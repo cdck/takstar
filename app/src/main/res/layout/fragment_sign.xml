@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/seat_root_ll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <xlk.takstar.paperless.ui.CustomAbsoluteLayout
+            android:id="@+id/seat_absolute"
+            android:layout_width="1300px"
+            android:layout_height="760px"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="5dp">
+
+        <TextView
+            android:id="@+id/tv_yd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:textSize="18sp"
+            tools:text="应到：31人" />
+
+        <TextView
+            android:id="@+id/tv_yqd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:layout_toEndOf="@+id/tv_yd"
+            android:textSize="18sp"
+            tools:text="已签到：6人" />
+
+        <TextView
+            android:id="@+id/tv_wqd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:layout_toEndOf="@+id/tv_yqd"
+            android:textSize="18sp"
+            tools:text="未签到：25人" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:layout_toStartOf="@+id/f_s_yqd_iv"
+            android:drawableStart="@drawable/shape_circle_red"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:text="@string/not_checked_in"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/f_s_yqd_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:drawableStart="@drawable/shape_circle_green"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:text="@string/checked_in"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="20dp"
+    android:background="@drawable/dialog_full_holo_light"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_launch"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/launch" />
+
+        <Button
+            android:id="@+id/btn_modify"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/modify" />
+
+        <Button
+            android:id="@+id/btn_delete"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/delete" />
+
+        <Button
+            android:id="@+id/btn_view_details"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/view_details" />
+
+        <Button
+            android:id="@+id/btn_view_chart"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/view_chart" />
+
+        <Button
+            android:id="@+id/btn_export_data"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/export_data" />
+
+        <Button
+            android:id="@+id/btn_import_data"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_weight="1"
+            android:text="@string/import_data" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_vote"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/white" />
+
+</LinearLayout>

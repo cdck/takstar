@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:paddingTop="5dp"
+    android:background="@drawable/item_file_bg_color"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingBottom="5dp">
+
+    <ImageView
+        android:id="@+id/item_iv_icon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:src="@drawable/ic_ppt" />
+
+    <TextView
+        android:id="@+id/item_tv_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="6"
+        android:ellipsize="end"
+        android:lines="1"
+        android:singleLine="true"
+        tools:text="资料名称资料名称资料名称.doc" />
+
+    <Button
+        android:id="@+id/item_btn_open"
+        style="@style/file_open_btn_style"
+        android:layout_gravity="center"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="center"
+        android:text="@string/open" />
+
+    <Button
+        android:id="@+id/item_btn_download"
+        style="@style/file_open_btn_style"
+        android:layout_gravity="center"
+        android:layout_marginEnd="10dp"
+        android:enabled="false"
+        android:gravity="center"
+        android:text="@string/download" />
+</LinearLayout>

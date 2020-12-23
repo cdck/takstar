@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="20dp"
+    android:background="@drawable/dialog_full_holo_light"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_rise"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/rise" />
+
+        <Button
+            android:id="@+id/btn_fall"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/fall" />
+
+        <Button
+            android:id="@+id/btn_stop"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/stop" />
+
+        <Button
+            android:id="@+id/btn_restart_app"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/restart_app" />
+
+        <Button
+            android:id="@+id/btn_restart_client"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/restart_client" />
+
+        <Button
+            android:id="@+id/btn_shutdown_client"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/shutdown_client" />
+
+        <Button
+            android:id="@+id/btn_assisted_sign_in"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/assisted_sign_in" />
+
+        <Button
+            android:id="@+id/btn_set_role"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/set_role" />
+
+        <Button
+            android:id="@+id/btn_wake_up"
+            style="@style/btn_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_weight="1"
+            android:text="@string/web_wake_up" />
+    </LinearLayout>
+
+    <include layout="@layout/item_terminal_control" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_client"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>
