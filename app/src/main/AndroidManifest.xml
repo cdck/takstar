@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!-- 读取帧缓存权限 截屏和录屏 -->
-<!--    <uses-permission android:name="android.permission.READ_FRAME_BUFFER"/>-->
+    <!--    <uses-permission android:name="android.permission.READ_FRAME_BUFFER"/>-->
 
     <!-- 网络权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -28,7 +28,7 @@
 
 
     <application
-        android:name=".MyApplication"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -47,11 +47,12 @@
         </activity>
         <activity
             android:name=".main.MainActivity"
+            android:launchMode="singleInstance"
             android:screenOrientation="landscape" />
         <activity
             android:name=".meet.MeetingActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             android:screenOrientation="landscape" />
         <activity
             android:name=".video.VideoActivity"
@@ -59,6 +60,7 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".chatonline.ChatVideoActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="landscape" />
 
         <activity
@@ -72,8 +74,7 @@
         <service
             android:name="com.tencent.smtt.export.external.DexClassLoaderProviderService"
             android:label="dexopt"
-            android:process=":dexopt" >
-        </service>
+            android:process=":dexopt"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

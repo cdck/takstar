@@ -3,6 +3,7 @@ package xlk.takstar.paperless.fragment.material;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.mogujie.tt.protobuf.InterfaceBase;
 import com.mogujie.tt.protobuf.InterfaceFile;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 
@@ -23,49 +24,35 @@ import xlk.takstar.paperless.util.LogUtil;
  */
 public class MaterialPresenter extends BasePresenter<MaterialContract.View> implements MaterialContract.Presenter {
 
-    public List<InterfaceFile.pbui_Item_MeetDirDetailInfo> meetDirs = new ArrayList<>();
     private List<InterfaceFile.pbui_Item_MeetDirFileDetailInfo> meetFiles = new ArrayList<>();
 
     public MaterialPresenter(MaterialContract.View view) {
         super(view);
     }
 
+    public List<InterfaceFile.pbui_Item_MeetDirFileDetailInfo> getMeetFiles() {
+        return meetFiles;
+    }
+
     @Override
     protected void busEvent(EventMessage msg) throws InvalidProtocolBufferException {
         switch (msg.getType()) {
-            //会议目录
-            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEETDIRECTORY_VALUE:
-                queryDir();
-                break;
             //会议目录文件
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEETDIRECTORYFILE_VALUE:
-                LogUtil.d(TAG, "BusEvent -->" + "会议目录文件变更通知");
-                queryDir();
+                byte[] bytes = (byte[]) msg.getObjects()[0];
+                InterfaceBase.pbui_MeetNotifyMsgForDouble data = InterfaceBase.pbui_MeetNotifyMsgForDouble.parseFrom(bytes);
+                int id = data.getId();
+                LogUtil.d(TAG, "BusEvent -->" + "会议目录文件变更通知 id=" + id);
+                queryFileByDir(id);
                 break;
             //会议资料下载完成
             case EventType.BUS_MATERIAL_FILE:
                 LogUtil.d(TAG, "BusEvent -->" + "会议资料下载完成");
-                queryDir();
+                mView.updateFile(meetFiles);
                 break;
             default:
                 break;
         }
-    }
-
-    @Override
-    public void queryDir() {
-        InterfaceFile.pbui_Type_MeetDirDetailInfo info = jni.queryMeetDir();
-        meetDirs.clear();
-        if (info != null) {
-            List<InterfaceFile.pbui_Item_MeetDirDetailInfo> itemList = info.getItemList();
-            for (int i = 0; i < itemList.size(); i++) {
-                InterfaceFile.pbui_Item_MeetDirDetailInfo item = itemList.get(i);
-                if (item.getId() != Constant.ANNOTATION_FILE_DIRECTORY_ID) {
-                    meetDirs.add(item);
-                }
-            }
-        }
-        mView.updateDir();
     }
 
     @Override

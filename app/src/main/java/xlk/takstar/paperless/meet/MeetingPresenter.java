@@ -3,9 +3,12 @@ package xlk.takstar.paperless.meet;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.chad.library.adapter.base.entity.node.BaseNode;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.mogujie.tt.protobuf.InterfaceBase;
 import com.mogujie.tt.protobuf.InterfaceDevice;
+import com.mogujie.tt.protobuf.InterfaceFile;
 import com.mogujie.tt.protobuf.InterfaceIM;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceMeetfunction;
@@ -26,12 +29,15 @@ import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.model.bean.DevMember;
 import xlk.takstar.paperless.model.bean.MyChatMessage;
+import xlk.takstar.paperless.model.node.FeaturesChildNode;
+import xlk.takstar.paperless.model.node.FeaturesFootNode;
+import xlk.takstar.paperless.model.node.FeaturesParentNode;
 import xlk.takstar.paperless.ui.ArtBoard;
 import xlk.takstar.paperless.util.DateUtil;
 import xlk.takstar.paperless.util.DialogUtil;
 import xlk.takstar.paperless.util.LogUtil;
 
-import static xlk.takstar.paperless.MyApplication.appContext;
+import static xlk.takstar.paperless.App.appContext;
 import static xlk.takstar.paperless.fragment.draw.DrawFragment.disposePicOpermemberid;
 import static xlk.takstar.paperless.fragment.draw.DrawFragment.disposePicSrcmemid;
 import static xlk.takstar.paperless.fragment.draw.DrawFragment.disposePicSrcwbidd;
@@ -50,9 +56,10 @@ import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_11;
 public class MeetingPresenter extends BasePresenter<MeetingContract.View> implements MeetingContract.Presenter {
 
     private final Context context;
-    public List<InterfaceMeetfunction.pbui_Item_MeetFunConfigDetailInfo> meetingFeatures = new ArrayList<>();
+    public List<BaseNode> features = new ArrayList<>();
     List<String> picPath = new ArrayList<>();
     public static HashMap<Integer, List<MyChatMessage>> imMessages = new HashMap<>();
+    private FeaturesParentNode materialNode;
 
     public MeetingPresenter(MeetingContract.View view, Context context) {
         super(view);
@@ -178,7 +185,8 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
     @Override
     public void queryMeetingFunction() {
         InterfaceMeetfunction.pbui_Type_MeetFunConfigDetailInfo funConfigDetailInfo = jni.queryMeetFunction();
-        meetingFeatures.clear();
+        features.clear();
+        materialNode = null;
         if (funConfigDetailInfo != null) {
             List<InterfaceMeetfunction.pbui_Item_MeetFunConfigDetailInfo> itemList = funConfigDetailInfo.getItemList();
             for (int i = 0; i < itemList.size(); i++) {
@@ -189,11 +197,36 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                         && funcode != InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_VOTERESULT_VALUE
                         && funcode != InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_DOCUMENT_VALUE
                 ) {
-                    meetingFeatures.add(item);
+                    FeaturesParentNode parentNode = new FeaturesParentNode(funcode);
+                    features.add(parentNode);
+                    if (funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE) {
+                        materialNode = parentNode;
+                        queryDir(materialNode);
+                    }
                 }
             }
         }
+        features.add(new FeaturesFootNode());
         mView.updateMeetingFeatures();
+    }
+
+    public void queryDir(FeaturesParentNode parentNode) {
+        InterfaceFile.pbui_Type_MeetDirDetailInfo info = jni.queryMeetDir();
+        if (parentNode != null) {
+            List<BaseNode> childs = new ArrayList<>();
+            if (info != null) {
+                List<InterfaceFile.pbui_Item_MeetDirDetailInfo> itemList = info.getItemList();
+                for (int i = 0; i < itemList.size(); i++) {
+                    InterfaceFile.pbui_Item_MeetDirDetailInfo item = itemList.get(i);
+                    if (item.getId() != Constant.ANNOTATION_FILE_DIRECTORY_ID) {
+                        childs.add(new FeaturesChildNode(item.getId(), item.getName().toStringUtf8()));
+                    }
+                }
+            }
+            LogUtils.i(TAG, "目录个数：" + childs.size());
+            parentNode.setChildNode(childs);
+            mView.updateMeetingFeatures();
+        }
     }
 
     @Override
@@ -275,7 +308,7 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                 if (!chatIsShowing) {
                     byte[] o = (byte[]) msg.getObjects()[0];
                     InterfaceIM.pbui_Type_MeetIM meetIM = InterfaceIM.pbui_Type_MeetIM.parseFrom(o);
-                    LogUtil.i(TAG, "busEvent 收到会议交流信息=" + meetIM.getMembername().toStringUtf8() + "," + meetIM.getMsg().toStringUtf8());
+                    LogUtil.i(TAG, "busEvent 收到会议交流信息 参会人id=" + meetIM.getMemberid() + ",名称=" + meetIM.getMembername().toStringUtf8() + ",内容=" + meetIM.getMsg().toStringUtf8());
                     //文本类消息
                     if (meetIM.getMsgtype() == InterfaceMacro.Pb_MeetIMMSG_TYPE.Pb_MEETIM_CHAT_Message_VALUE) {
                         int badgeNumber = MeetingActivity.mBadge.getBadgeNumber();
@@ -285,8 +318,10 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                         List<MyChatMessage> myChatMessages;
                         if (imMessages.containsKey(memberid)) {
                             myChatMessages = imMessages.get(memberid);
+                            LogUtil.i(TAG, "busEvent 获取消息数据 " + myChatMessages.size());
                         } else {
                             myChatMessages = new ArrayList<>();
+                            LogUtil.i(TAG, "busEvent 新建消息数据");
                         }
                         myChatMessages.add(newImMsg);
                         imMessages.put(memberid, myChatMessages);
@@ -310,8 +345,15 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                 break;
             }
             //导入笔记
-            case EventType.BUS_CHOOSE_NOTE_FILE:{
+            case EventType.BUS_CHOOSE_NOTE_FILE: {
                 mView.exportNoteFile();
+                break;
+            }
+            //会议目录
+            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEETDIRECTORY_VALUE: {
+                if (materialNode != null) {
+                    queryDir(materialNode);
+                }
                 break;
             }
             default:

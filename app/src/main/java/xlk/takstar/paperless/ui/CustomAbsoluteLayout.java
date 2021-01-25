@@ -5,6 +5,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.AbsoluteLayout;
 
+import xlk.takstar.paperless.util.LogUtil;
+
 /**
  * @author by xlk
  * @date 2020/6/12 18:03
@@ -13,6 +15,7 @@ import android.widget.AbsoluteLayout;
 public class CustomAbsoluteLayout extends AbsoluteLayout {
     private int width = 1300, height = 760;//底图宽高
     private int viewWidth, viewHeight;//显示区域的宽高
+    private boolean logenable = false;
 
     /**
      * 设置显示区域的宽高
@@ -49,6 +52,7 @@ public class CustomAbsoluteLayout extends AbsoluteLayout {
         setMeasuredDimension(width, height);
         this.width = width;
         this.height = height;
+        if (logenable) LogUtil.i("mylog", "onMeasure：width=" + width + ",height=" + height);
     }
 
     @Override
@@ -58,6 +62,7 @@ public class CustomAbsoluteLayout extends AbsoluteLayout {
         this.t = t;
         this.r = r;
         this.b = b;
+        if (logenable) LogUtil.e("mylog", "当前layout：l=" + l + ",t=" + t + ",r=" + r + ",b=" + b);
     }
 
     private float downX, downY;//拖动时按下
@@ -75,12 +80,12 @@ public class CustomAbsoluteLayout extends AbsoluteLayout {
         }
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                downX = event.getX();
-                downY = event.getY();
+                downX = event.getRawX();
+                downY = event.getRawY();
                 break;
             case MotionEvent.ACTION_MOVE:
-                float moveX = event.getX();
-                float moveY = event.getY();
+                float moveX = event.getRawX();
+                float moveY = event.getRawY();
 //                LogUtil.d(TAG, "触摸点 -->" + moveX+","+moveY+", 按压点: "+downX+","+downY);
                 float dx = moveX - downX;//负数,说明是向左滑动
                 float dy = moveY - downY;//负数,说明是向上滑动
@@ -110,8 +115,8 @@ public class CustomAbsoluteLayout extends AbsoluteLayout {
                         l += i1;
                     }
                 } else {//不可以拖动X轴
-                    l = 0;
-                    r = width;
+//                    l = 0;
+//                    r = width;
                 }
                 if (canMoveY) {
                     //上
@@ -133,9 +138,11 @@ public class CustomAbsoluteLayout extends AbsoluteLayout {
                         t += i;
                     }
                 } else {//不可以拖动Y轴
-                    t = 0;
-                    b = height;
+//                    t = 0;
+//                    b = height;
                 }
+                if (logenable)
+                    LogUtil.d("mylog", "当前layout：l=" + l + ",t=" + t + ",r=" + r + ",b=" + b);
                 this.layout(l, t, r, b);
                 break;
         }

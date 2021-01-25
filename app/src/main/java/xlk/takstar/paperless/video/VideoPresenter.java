@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.util.Range;
 import android.view.Surface;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.mogujie.tt.protobuf.InterfaceBase;
 import com.mogujie.tt.protobuf.InterfaceDevice;
@@ -26,8 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import io.reactivex.internal.operators.single.SingleFlatMapIterableFlowable;
-import xlk.takstar.paperless.MyApplication;
+import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.base.BasePresenter;
 import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.model.EventMessage;
@@ -38,7 +38,7 @@ import xlk.takstar.paperless.model.bean.MediaBean;
 import xlk.takstar.paperless.util.DateUtil;
 import xlk.takstar.paperless.util.LogUtil;
 
-import static xlk.takstar.paperless.MyApplication.read2file;
+import static xlk.takstar.paperless.App.read2file;
 import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_0;
 
 /**
@@ -243,10 +243,6 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
             initH = h;
             w = supportedWidths.clamp(w);
             h = supportedHeights.clamp(h);
-            if(initW>w){
-                int i = initW - w;
-
-            }
             LogUtil.e(TAG, "initCodec :   --> " + upper + ", " + lower + " ,,高：" + upper1 + ", " + lower1);
             initMediaFormat(w, h, codecdata);
             boolean formatSupported = capabilitiesForType.isFormatSupported(mediaFormat);
@@ -259,14 +255,14 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
                 String message = e.getMessage();
                 String string = e.toString();
                 String localizedMessage = e.getLocalizedMessage();
-                LogUtil.e(TAG, "initCodec  configure方法异常捕获 --> \n" + message + "\n toString: " + string + "\n localizedMessage: " + localizedMessage);
+                LogUtils.e(TAG, "initCodec  configure方法异常捕获 --> \n" + message + "\n toString: " + string + "\n localizedMessage: " + localizedMessage);
                 e.printStackTrace();
             } catch (MediaCodec.CodecException e) {
                 //可能是由于media内容错误、硬件错误、资源枯竭等原因所致
                 //可恢复错误（recoverable errors）：如果isRecoverable() 方法返回true,然后就可以调用stop(),configure(...),以及start()方法进行修复
                 //短暂错误（transient errors）：如果isTransient()方法返回true,资源短时间内不可用，这个方法可能会在一段时间之后重试。
                 //isRecoverable()和isTransient()方法不可能同时都返回true。
-                LogUtil.e(TAG, "initCodec :   -->可恢复错误： " + e.isRecoverable() + ",短暂错误：" + e.isTransient());
+                LogUtils.e(TAG, "initCodec :   -->可恢复错误： " + e.isRecoverable() + ",短暂错误：" + e.isTransient());
             }
             //3.调用start()方法使其转入执行状态（Executing）
             mediaCodec.start();
@@ -286,8 +282,8 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
             mediaFormat.setByteBuffer("csd-0", ByteBuffer.wrap(codecdata));
             mediaFormat.setByteBuffer("csd-1", ByteBuffer.wrap(codecdata));
         }
-        mediaCodec.getCodecInfo().getCapabilitiesForType(saveMimeType).isFormatSupported(mediaFormat);
-        LogUtil.e(TAG, "initMediaFormat :   --> " + mediaFormat);
+        boolean formatSupported = mediaCodec.getCodecInfo().getCapabilitiesForType(saveMimeType).isFormatSupported(mediaFormat);
+        LogUtils.e(TAG, "formatSupported=" + formatSupported + ",initMediaFormat :   --> " + mediaFormat);
     }
 
     private BufferedOutputStream outputStream;
@@ -353,7 +349,7 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
             return;
         //队列中有视频帧，检查解码队列中是否有空闲可用的buffer，有则取视频帧送进去解码
         if (queuesize > 0) {
-            int inputBufferIndex = -1;
+            int inputBufferIndex;
             try {
                 inputBufferIndex = mediaCodec.dequeueInputBuffer(0);
                 if (inputBufferIndex >= 0) {
@@ -363,11 +359,15 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
                     //将视频队列中的头取出送到解码队列中
                     MediaBean poll = queue.poll();
                     byteBuffer.put(poll.getBytes());
+                    LogUtil.i(TAG, "mediaCodecDecode pts=" + poll.getPts());
                     mediaCodec.queueInputBuffer(inputBufferIndex, 0, poll.getSize(), poll.getPts(), 0);
+                } else {
+                    LogUtil.e(TAG, "mediaCodecDecode dequeueInputBuffer inputBufferIndex=" + inputBufferIndex);
                 }
             } catch (IllegalStateException e) {
                 //如果解码出错，需要提示用户或者程序自动重新初始化解码
                 mediaCodec = null;
+                LogUtil.e(TAG, "mediaCodecDecode dequeueInputBuffer " + e);
                 return;
             }
         }
@@ -379,16 +379,24 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
 //            return;
 //        }
         int index = mediaCodec.dequeueOutputBuffer(info, 0);
+//        MediaCodec.INFO_TRY_AGAIN_LATER
+//        MediaCodec.INFO_OUTPUT_FORMAT_CHANGED
+//        MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED
         if (index >= 0) {
+            //返回输出缓冲区，如果索引不是dequeued输出缓冲区，或者编解码器配置了输出面，则返回null
             ByteBuffer outputBuffer = mediaCodec.getOutputBuffer(index);
-            outputBuffer.position(info.offset);
-            outputBuffer.limit(info.offset + info.size);
+            if (outputBuffer != null) {
+                outputBuffer.position(info.offset);
+                outputBuffer.limit(info.offset + info.size);
+            }
             LogUtil.v(TAG, "mediaCodecDecode --> dequeueOutputBuffer：查看info：" + index
                     + "\nflags：" + info.flags + ", offset：" + info.offset + ", size：" + info.size
                     + ", presentationTimeUs：" + info.presentationTimeUs);
 //            mediaCodec.releaseOutputBuffer(index, info.presentationTimeUs);
             //如果配置编码器时指定了有效的surface，传true将此输出缓冲区显示在surface
             mediaCodec.releaseOutputBuffer(index, true);
+        } else {
+            LogUtil.e(TAG, "mediaCodecDecode dequeueOutputBuffer值=" + index);
         }
     }
 
@@ -497,7 +505,7 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
      * 释放资源
      */
     private void releaseMediaCodec() {
-        MyApplication.threadPool.execute(() -> {
+        App.threadPool.execute(() -> {
             if (mediaCodec != null) {
                 try {
                     LogUtil.e(TAG, "releaseMediaCodec :   --> ");

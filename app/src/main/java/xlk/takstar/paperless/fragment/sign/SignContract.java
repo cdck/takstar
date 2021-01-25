@@ -14,7 +14,7 @@ import xlk.takstar.paperless.base.IBaseView;
 public interface SignContract {
     interface View extends IBaseView{
 
-        void updateView(List<InterfaceRoom.pbui_Item_MeetRoomDevSeatDetailInfo> itemList, boolean isShow);
+        void updateView(List<InterfaceRoom.pbui_Item_MeetRoomDevSeatDetailInfo> itemList, boolean isShow,int allMemberCount, int checkedMemberCount);
 
         void updateSignin(int yqd, int size);
 

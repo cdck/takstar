@@ -15,14 +15,12 @@ import xlk.takstar.paperless.model.bean.DevMember;
  */
 public interface MaterialContract {
     interface View extends IBaseView {
-        void updateDir();
 
         void updateFile(List<InterfaceFile.pbui_Item_MeetDirFileDetailInfo> meetFiles);
 
     }
 
     interface Presenter extends IBasePresenter {
-        void queryDir();
 
         void queryFileByDir(int dirId);
 

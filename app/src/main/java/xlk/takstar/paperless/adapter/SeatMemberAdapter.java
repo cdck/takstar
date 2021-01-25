@@ -1,7 +1,6 @@
 package xlk.takstar.paperless.adapter;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 
 import java.util.List;
 
@@ -26,8 +25,8 @@ public class SeatMemberAdapter extends BaseQuickAdapter<SeatMember, BaseViewHold
     }
 
     public int getSelectedId() {
-        for (int i = 0; i < mData.size(); i++) {
-            if (mData.get(i).getSeatDetailInfo().getSeatid() == selectedId) {
+        for (int i = 0; i < getData().size(); i++) {
+            if (getData().get(i).getSeatDetailInfo().getSeatid() == selectedId) {
                 return selectedId;
             }
         }

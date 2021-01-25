@@ -3,7 +3,7 @@ package xlk.takstar.paperless.adapter;
 import android.widget.Button;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.mogujie.tt.protobuf.InterfaceMember;
 
 import java.util.List;
@@ -17,6 +17,7 @@ import xlk.takstar.paperless.util.LogUtil;
  * @desc 主界面绑定参会人
  */
 public class MemberAdapter extends BaseQuickAdapter<InterfaceMember.pbui_Item_MemberDetailInfo, BaseViewHolder> {
+    private final String TAG = "MemberAdapter-->";
     private int selectedId;
 
     public MemberAdapter(int layoutResId, @Nullable List<InterfaceMember.pbui_Item_MemberDetailInfo> data) {
@@ -29,8 +30,8 @@ public class MemberAdapter extends BaseQuickAdapter<InterfaceMember.pbui_Item_Me
         notifyDataSetChanged();
     }
     public int getSelectedMemberId(){
-        for (int i = 0; i < mData.size(); i++) {
-            if(selectedId==mData.get(i).getPersonid()){
+        for (int i = 0; i < getData().size(); i++) {
+            if(selectedId==getData().get(i).getPersonid()){
                 return selectedId;
             }
         }

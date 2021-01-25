@@ -8,7 +8,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import xlk.takstar.paperless.util.LogUtil;
 
-import static xlk.takstar.paperless.MyApplication.lbm;
+import static xlk.takstar.paperless.App.lbm;
 
 /**
  * @author Created by xlk on 2020/11/26.

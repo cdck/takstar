@@ -20,6 +20,8 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.UriUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.entity.node.BaseNode;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.mogujie.tt.protobuf.InterfaceDevice;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceMeetfunction;
@@ -30,6 +32,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentTransaction;
@@ -61,6 +64,9 @@ import xlk.takstar.paperless.model.EventMessage;
 import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.model.bean.DevMember;
+import xlk.takstar.paperless.model.node.FeaturesNodeAdapter;
+import xlk.takstar.paperless.model.node.FeaturesParentNode;
+import xlk.takstar.paperless.ui.RvItemDecoration;
 import xlk.takstar.paperless.util.LogUtil;
 import xlk.takstar.paperless.util.PopUtil;
 
@@ -84,8 +90,6 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     private ImageView meet_iv_message;
     private ImageView meet_iv_news;
     private FrameLayout meet_fl;
-    private LinearLayout other_feature_ll;
-    private FeaturesAdapter featuresAdapter;
     private int saveFunCode = -1;
     public static boolean chatIsShowing = false;
     public static Badge mBadge;
@@ -97,11 +101,15 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     private ChatFragment chatFragment;
     private DrawFragment drawFragment;
     private TerminalControlFragment clientControlFragment;
-    private PopupWindow featurePop;
     private VoteManageFragment voteManageFragment;
     private ScreenManageFragment screenManageFragment;
     private BulletFragment bulletFragment;
     private LiveVideoFragment liveVideoFragment;
+    private FeaturesNodeAdapter nodeAdapter;
+    /**
+     * 保存当前点击的目录id
+     */
+    private int currentClickDirId = -1;
 
     @Override
     protected int getLayoutId() {
@@ -157,9 +165,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
 
     @Override
     public void closeOtherFeaturePage() {
-        if (featurePop != null && featurePop.isShowing()) {
-            featurePop.dismiss();
-        }
+        if (nodeAdapter != null) nodeAdapter.closeFoot();
         if (saveFunCode > Constant.FUN_CODE) {
             saveFunCode = -1;
             updateMeetingFeatures();
@@ -168,23 +174,45 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
 
     @Override
     public void updateMeetingFeatures() {
-        LogUtil.i(TAG, "updateMeetingFeatures meetingFeatures.size=" + presenter.meetingFeatures.size());
-        if (featuresAdapter == null) {
-            featuresAdapter = new FeaturesAdapter(R.layout.item_feature, presenter.meetingFeatures);
+        if (nodeAdapter == null) {
+            nodeAdapter = new FeaturesNodeAdapter(presenter.features);
+            meet_rv.setAdapter(nodeAdapter);
+            meet_rv.addItemDecoration(new RvItemDecoration(this));
             meet_rv.setLayoutManager(new LinearLayoutManager(this));
-            meet_rv.setAdapter(featuresAdapter);
-            featuresAdapter.setOnItemClickListener((adapter, view, position) -> {
-                int funcode = presenter.meetingFeatures.get(position).getFuncode();
-                showFragment(funcode);
+            nodeAdapter.setNodeClickItemListener(new FeaturesNodeAdapter.NodeClickItem() {
+                @Override
+                public void onClickItem(Object... obj) {
+                    int id = (int) obj[0];
+                    if (obj.length > 1) {
+                        currentClickDirId = id;
+                        //点击了目录
+                        showFragment(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE);
+                    } else {
+                        currentClickDirId = -1;
+                        //点击了某一功能
+                        showFragment(id);
+                    }
+                }
             });
         } else {
-            featuresAdapter.notifyDataSetChanged();
+            nodeAdapter.setList(presenter.features);
+            nodeAdapter.notifyDataSetChanged();
         }
         if (saveFunCode == -1) {
-            if (presenter.meetingFeatures.size() > 0) {
-                InterfaceMeetfunction.pbui_Item_MeetFunConfigDetailInfo info = presenter.meetingFeatures.get(0);
-                int funcode = info.getFuncode();
-                showFragment(funcode);
+            if (!presenter.features.isEmpty()) {
+                BaseNode baseNode = presenter.features.get(0);
+                if (baseNode instanceof FeaturesParentNode) {
+                    FeaturesParentNode parentNode = (FeaturesParentNode) baseNode;
+                    showFragment(parentNode.getFeatureId());
+                    nodeAdapter.setDefaultSelected(parentNode.getFeatureId());
+                } else if (presenter.features.size() > 1) {
+                    BaseNode baseNode1 = presenter.features.get(1);
+                    if (baseNode1 instanceof FeaturesParentNode) {
+                        FeaturesParentNode parentNode = (FeaturesParentNode) baseNode1;
+                        showFragment(parentNode.getFeatureId());
+                        nodeAdapter.setDefaultSelected(parentNode.getFeatureId());
+                    }
+                }
             }
         }
     }
@@ -193,11 +221,6 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     public void showFragment(int funcode) {
         LogUtil.i(TAG, "showFragment funcode=" + funcode);
         saveFunCode = funcode;
-        if (funcode > Constant.FUN_CODE) {
-            featuresAdapter.setSelected(-1);
-        } else {
-            featuresAdapter.setSelected(funcode);
-        }
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         hideFragment(ft);
         switch (funcode) {
@@ -212,10 +235,13 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             }
             //会议资料
             case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE: {
+                Bundle bundle = new Bundle();
+                bundle.putInt("dirId", currentClickDirId);
                 if (materialFragment == null) {
                     materialFragment = new MaterialFragment();
                     ft.add(R.id.meet_fl, materialFragment);
                 }
+                materialFragment.setArguments(bundle);
                 ft.show(materialFragment);
                 break;
             }
@@ -239,11 +265,13 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             }
             //视频直播
             case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_VIDEOSTREAM_VALUE: {
-                LiveVideoFragment.isVideoManage = false;
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isVideoManage", false);
                 if (liveVideoFragment == null) {
                     liveVideoFragment = new LiveVideoFragment();
                     ft.add(R.id.meet_fl, liveVideoFragment);
                 }
+                liveVideoFragment.setArguments(bundle);
                 ft.show(liveVideoFragment);
                 break;
             }
@@ -305,11 +333,13 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             }
             //视频控制
             case Constant.FUN_CODE_VIDEO: {
-                LiveVideoFragment.isVideoManage = true;
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isVideoManage", true);
                 if (liveVideoFragment == null) {
                     liveVideoFragment = new LiveVideoFragment();
                     ft.add(R.id.meet_fl, liveVideoFragment);
                 }
+                liveVideoFragment.setArguments(bundle);
                 ft.show(liveVideoFragment);
                 break;
             }
@@ -400,18 +430,16 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         this.meet_iv_message = (ImageView) findViewById(R.id.meet_iv_message);
         this.meet_iv_news = (ImageView) findViewById(R.id.meet_iv_news);
         this.meet_fl = (FrameLayout) findViewById(R.id.meet_fl);
-        this.other_feature_ll = (LinearLayout) findViewById(R.id.other_feature_ll);
         if (mBadge == null) {
             /** ************ ******  设置未读消息展示  ****** ************ **/
             mBadge = new QBadgeView(this).bindTarget(meet_iv_message);
-            mBadge.setBadgeGravity(Gravity.END | Gravity.TOP);
-            mBadge.setBadgeTextSize(14, true);
+            mBadge.setBadgeGravity(Gravity.START | Gravity.TOP);
+            mBadge.setBadgeTextSize(8, true);
             mBadge.setShowShadow(true);
             mBadge.setOnDragStateChangedListener((dragState, badge, targetView) -> {
                 //只需要空实现，就可以拖拽消除未读消息
             });
         }
-        other_feature_ll.setOnClickListener(this);
         meet_iv_close.setOnClickListener(this);
         meet_iv_min.setOnClickListener(this);
         meet_iv_message.setOnClickListener(this);
@@ -421,15 +449,6 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.other_feature_ll:
-                if (GlobalValue.localRole == InterfaceMacro.Pb_MeetMemberRole.Pb_role_member_compere.getNumber()
-                        || GlobalValue.localRole == InterfaceMacro.Pb_MeetMemberRole.Pb_role_member_secretary.getNumber()
-                        || GlobalValue.localRole == InterfaceMacro.Pb_MeetMemberRole.Pb_role_admin.getNumber()) {
-                    showOtherFeature();
-                } else {
-                    ToastUtils.showShort(R.string.you_have_no_permission);
-                }
-                break;
             case R.id.meet_iv_close:
                 exit2main();
                 break;
@@ -447,77 +466,6 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 break;
         }
     }
-
-    private void showOtherFeature() {
-        View inflate = LayoutInflater.from(this).inflate(R.layout.pop_other_feature, null, false);
-        int width = meet_left_ll.getWidth();
-        int height = meet_left_ll.getHeight();
-        int yoff = meet_top_ll.getHeight();
-        featurePop = PopUtil.createAt(inflate, width, height, other_feature_ll, width, yoff);
-        ViewHolder viewHolder = new ViewHolder(inflate);
-        holderEvent(viewHolder);
-    }
-
-    private void setSelected(ViewHolder holder, int code) {
-        holder.feature_terminal.setSelected(code == Constant.FUN_CODE_TERMINAL);
-        holder.iv_terminal.setSelected(code == Constant.FUN_CODE_TERMINAL);
-        holder.tv_terminal.setSelected(code == Constant.FUN_CODE_TERMINAL);
-
-        holder.feature_vote_manage.setSelected(code == Constant.FUN_CODE_VOTE);
-        holder.iv_vote_manage.setSelected(code == Constant.FUN_CODE_VOTE);
-        holder.tv_vote_manage.setSelected(code == Constant.FUN_CODE_VOTE);
-
-        holder.feature_election_manage.setSelected(code == Constant.FUN_CODE_ELECTION);
-        holder.iv_election_manage.setSelected(code == Constant.FUN_CODE_ELECTION);
-        holder.tv_election_manage.setSelected(code == Constant.FUN_CODE_ELECTION);
-
-        holder.feature_video_control.setSelected(code == Constant.FUN_CODE_VIDEO);
-        holder.iv_video_control.setSelected(code == Constant.FUN_CODE_VIDEO);
-        holder.tv_video_control.setSelected(code == Constant.FUN_CODE_VIDEO);
-
-        holder.feature_screen_manage.setSelected(code == Constant.FUN_CODE_SCREEN);
-        holder.iv_screen_manage.setSelected(code == Constant.FUN_CODE_SCREEN);
-        holder.tv_screen_manage.setSelected(code == Constant.FUN_CODE_SCREEN);
-
-        holder.feature_bulletin.setSelected(code == Constant.FUN_CODE_BULLETIN);
-        holder.iv_bulletin.setSelected(code == Constant.FUN_CODE_BULLETIN);
-        holder.tv_bulletin.setSelected(code == Constant.FUN_CODE_BULLETIN);
-    }
-
-    private void holderEvent(ViewHolder holder) {
-        setSelected(holder, saveFunCode);
-        holder.feature_terminal.setOnClickListener(v -> {
-            setSelected(holder, Constant.FUN_CODE_TERMINAL);
-            showFragment(Constant.FUN_CODE_TERMINAL);
-            featurePop.dismiss();
-        });
-        holder.feature_vote_manage.setOnClickListener(v -> {
-            setSelected(holder, Constant.FUN_CODE_VOTE);
-            showFragment(Constant.FUN_CODE_VOTE);
-            featurePop.dismiss();
-        });
-        holder.feature_election_manage.setOnClickListener(v -> {
-            setSelected(holder, Constant.FUN_CODE_ELECTION);
-            showFragment(Constant.FUN_CODE_ELECTION);
-            featurePop.dismiss();
-        });
-        holder.feature_video_control.setOnClickListener(v -> {
-            setSelected(holder, Constant.FUN_CODE_VIDEO);
-            showFragment(Constant.FUN_CODE_VIDEO);
-            featurePop.dismiss();
-        });
-        holder.feature_screen_manage.setOnClickListener(v -> {
-            setSelected(holder, Constant.FUN_CODE_SCREEN);
-            showFragment(Constant.FUN_CODE_SCREEN);
-            featurePop.dismiss();
-        });
-        holder.feature_bulletin.setOnClickListener(v -> {
-            setSelected(holder, Constant.FUN_CODE_BULLETIN);
-            showFragment(Constant.FUN_CODE_BULLETIN);
-            featurePop.dismiss();
-        });
-    }
-
 
     private PopPushMemberAdapter pushMemberAdapter;
     private PopPushProjectionAdapter pushProjectionAdapter;
@@ -539,9 +487,9 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             pushMemberAdapter = new PopPushMemberAdapter(R.layout.item_single_button, onlineMembers);
             pop_push_member_rv.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
             pop_push_member_rv.setAdapter(pushMemberAdapter);
-            pushMemberAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            pushMemberAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                     pushMemberAdapter.choose(onlineMembers.get(position).getDeviceDetailInfo().getDevcieid());
                     pop_push_member_cb.setChecked(pushMemberAdapter.isChooseAll());
                 }
@@ -559,9 +507,9 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             pushProjectionAdapter = new PopPushProjectionAdapter(R.layout.item_single_button, onLineProjectors);
             pop_push_projection_rv.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
             pop_push_projection_rv.setAdapter(pushProjectionAdapter);
-            pushProjectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            pushProjectionAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                     pushProjectionAdapter.choose(onlineMembers.get(position).getDeviceDetailInfo().getDevcieid());
                     pop_push_projection_cb.setChecked(pushProjectionAdapter.isChooseAll());
                 }
@@ -613,50 +561,6 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 }
             });
         }
-    }
-
-
-    public static class ViewHolder {
-        public ImageView iv_terminal;
-        public TextView tv_terminal;
-        public LinearLayout feature_terminal;
-        public ImageView iv_vote_manage;
-        public TextView tv_vote_manage;
-        public LinearLayout feature_vote_manage;
-        public ImageView iv_election_manage;
-        public TextView tv_election_manage;
-        public LinearLayout feature_election_manage;
-        public ImageView iv_video_control;
-        public TextView tv_video_control;
-        public LinearLayout feature_video_control;
-        public ImageView iv_screen_manage;
-        public TextView tv_screen_manage;
-        public LinearLayout feature_screen_manage;
-        public ImageView iv_bulletin;
-        public TextView tv_bulletin;
-        public LinearLayout feature_bulletin;
-
-        public ViewHolder(View rootView) {
-            this.iv_terminal = (ImageView) rootView.findViewById(R.id.iv_terminal);
-            this.tv_terminal = (TextView) rootView.findViewById(R.id.tv_terminal);
-            this.feature_terminal = (LinearLayout) rootView.findViewById(R.id.feature_terminal);
-            this.iv_vote_manage = (ImageView) rootView.findViewById(R.id.iv_vote_manage);
-            this.tv_vote_manage = (TextView) rootView.findViewById(R.id.tv_vote_manage);
-            this.feature_vote_manage = (LinearLayout) rootView.findViewById(R.id.feature_vote_manage);
-            this.iv_election_manage = (ImageView) rootView.findViewById(R.id.iv_election_manage);
-            this.tv_election_manage = (TextView) rootView.findViewById(R.id.tv_election_manage);
-            this.feature_election_manage = (LinearLayout) rootView.findViewById(R.id.feature_election_manage);
-            this.iv_video_control = (ImageView) rootView.findViewById(R.id.iv_video_control);
-            this.tv_video_control = (TextView) rootView.findViewById(R.id.tv_video_control);
-            this.feature_video_control = (LinearLayout) rootView.findViewById(R.id.feature_video_control);
-            this.iv_screen_manage = (ImageView) rootView.findViewById(R.id.iv_screen_manage);
-            this.tv_screen_manage = (TextView) rootView.findViewById(R.id.tv_screen_manage);
-            this.feature_screen_manage = (LinearLayout) rootView.findViewById(R.id.feature_screen_manage);
-            this.iv_bulletin = (ImageView) rootView.findViewById(R.id.iv_bulletin);
-            this.tv_bulletin = (TextView) rootView.findViewById(R.id.tv_bulletin);
-            this.feature_bulletin = (LinearLayout) rootView.findViewById(R.id.feature_bulletin);
-        }
-
     }
 
     private final int REQUEST_CODE_EXPORT_NOTE = 1;

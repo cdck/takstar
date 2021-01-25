@@ -2,8 +2,9 @@ package xlk.takstar.paperless.adapter;
 
 import android.widget.Button;
 
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +53,8 @@ public class DevMemberAdapter extends BaseQuickAdapter<DevMember, BaseViewHolder
 
     public List<Integer> getCheckMemberIds() {
         List<Integer> temps = new ArrayList<>();
-        for (int i = 0; i < mData.size(); i++) {
-            DevMember devMember = mData.get(i);
+        for (int i = 0; i < getData().size(); i++) {
+            DevMember devMember = getData().get(i);
             if (checks.contains(devMember.getMemberDetailInfo().getPersonid())) {
                 temps.add(devMember.getMemberDetailInfo().getPersonid());
             }
@@ -63,8 +64,8 @@ public class DevMemberAdapter extends BaseQuickAdapter<DevMember, BaseViewHolder
 
     public List<Integer> getCheckDeviceIds() {
         List<Integer> temps = new ArrayList<>();
-        for (int i = 0; i < mData.size(); i++) {
-            DevMember devMember = mData.get(i);
+        for (int i = 0; i < getData().size(); i++) {
+            DevMember devMember = getData().get(i);
             if (checks.contains(devMember.getMemberDetailInfo().getPersonid())) {
                 temps.add(devMember.getDeviceDetailInfo().getDevcieid());
             }
@@ -73,14 +74,14 @@ public class DevMemberAdapter extends BaseQuickAdapter<DevMember, BaseViewHolder
     }
 
     public boolean isCheckAll() {
-        return checks.size() == mData.size() && mData.size() > 0;
+        return checks.size() == getData().size() && getData().size() > 0;
     }
 
     public void setCheckAll(boolean all) {
         checks.clear();
         if (all) {
-            for (int i = 0; i < mData.size(); i++) {
-                DevMember devMember = mData.get(i);
+            for (int i = 0; i < getData().size(); i++) {
+                DevMember devMember = getData().get(i);
                 int personid = devMember.getMemberDetailInfo().getPersonid();
                 checks.add(personid);
             }

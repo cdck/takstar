@@ -6,7 +6,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceVote;
 
@@ -33,9 +33,9 @@ public class VoteAdapter extends BaseQuickAdapter<InterfaceVote.pbui_Item_MeetVo
     }
 
     public InterfaceVote.pbui_Item_MeetVoteDetailInfo getSelect() {
-        for (int i = 0; i < mData.size(); i++) {
-            if (mData.get(i).getVoteid() == selectedId) {
-                return mData.get(i);
+        for (int i = 0; i < getData().size(); i++) {
+            if (getData().get(i).getVoteid() == selectedId) {
+                return getData().get(i);
             }
         }
         return null;
@@ -47,9 +47,9 @@ public class VoteAdapter extends BaseQuickAdapter<InterfaceVote.pbui_Item_MeetVo
         item_vote_root.setSelected(selectedId == item.getVoteid());
         String content = item.getContent().toStringUtf8();
         int type = item.getType();
-        String voteType = Constant.getVoteType(mContext, type);
+        String voteType = Constant.getVoteType(getContext(), type);
         String mode = item.getMode() == InterfaceMacro.Pb_MeetVoteMode.Pb_VOTEMODE_agonymous_VALUE
-                ? mContext.getString(R.string.anonymous) : mContext.getString(R.string.notation);
+                ? getContext().getString(R.string.anonymous) : getContext().getString(R.string.notation);
         content += "（" + voteType + "、" + mode + "）";
         LinearLayout item_options_a = helper.getView(R.id.item_options_a);
         LinearLayout item_options_b = helper.getView(R.id.item_options_b);
@@ -91,7 +91,7 @@ public class VoteAdapter extends BaseQuickAdapter<InterfaceVote.pbui_Item_MeetVo
         boolean selected = votestate == InterfaceMacro.Pb_MeetVoteStatus.Pb_vote_notvote_VALUE;
         item_btn_status.setEnabled(enabled);
         item_btn_status.setSelected(selected);
-        item_btn_status.setText(Constant.getVoteState(mContext, votestate));
+        item_btn_status.setText(Constant.getVoteState(getContext(), votestate));
     }
 
 }

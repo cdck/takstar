@@ -2,16 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@drawable/dialog_full_holo_light"
-    android:layout_margin="20dp"
     android:layout_height="match_parent"
+    android:layout_marginStart="30dp"
+    android:layout_marginEnd="30dp"
+    android:layout_marginBottom="30dp"
+    android:background="@drawable/dialog_full_holo_light"
     android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:background="@drawable/shape_rect_gray"
         android:layout_weight="1"
+        android:background="@drawable/shape_rect_gray"
         android:orientation="vertical">
 
         <TextView
@@ -19,17 +21,18 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="5dp"
-            android:drawableStart="@drawable/ic_group"
             android:background="@drawable/shape_rect_gray"
+            android:drawableStart="@drawable/ic_group"
             android:gravity="center"
+            android:textSize="14sp"
             android:paddingStart="10dp"
             tools:text="人民代表大会" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_member"
             android:layout_width="match_parent"
-            android:layout_margin="1dp"
             android:layout_height="0dp"
+            android:layout_margin="1dp"
             android:layout_weight="1"
             android:background="@color/white" />
 
@@ -45,17 +48,17 @@
             android:id="@+id/tv_member_name"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@drawable/shape_rect_gray"
             android:layout_gravity="center"
+            android:background="@drawable/shape_rect_gray"
             android:gravity="center"
             tools:text="参会者：王某某" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_message"
-            android:background="@drawable/shape_rect_gray"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="@drawable/shape_rect_gray" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -96,11 +99,11 @@
                 android:id="@+id/edt_message"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:background="@drawable/shape_edt_white"
                 android:layout_margin="5dp"
+                android:background="@drawable/shape_edt_white"
                 android:gravity="start|top"
-                android:textSize="14sp"
                 android:padding="2dp"
+                android:textSize="14sp"
                 tools:text="上课来得及弗兰克是" />
 
             <Button

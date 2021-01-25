@@ -1,5 +1,7 @@
 package xlk.takstar.paperless.util;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import org.ini4j.Config;
 import org.ini4j.Ini;
 
@@ -42,6 +44,7 @@ public class IniUtil {
             this.file = iniFile;
             return true;
         } catch (IOException e) {
+            LogUtils.e("IniUtil","loadFile异常："+e);
             e.printStackTrace();
         }
         return false;
@@ -69,6 +72,7 @@ public class IniUtil {
             try {
                 ini.store(file);
             } catch (IOException e) {
+                LogUtils.e("IniUtil","store方法提交到ini文件中失败");
                 e.printStackTrace();
             }
         }

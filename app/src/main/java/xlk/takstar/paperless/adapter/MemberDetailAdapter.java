@@ -4,7 +4,7 @@ import android.widget.CheckBox;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceMember;
 
@@ -28,8 +28,8 @@ public class MemberDetailAdapter extends BaseQuickAdapter<InterfaceMember.pbui_I
 
     public boolean isCheckedAll() {
         List<InterfaceMember.pbui_Item_MeetMemberDetailInfo> canChooseVote = new ArrayList<>();
-        for (int i = 0; i < mData.size(); i++) {
-            InterfaceMember.pbui_Item_MeetMemberDetailInfo item = mData.get(i);
+        for (int i = 0; i < getData().size(); i++) {
+            InterfaceMember.pbui_Item_MeetMemberDetailInfo item = getData().get(i);
             if (isCanChoose(item)) {
                 canChooseVote.add(item);
             }
@@ -40,8 +40,8 @@ public class MemberDetailAdapter extends BaseQuickAdapter<InterfaceMember.pbui_I
     public void setCheckedAll(boolean all) {
         ids.clear();
         if (all) {
-            for (int i = 0; i < mData.size(); i++) {
-                InterfaceMember.pbui_Item_MeetMemberDetailInfo item = mData.get(i);
+            for (int i = 0; i < getData().size(); i++) {
+                InterfaceMember.pbui_Item_MeetMemberDetailInfo item = getData().get(i);
                 if (isCanChoose(item)) {
                     ids.add(item.getMemberid());
                 }
@@ -59,8 +59,8 @@ public class MemberDetailAdapter extends BaseQuickAdapter<InterfaceMember.pbui_I
             ids.remove(ids.indexOf(id));
         } else {
             boolean isCan = false;
-            for (int i = 0; i < mData.size(); i++) {
-                InterfaceMember.pbui_Item_MeetMemberDetailInfo info = mData.get(i);
+            for (int i = 0; i < getData().size(); i++) {
+                InterfaceMember.pbui_Item_MeetMemberDetailInfo info = getData().get(i);
                 if (id == info.getMemberid()) {
                     isCan = isCanChoose(info);
                     break;
@@ -88,26 +88,26 @@ public class MemberDetailAdapter extends BaseQuickAdapter<InterfaceMember.pbui_I
         int facestatus = item.getFacestatus();
         String state;
         if (item.getDevid() == 0) {
-            state = mContext.getString(R.string.not_bind_dev);
+            state = getContext().getString(R.string.not_bind_dev);
         } else {
             if (isonline) {
-                state = mContext.getString(R.string.online);
+                state = getContext().getString(R.string.online);
                 if (facestatus != InterfaceMacro.Pb_MeetFaceStatus.Pb_MemState_MemFace_VALUE) {
-                    state += " / " + mContext.getString(R.string.not_on_meet);
+                    state += " / " + getContext().getString(R.string.not_on_meet);
                 }
                 if (ishas) {//有权限
                     isCan = true;
                 }
             } else {
-                state = mContext.getString(R.string.offline);
+                state = getContext().getString(R.string.offline);
             }
         }
         helper.setText(R.id.item_vote_member_number, String.valueOf(helper.getLayoutPosition() + 1))
                 .setText(R.id.item_vote_member_name, item.getMembername().toStringUtf8())
                 .setText(R.id.item_vote_member_seat, item.getDevname().toStringUtf8())
                 .setText(R.id.item_vote_member_state, state)
-                .setText(R.id.item_vote_member_permissions, ishas ? "√" : mContext.getResources().getString(R.string.no_permission));
-        int textColor = isCan ? mContext.getResources().getColor(R.color.btn_normal_bg_color) : mContext.getResources().getColor(R.color.normal_text_color);
+                .setText(R.id.item_vote_member_permissions, ishas ? "√" : getContext().getResources().getString(R.string.no_permission));
+        int textColor = isCan ? getContext().getResources().getColor(R.color.btn_normal_bg_color) : getContext().getResources().getColor(R.color.normal_text_color);
         helper.setTextColor(R.id.item_vote_member_number, textColor)
                 .setTextColor(R.id.item_vote_member_name, textColor)
                 .setTextColor(R.id.item_vote_member_seat, textColor)

@@ -3,7 +3,7 @@ package xlk.takstar.paperless.adapter;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.mogujie.tt.protobuf.InterfaceFile;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class DirAdapter extends BaseQuickAdapter<InterfaceFile.pbui_Item_MeetDir
         helper.getView(R.id.item_meet_data_dir_iv).setSelected(selected);
         helper.getView(R.id.item_meet_data_dir_ll).setSelected(selected);
         TextView view = helper.getView(R.id.item_meet_data_dir_name);
-        view.setTextColor(selected ? mContext.getResources().getColor(R.color.white) : mContext.getResources().getColor(R.color.normal_text_color));
+        view.setTextColor(selected ? getContext().getResources().getColor(R.color.white) : getContext().getResources().getColor(R.color.normal_text_color));
     }
     public int getChooseId() {
         return chooseId;

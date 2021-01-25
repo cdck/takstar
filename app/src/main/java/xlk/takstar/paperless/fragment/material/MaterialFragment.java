@@ -3,16 +3,22 @@ package xlk.takstar.paperless.fragment.material;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.UriUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.mogujie.tt.protobuf.InterfaceFile;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 
@@ -22,6 +28,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -48,7 +55,8 @@ import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_0;
  * @desc
  */
 public class MaterialFragment extends BaseFragment<MaterialPresenter> implements MaterialContract.View, View.OnClickListener {
-    private RecyclerView rv_dir;
+    private ImageView welcome_view;
+    private LinearLayout content_view;
     private Button btn_upload;
     private Button btn_export;
     private Button btn_document;
@@ -57,7 +65,6 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
     private Button btn_other;
     private Button btn_push;
     private RecyclerView rv_file;
-    private DirAdapter dirAdapter;
     private int currentDirId = -1;
     private FileAdapter fileAdapter;
     /**
@@ -76,7 +83,8 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
 
     @Override
     protected void initView(View inflate) {
-        rv_dir = inflate.findViewById(R.id.rv_dir);
+        welcome_view = inflate.findViewById(R.id.welcome_view);
+        content_view = inflate.findViewById(R.id.content_view);
         btn_upload = inflate.findViewById(R.id.btn_upload);
         btn_export = inflate.findViewById(R.id.btn_export);
         btn_document = inflate.findViewById(R.id.btn_document);
@@ -101,12 +109,21 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
 
     @Override
     protected void initial() {
-        presenter.queryDir();
+        onShow();
     }
 
     @Override
     protected void onShow() {
-        presenter.queryDir();
+        currentDirId = getArguments().getInt("dirId");
+        LogUtils.d(TAG, "目录id=" + currentDirId);
+        if (currentDirId != -1) {
+            welcome_view.setVisibility(View.GONE);
+            content_view.setVisibility(View.VISIBLE);
+            presenter.queryFileByDir(currentDirId);
+        } else {
+            welcome_view.setVisibility(View.VISIBLE);
+            content_view.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -168,19 +185,19 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
                 break;
             case R.id.btn_document:
                 currentFileType = currentFileType == 1 ? 0 : 1;
-                presenter.queryDir();
+                updateFile(presenter.getMeetFiles());
                 break;
             case R.id.btn_picture:
                 currentFileType = currentFileType == 2 ? 0 : 2;
-                presenter.queryDir();
+                updateFile(presenter.getMeetFiles());
                 break;
             case R.id.btn_video:
                 currentFileType = currentFileType == 3 ? 0 : 3;
-                presenter.queryDir();
+                updateFile(presenter.getMeetFiles());
                 break;
             case R.id.btn_other:
                 currentFileType = currentFileType == 4 ? 0 : 4;
-                presenter.queryDir();
+                updateFile(presenter.getMeetFiles());
                 break;
             case R.id.btn_push: {
                 int mediaId = fileAdapter.getSelectedId();
@@ -219,47 +236,6 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
     }
 
     @Override
-    public void updateDir() {
-        if (dirAdapter == null) {
-            dirAdapter = new DirAdapter(R.layout.item_dir, presenter.meetDirs);
-            rv_dir.setLayoutManager(new LinearLayoutManager(getContext()));
-            rv_dir.setAdapter(dirAdapter);
-            dirAdapter.setOnItemClickListener((adapter, view, position) -> {
-                currentFileType = 0;
-                currentDirId = presenter.meetDirs.get(position).getId();
-                dirAdapter.setChoose(currentDirId);
-                presenter.queryFileByDir(currentDirId);
-            });
-        } else {
-            dirAdapter.notifyDataSetChanged();
-        }
-        if (!presenter.meetDirs.isEmpty()) {
-            int dirId = presenter.meetDirs.get(0).getId();
-            if (currentDirId == -1) {
-                presenter.queryFileByDir(dirId);
-                currentDirId = dirId;
-                dirAdapter.setChoose(currentDirId);
-            } else {
-                boolean have = false;
-                for (int i = 0; i < presenter.meetDirs.size(); i++) {
-                    InterfaceFile.pbui_Item_MeetDirDetailInfo info = presenter.meetDirs.get(i);
-                    if (info.getId() == currentDirId) {
-                        have = true;
-                        break;
-                    }
-                }
-                if (!have) {
-                    currentDirId = dirId;
-                }
-                presenter.queryFileByDir(currentDirId);
-                dirAdapter.setChoose(currentDirId);
-            }
-        } else {
-            presenter.cleanFile();
-        }
-    }
-
-    @Override
     public void updateFile(List<InterfaceFile.pbui_Item_MeetDirFileDetailInfo> meetFiles) {
         currentFiles.clear();
         if (currentFileType == 0) {
@@ -292,15 +268,16 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
             rv_file.setLayoutManager(new LinearLayoutManager(getContext()));
             rv_file.addItemDecoration(new RvItemDecoration(getContext()));
             rv_file.setAdapter(fileAdapter);
-            fileAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            fileAdapter.addChildClickViewIds(R.id.item_btn_open, R.id.item_btn_download);
+            fileAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                     fileAdapter.setSelectedId(currentFiles.get(position).getMediaid());
                 }
             });
-            fileAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            fileAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
                 @Override
-                public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
                     InterfaceFile.pbui_Item_MeetDirFileDetailInfo item = currentFiles.get(position);
                     String fileName = item.getName().toStringUtf8();
                     int mediaid = item.getMediaid();
@@ -324,9 +301,9 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
         }
         if (downloadFileAdapter == null) {
             downloadFileAdapter = new DownloadFileAdapter(R.layout.item_download_file, meetFiles);
-            downloadFileAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            downloadFileAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                     InterfaceFile.pbui_Item_MeetDirFileDetailInfo item = meetFiles.get(position);
                     int mediaid = item.getMediaid();
                     if (FileUtils.isFileExists(Constant.download_dir + item.getName().toStringUtf8())) {

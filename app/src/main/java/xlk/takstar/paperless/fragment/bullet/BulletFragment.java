@@ -7,10 +7,12 @@ import android.widget.PopupWindow;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.mogujie.tt.protobuf.InterfaceBullet;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import xlk.takstar.paperless.R;
@@ -64,9 +66,9 @@ public class BulletFragment extends BaseFragment<BulletPresenter> implements Bul
             rv_bullet.setLayoutManager(new LinearLayoutManager(getContext()));
             rv_bullet.addItemDecoration(new RvItemDecoration(getContext()));
             rv_bullet.setAdapter(bulletAdapter);
-            bulletAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            bulletAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                     bulletAdapter.setSelectedId(bullets.get(position).getBulletid());
                 }
             });

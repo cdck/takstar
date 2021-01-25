@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import xlk.takstar.paperless.MyApplication;
+import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.base.BasePresenter;
 import xlk.takstar.paperless.model.Call;
@@ -31,7 +31,7 @@ import xlk.takstar.paperless.util.CodecUtil;
 import xlk.takstar.paperless.util.DateUtil;
 import xlk.takstar.paperless.util.LogUtil;
 
-import static xlk.takstar.paperless.MyApplication.appContext;
+import static xlk.takstar.paperless.App.appContext;
 import static xlk.takstar.paperless.model.GlobalValue.localDeviceId;
 
 /**
@@ -49,10 +49,11 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
 
     @Override
     public void initialization(String uniqeid) {
+        LogUtils.i(TAG, "initialization :  GlobalValue.initializationIsOver=" + GlobalValue.initializationIsOver);
         if (GlobalValue.initializationIsOver) {
             initial();
         } else {
-            MyApplication.threadPool.execute(() -> jni.javaInitSys(uniqeid));
+            App.threadPool.execute(() -> jni.javaInitSys(uniqeid));
         }
     }
 
@@ -142,6 +143,7 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
         cacheData();
         mView.updateMeetInfo(info);
         int meetingid = info != null ? info.getMeetingid() : 0;
+        LogUtil.i(TAG, "queryDeviceMeetInfo meetingid=" + meetingid);
         if (meetingid != 0) {
             queryMeetingState(meetingid);
         } else {
@@ -171,19 +173,17 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
         }
     }
 
-
     public void queryMeetingState(int meetingid) {
         byte[] bytes = jni.queryMeetingProperty(InterfaceMacro.Pb_MeetPropertyID.Pb_MEET_PROPERTY_STATUS_VALUE, meetingid, 0);
-        if (bytes == null) {
-            return;
-        }
-        try {
-            InterfaceBase.pbui_CommonInt32uProperty info = InterfaceBase.pbui_CommonInt32uProperty.parseFrom(bytes);
-            int propertyval = info.getPropertyval();
-            LogUtil.i(TAG, "queryMeetingState -->" + "会议状态：" + propertyval);
-            mView.updateMeetingState(propertyval);
-        } catch (InvalidProtocolBufferException e) {
-            e.printStackTrace();
+        if (bytes != null) {
+            try {
+                InterfaceBase.pbui_CommonInt32uProperty info = InterfaceBase.pbui_CommonInt32uProperty.parseFrom(bytes);
+                int propertyval = info.getPropertyval();
+                LogUtil.i(TAG, "queryMeetingState -->" + "会议状态：" + propertyval);
+                mView.updateMeetingState(propertyval);
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -378,7 +378,7 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
 //                    File apkFile = new File(updatepath + "/update.apk");
             File docFile = new File(updatepath + "/无纸化标准版更新说明.txt");
             String content = FileIOUtils.readFile2String(docFile);
-            MyApplication.threadPool.execute(() -> {
+            App.threadPool.execute(() -> {
                 try {
                     //粘性信息的情况下：可能Activity还没有完全创建
                     Thread.sleep(1000);
@@ -448,6 +448,7 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
 
     private void initial() {
         LogUtil.i(TAG, "initial ");
+        cacheData();
         setInterfaceStatus();
         initStream();
         getSeatName();

@@ -8,7 +8,9 @@
     <color name="bg_">#E7F6FD</color>
 
     <color name="text_color_enabled_f">#D4D4D4</color>
-    <color name="devline">#9E919191</color>
+    <color name="devline">#9EBDBDBD</color>
+    <color name="table_bg_color">#F0F0F0</color>
+    <color name="table_bg_color1">#FAFAFA</color>
     <color name="table_line_color">#c0dcf2</color>
     <color name="admin_table_title_bg">#738494</color>
 
@@ -206,6 +208,7 @@
     <drawable name="transparent">#00FFFFFF</drawable>
 
     <drawable name="bg_">#E7F6FD</drawable>
+    <color name="feature_dividing_line_color">#5A5A5A</color>
 
 
 </resources>

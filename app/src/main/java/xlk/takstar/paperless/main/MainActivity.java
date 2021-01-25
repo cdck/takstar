@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
-import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,9 +27,11 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.protobuf.ByteString;
 import com.hjq.permissions.OnPermission;
 import com.hjq.permissions.XXPermissions;
@@ -45,17 +46,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import xlk.takstar.paperless.MyApplication;
+import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.adapter.LocalFileAdapter;
 import xlk.takstar.paperless.adapter.MemberAdapter;
 import xlk.takstar.paperless.base.BaseActivity;
 import xlk.takstar.paperless.meet.MeetingActivity;
+import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.ui.ArtBoard;
 import xlk.takstar.paperless.ui.RvItemDecoration;
@@ -64,6 +67,7 @@ import xlk.takstar.paperless.util.ConvertUtil;
 import xlk.takstar.paperless.util.LogUtil;
 import xlk.takstar.paperless.util.PopUtil;
 
+import static xlk.takstar.paperless.App.lbm;
 import static xlk.takstar.paperless.model.GlobalValue.camera_height;
 import static xlk.takstar.paperless.model.GlobalValue.camera_width;
 import static xlk.takstar.paperless.util.ConvertUtil.s2b;
@@ -113,7 +117,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     protected void init(Bundle savedInstanceState) {
         initView();
         setVersion();
-        initCameraSize();
+        try {
+            initCameraSize();
+        } catch (Exception e) {
+            LogUtils.e(TAG, "查找摄像机像素失败=" + e);
+            e.printStackTrace();
+        }
         applyReadFrameBufferPermission();
     }
 
@@ -122,7 +131,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             PackageManager pm = getPackageManager();
             try {
                 PackageInfo packageInfo = pm.getPackageInfo(getPackageName(), 0);
-                main_tv_version.setText("软件版本V" + packageInfo.versionName);
+                main_tv_version.setText(getString(R.string.app_version_, packageInfo.versionName));
                 String hardver = "";
                 String softver = "";
                 if (packageInfo.versionName.contains(".")) {
@@ -132,69 +141,69 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 ini.put("selfinfo", "hardver", hardver);
                 ini.put("selfinfo", "softver", softver);
                 ini.store();
+                LogUtils.i(TAG, "已将版本信息写入ini文件中");
             } catch (PackageManager.NameNotFoundException e) {
+                LogUtils.e(TAG, e);
                 e.printStackTrace();
             }
         }
     }
 
-    private void initCameraSize() {
-//        MyApplication.threadPool.execute(() -> {
-            int type = 1;
-            LogUtil.d(TAG, "initCameraSize :   --> ");
-            //获取摄像机的个数 一般是前/后置两个
-            int numberOfCameras = Camera.getNumberOfCameras();
-            if (numberOfCameras < 2) {
-                LogUtil.d(TAG, "initCameraSize: 该设备只有后置像头");
-                //如果没有2个则说明只有后置像头
-                type = 0;
-            }
-            ArrayList<Integer> supportW = new ArrayList<>();
-            ArrayList<Integer> supportH = new ArrayList<>();
-            int largestW = 0, largestH = 0;
-            Camera c = Camera.open(type);
-            Camera.Parameters param = null;
-            if (c != null) {
-                param = c.getParameters();
-            }
-            if (param == null) {
-                return;
-            }
-            for (int i = 0; i < param.getSupportedPreviewSizes().size(); i++) {
-                int w = param.getSupportedPreviewSizes().get(i).width, h = param.getSupportedPreviewSizes().get(i).height;
+    private void initCameraSize() throws Exception {
+        int type = 1;
+        LogUtil.d(TAG, "initCameraSize :   --> ");
+        //获取摄像机的个数 一般是前/后置两个
+        int numberOfCameras = Camera.getNumberOfCameras();
+        if (numberOfCameras < 2) {
+            LogUtil.d(TAG, "initCameraSize: 该设备没有两个摄像头");
+            //如果没有2个则说明只有后置像头
+            type = 0;
+        }
+        ArrayList<Integer> supportW = new ArrayList<>();
+        ArrayList<Integer> supportH = new ArrayList<>();
+        int largestW = 0, largestH = 0;
+        Camera c = Camera.open(type);
+        Camera.Parameters param = null;
+        if (c != null) {
+            param = c.getParameters();
+        }
+        if (param == null) {
+            return;
+        }
+        for (int i = 0; i < param.getSupportedPreviewSizes().size(); i++) {
+            int w = param.getSupportedPreviewSizes().get(i).width, h = param.getSupportedPreviewSizes().get(i).height;
 //            LogUtil.d(TAG, "initCameraSize: w=" + w + " h=" + h);
-                supportW.add(w);
-                supportH.add(h);
-            }
-            for (int i = 0; i < supportH.size(); i++) {
-                try {
-                    largestW = supportW.get(i);
-                    largestH = supportH.get(i);
+            supportW.add(w);
+            supportH.add(h);
+        }
+        for (int i = 0; i < supportH.size(); i++) {
+            try {
+                largestW = supportW.get(i);
+                largestH = supportH.get(i);
 //                LogUtil.d(TAG, "initCameraSize :   --> largestW= " + largestW + " , largestH=" + largestH);
-                    MediaFormat mediaFormat = MediaFormat.createVideoFormat("video/avc", largestW, largestH);
-                    if (MediaCodec.createEncoderByType("video/avc").getCodecInfo().getCapabilitiesForType("video/avc").isFormatSupported(mediaFormat)) {
-                        if (largestW * largestH > camera_width * camera_height) {
-                            camera_width = largestW;
-                            camera_height = largestH;
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (c != null) {
-                        c.setPreviewCallback(null);
-                        c.stopPreview();
-                        c.release();
-                        c = null;
+                MediaFormat mediaFormat = MediaFormat.createVideoFormat("video/avc", largestW, largestH);
+                if (MediaCodec.createEncoderByType("video/avc").getCodecInfo().getCapabilitiesForType("video/avc").isFormatSupported(mediaFormat)) {
+                    if (largestW * largestH > camera_width * camera_height) {
+                        camera_width = largestW;
+                        camera_height = largestH;
                     }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (c != null) {
+                    c.setPreviewCallback(null);
+                    c.stopPreview();
+                    c.release();
+                    c = null;
+                }
             }
-            if (camera_width * camera_height > 1280 * 720) {
-                camera_width = 1280;
-                camera_height = 720;
-            }
-            LogUtil.d(TAG, "initCameraSize -->" + "前置像素：" + camera_width + " X " + camera_height);
-//        });
+        }
+        if (camera_width * camera_height > 1280 * 720) {
+            camera_width = 1280;
+            camera_height = 720;
+        }
+        LogUtil.d(TAG, "initCameraSize -->" + "前置像素：" + camera_width + " X " + camera_height);
     }
 
     /**
@@ -208,9 +217,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
      * 申请屏幕录制权限
      */
     private void applyReadFrameBufferPermission() {
-        MyApplication.mMediaProjectionManager = (MediaProjectionManager) getApplication().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-        if (MyApplication.mResult == 0 || MyApplication.mIntent == null) {
-            startActivityForResult(MyApplication.mMediaProjectionManager.createScreenCaptureIntent(), REQUEST_CODE_READ_FRAME_BUFFER);
+        App.mMediaProjectionManager = (MediaProjectionManager) getApplication().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        if (App.mResult == 0 || App.mIntent == null) {
+            startActivityForResult(App.mMediaProjectionManager.createScreenCaptureIntent(), REQUEST_CODE_READ_FRAME_BUFFER);
         } else {
             platformInitiation();
         }
@@ -221,9 +230,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_READ_FRAME_BUFFER) {
             if (resultCode == Activity.RESULT_OK) {
-                MyApplication.mResult = resultCode;
-                MyApplication.mIntent = data;
-                MyApplication.mMediaProjection = MyApplication.mMediaProjectionManager.getMediaProjection(resultCode, data);
+                App.mResult = resultCode;
+                App.mIntent = data;
+                App.mMediaProjection = App.mMediaProjectionManager.getMediaProjection(resultCode, data);
                 platformInitiation();
             } else {
                 applyReadFrameBufferPermission();
@@ -244,7 +253,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     }
 
     private void exitApp() {
-        AppUtils.exitApp();
+        Intent intent = new Intent();
+        intent.setAction(Constant.ACTION_STOP_SCREEN_RECORD_WHEN_EXIT_APP);
+        lbm.sendBroadcast(intent);
+//        finish();
+//        AppUtils.exitApp();
     }
 
     @Override
@@ -388,7 +401,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     public void updateLogo(Drawable drawable) {
-        main_iv_logo.setImageDrawable(drawable);
+//        main_iv_logo.setImageDrawable(drawable);
     }
 
     @Override
@@ -405,6 +418,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     public void updateMeetingState(int state) {
+        LogUtil.i(TAG, "updateMeetingState state=" + state);
         main_tv_status.setVisibility(state == -1 ? View.GONE : View.VISIBLE);
         //会议状态，0为未开始会议，1为已开始会议，2为已结束会议，其它表示未加入会议无状态
         switch (state) {
@@ -461,9 +475,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         memberAdapter = new MemberAdapter(R.layout.item_single_button, presenter.unbindMembers);
         rv_member.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
         rv_member.setAdapter(memberAdapter);
-        memberAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        memberAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+            public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 LogUtil.i(TAG, "onItemClick " + position);
                 memberAdapter.setSelectedId(presenter.unbindMembers.get(position).getPersonid());
             }
@@ -548,7 +562,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
         main_ll_date = (LinearLayout) findViewById(R.id.main_ll_date);
         main_btn_enter_meeting = (Button) findViewById(R.id.main_btn_enter_meeting);
-//        main_iv_logo = (ImageView) findViewById(R.id.main_iv_logo);
+        main_iv_logo = (ImageView) findViewById(R.id.main_iv_logo);
         main_iv_close = (ImageView) findViewById(R.id.main_iv_close);
         main_iv_min = (ImageView) findViewById(R.id.main_iv_min);
         main_tv_date = (TextView) findViewById(R.id.main_tv_date);
@@ -664,11 +678,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             ini.put("debug", "disablemulticast", cb_disable_multicast.isChecked() ? "1" : "0");
             ini.put("selfinfo", "streamprotol", cb_tcp_mode.isChecked() ? "1" : "0");
             ini.store();
-            AppUtils.relaunchApp();
+            AppUtils.relaunchApp(true);
             configPop.dismiss();
         });
     }
-
 
     private FileFilter dirFilter = new FileFilter() {
         @Override
@@ -728,6 +741,5 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         inflate.findViewById(R.id.btn_cancel).setOnClickListener(v -> {
             dirPop.dismiss();
         });
-
     }
 }

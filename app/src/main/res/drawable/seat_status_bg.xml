@@ -2,13 +2,15 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/seat_bg_color" />
-            <stroke android:width="2px" android:color="@color/red" />
+            <solid android:color="@color/blue" />
+            <size android:width="152px" android:height="83px" />
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/seat_bg_color" />
+            <solid android:color="@color/white" />
+            <size android:width="152px" android:height="83px" />
+            <stroke android:width="1px" android:color="@color/gainsboro"/>
         </shape>
     </item>
 </selector>

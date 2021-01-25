@@ -1159,7 +1159,8 @@ public class JniHelper {
         jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_STREAMPLAY_VALUE,
                 InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_START_VALUE,
                 build.toByteArray());
-        LogUtil.i(TAG, "playTargetScreen 播放目标设备的屏幕 sourceId=" + sourceId);
+        LogUtil.i(TAG, "playTargetScreen 播放目标设备的屏幕 sourceId=" + sourceId
+                + ",GlobalValue.localDeviceId=" + GlobalValue.localDeviceId);
     }
 
     /**

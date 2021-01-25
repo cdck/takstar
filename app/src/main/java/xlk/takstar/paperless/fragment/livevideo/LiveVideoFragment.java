@@ -3,10 +3,13 @@ package xlk.takstar.paperless.fragment.livevideo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceVideo;
 
@@ -15,6 +18,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -22,6 +26,7 @@ import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.adapter.MeetLiveVideoAdapter;
 import xlk.takstar.paperless.adapter.WmProjectorAdapter;
 import xlk.takstar.paperless.adapter.WmScreenMemberAdapter;
+import xlk.takstar.paperless.adapter.WmScreenProjectorAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
 import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.model.bean.VideoDev;
@@ -43,7 +48,6 @@ import static xlk.takstar.paperless.model.Constant.permission_code_screen;
  * @desc
  */
 public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implements LiveVideoContract.View, View.OnClickListener, CustomVideoView.ViewClickListener {
-    public static boolean isVideoManage = false;
     private Button f_l_v_stop_pro;
     private Button f_l_v_start_pro;
     private Button f_l_v_stop_screen;
@@ -55,10 +59,12 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
     List<Integer> ids = new ArrayList<>();
     private WmScreenMemberAdapter memberAdapter;
     private WmProjectorAdapter projectorAdapter;
-    private int pvWidth,pvHeight;
+    private WmScreenProjectorAdapter wmScreenProjectorAdapter;
+    private int pvWidth, pvHeight;
     private MeetLiveVideoAdapter adapter;
     private PopupWindow proPop;
     private PopupWindow screenPop;
+    private LinearLayout ll_screen, ll_pro;
 
     @Override
     protected int getLayoutId() {
@@ -67,6 +73,8 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
 
     @Override
     protected void initView(View inflate) {
+        ll_screen = (LinearLayout) inflate.findViewById(R.id.ll_screen);
+        ll_pro = (LinearLayout) inflate.findViewById(R.id.ll_pro);
         f_l_v_rv = (RecyclerView) inflate.findViewById(R.id.f_l_v_rv);
         f_l_v_watch = (Button) inflate.findViewById(R.id.f_l_v_watch);
         f_l_v_stop = (Button) inflate.findViewById(R.id.f_l_v_stop);
@@ -97,8 +105,9 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
         ids.add(RESOURCE_ID_2);
         ids.add(RESOURCE_ID_3);
         ids.add(RESOURCE_ID_4);
-        memberAdapter = new WmScreenMemberAdapter(R.layout.item_single_button, presenter.onLineMember);
-        projectorAdapter = new WmProjectorAdapter(R.layout.item_single_button, presenter.onLineProjectors);
+        memberAdapter = new WmScreenMemberAdapter(R.layout.item_wm_screen, presenter.onLineMember);
+        projectorAdapter = new WmProjectorAdapter(R.layout.item_wm_pro, presenter.onLineProjectors);
+        wmScreenProjectorAdapter = new WmScreenProjectorAdapter(R.layout.item_wm_screen, presenter.onLineProjectors);
         f_l_v_v.post(() -> {
             pvWidth = f_l_v_v.getWidth();
             pvHeight = f_l_v_v.getHeight();
@@ -124,10 +133,9 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
     }
 
     private void start() {
-        f_l_v_start_pro.setVisibility(isVideoManage ? View.VISIBLE : View.GONE);
-        f_l_v_stop_pro.setVisibility(isVideoManage ? View.VISIBLE : View.GONE);
-        f_l_v_start_screen.setVisibility(isVideoManage ? View.VISIBLE : View.GONE);
-        f_l_v_stop_screen.setVisibility(isVideoManage ? View.VISIBLE : View.GONE);
+        boolean isVideoManage = getArguments().getBoolean("isVideoManage");
+        ll_pro.setVisibility(isVideoManage ? View.VISIBLE : View.GONE);
+        ll_screen.setVisibility(isVideoManage ? View.VISIBLE : View.GONE);
         presenter.register();
         presenter.initVideoRes(pvWidth, pvHeight);
         f_l_v_v.createView(ids);
@@ -211,7 +219,8 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
                     }
                 }
                 break;
-            default:break;
+            default:
+                break;
         }
     }
 
@@ -223,10 +232,12 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
     }
 
     private void proHolderEvent(CustomBaseViewHolder.ProViewHolder holder, boolean isStart, VideoDev videoDev) {
-        holder.wm_pro_mandatory.setVisibility(isStart ? View.VISIBLE : View.INVISIBLE);
-        holder.wm_pro_title.setText(isStart ? getContext().getString(R.string.launch_pro_title) : getContext().getString(R.string.stop_pro_title));
-        holder.wm_pro_launch_pro.setText(isStart ? getContext().getString(R.string.launch_pro) : getContext().getString(R.string.stop_pro));
-        holder.wm_pro_rv.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
+        holder.mandatory_ll.setVisibility(isStart ? View.VISIBLE : View.GONE);
+        holder.output_type_ll.setVisibility(isStart ? View.VISIBLE : View.GONE);
+        holder.iv_dividing_line.setVisibility(isStart ? View.VISIBLE : View.GONE);
+        holder.dividing_line.setVisibility(isStart ? View.GONE : View.VISIBLE);
+        holder.wm_pro_title.setText(isStart ? getContext().getString(R.string.launch_pro) : getContext().getString(R.string.stop_pro));
+        holder.wm_pro_rv.setLayoutManager(new LinearLayoutManager(getContext()));
         holder.wm_pro_rv.setAdapter(projectorAdapter);
         projectorAdapter.setOnItemClickListener((adapter, view, position) -> {
             projectorAdapter.choose(presenter.onLineProjectors.get(position).getDevcieid());
@@ -237,8 +248,26 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
             holder.wm_pro_all.setChecked(checked);
             projectorAdapter.setChooseAll(checked);
         });
-        holder.wm_pro_cancel.setOnClickListener(v -> proPop.dismiss());
-        holder.wm_pro_launch_pro.setOnClickListener(v -> {
+        holder.wm_pro_full.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                holder.wm_pro_flow1.setChecked(false);
+                holder.wm_pro_flow2.setChecked(false);
+                holder.wm_pro_flow3.setChecked(false);
+                holder.wm_pro_flow4.setChecked(false);
+            }
+        });
+        CompoundButton.OnCheckedChangeListener lll = (buttonView, isChecked) -> {
+            if (isChecked) {
+                holder.wm_pro_full.setChecked(false);
+            }
+        };
+        holder.wm_pro_flow1.setOnCheckedChangeListener(lll);
+        holder.wm_pro_flow2.setOnCheckedChangeListener(lll);
+        holder.wm_pro_flow3.setOnCheckedChangeListener(lll);
+        holder.wm_pro_flow4.setOnCheckedChangeListener(lll);
+        holder.btn_cancel.setOnClickListener(v -> proPop.dismiss());
+        holder.iv_close.setOnClickListener(v -> proPop.dismiss());
+        holder.btn_ensure.setOnClickListener(v -> {
             List<Integer> ids = projectorAdapter.getChooseIds();
             if (ids.isEmpty()) {
                 ToastUtils.showShort(getContext().getString(R.string.please_choose_projector_first));
@@ -270,6 +299,7 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
             }
             proPop.dismiss();
         });
+        holder.wm_pro_all.performClick();
     }
 
     private void showScreenPop(boolean isStart, VideoDev videoDev) {
@@ -280,15 +310,18 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
     }
 
     private void holderEvent(CustomBaseViewHolder.ScreenViewHolder holder, boolean isStart, VideoDev videoDev) {
-        holder.wm_screen_mandatory.setVisibility(isStart ? View.VISIBLE : View.INVISIBLE);
         if (isStart) {
-            holder.wm_screen_launch.setText(getContext().getString(R.string.launch_screen));
-            holder.wm_screen_title.setText(getContext().getString(R.string.launch_screen_title));
+            holder.mandatory_ll.setVisibility(View.VISIBLE);
+            holder.iv_dividing_line.setVisibility(View.VISIBLE);
+            holder.dividing_line.setVisibility(View.GONE);
+            holder.wm_screen_title.setText(getString(R.string.launch_screen));
         } else {
-            holder.wm_screen_launch.setText(getContext().getString(R.string.stop_screen));
-            holder.wm_screen_title.setText(getContext().getString(R.string.stop_screen_title));
+            holder.mandatory_ll.setVisibility(View.GONE);
+            holder.iv_dividing_line.setVisibility(View.GONE);
+            holder.dividing_line.setVisibility(View.VISIBLE);
+            holder.wm_screen_title.setText(getString(R.string.stop_screen));
         }
-        holder.wm_screen_rv_attendee.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
+        holder.wm_screen_rv_attendee.setLayoutManager(new LinearLayoutManager(getContext()));
         holder.wm_screen_rv_attendee.setAdapter(memberAdapter);
         memberAdapter.setOnItemClickListener((adapter, view, position) -> {
             memberAdapter.choose(presenter.onLineMember.get(position).getDeviceDetailInfo().getDevcieid());
@@ -299,22 +332,23 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
             holder.wm_screen_cb_attendee.setChecked(checked);
             memberAdapter.setChooseAll(checked);
         });
-        holder.wm_screen_rv_projector.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        holder.wm_screen_rv_projector.setAdapter(projectorAdapter);
-        projectorAdapter.setOnItemClickListener((adapter, view, position) -> {
-            projectorAdapter.choose(presenter.onLineProjectors.get(position).getDevcieid());
-            holder.wm_screen_cb_projector.setChecked(projectorAdapter.isChooseAll());
+        holder.wm_screen_rv_projector.setLayoutManager(new LinearLayoutManager(getContext()));
+        holder.wm_screen_rv_projector.setAdapter(wmScreenProjectorAdapter);
+        wmScreenProjectorAdapter.setOnItemClickListener((adapter, view, position) -> {
+            wmScreenProjectorAdapter.choose(presenter.onLineProjectors.get(position).getDevcieid());
+            holder.wm_screen_cb_projector.setChecked(wmScreenProjectorAdapter.isChooseAll());
         });
         holder.wm_screen_cb_projector.setOnClickListener(v -> {
             boolean checked = holder.wm_screen_cb_projector.isChecked();
             holder.wm_screen_cb_projector.setChecked(checked);
-            projectorAdapter.setChooseAll(checked);
+            wmScreenProjectorAdapter.setChooseAll(checked);
         });
-        holder.wm_screen_cancel.setOnClickListener(v -> screenPop.dismiss());
+        holder.btn_cancel.setOnClickListener(v -> screenPop.dismiss());
+        holder.iv_close.setOnClickListener(v -> screenPop.dismiss());
         //发起/结束同屏
-        holder.wm_screen_launch.setOnClickListener(v -> {
+        holder.btn_ensure.setOnClickListener(v -> {
             List<Integer> ids = memberAdapter.getChooseIds();
-            ids.addAll(projectorAdapter.getChooseIds());
+            ids.addAll(wmScreenProjectorAdapter.getChooseIds());
             if (ids.isEmpty()) {
                 ToastUtils.showShort(R.string.err_target_NotNull);
             } else {
@@ -334,6 +368,9 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
                 screenPop.dismiss();
             }
         });
+        //默认全部选中
+        holder.wm_screen_cb_attendee.performClick();
+        holder.wm_screen_cb_projector.performClick();
     }
 
 
@@ -383,9 +420,9 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
             adapter = new MeetLiveVideoAdapter(R.layout.item_meet_video, videoDevs);
             f_l_v_rv.setLayoutManager(new LinearLayoutManager(getContext()));
             f_l_v_rv.setAdapter(adapter);
-            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            adapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter ad, View view, int position) {
+                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> ap, @NonNull View view, int position) {
                     if (videoDevs.get(position).getDeviceDetailInfo().getNetstate() == 1) {
                         InterfaceVideo.pbui_Item_MeetVideoDetailInfo videoDetailInfo = videoDevs.get(position).getVideoDetailInfo();
                         LogUtil.d(TAG, "onItemClick --> Subid= " + videoDetailInfo.getSubid());
@@ -423,6 +460,10 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
         if (projectorAdapter != null) {
             projectorAdapter.notifyDataSetChanged();
             projectorAdapter.notifyChecks();
+        }
+        if (wmScreenProjectorAdapter != null) {
+            wmScreenProjectorAdapter.notifyDataSetChanged();
+            wmScreenProjectorAdapter.notifyChecks();
         }
     }
 }

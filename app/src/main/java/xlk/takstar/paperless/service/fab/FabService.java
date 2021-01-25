@@ -26,16 +26,17 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Chronometer;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.protobuf.ByteString;
 import com.mogujie.tt.protobuf.InterfaceBullet;
 import com.mogujie.tt.protobuf.InterfaceDevice;
@@ -50,13 +51,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.adapter.WmCanJoinMemberAdapter;
 import xlk.takstar.paperless.adapter.WmCanJoinProAdapter;
 import xlk.takstar.paperless.adapter.WmProjectorAdapter;
 import xlk.takstar.paperless.adapter.WmScreenMemberAdapter;
+import xlk.takstar.paperless.adapter.WmScreenProjectorAdapter;
 import xlk.takstar.paperless.chatonline.ChatVideoActivity;
 import xlk.takstar.paperless.meet.MeetingActivity;
 import xlk.takstar.paperless.model.Constant;
@@ -73,7 +76,7 @@ import xlk.takstar.paperless.util.FileUtil;
 import xlk.takstar.paperless.util.LogUtil;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-import static xlk.takstar.paperless.MyApplication.mMediaProjection;
+import static xlk.takstar.paperless.App.mMediaProjection;
 import static xlk.takstar.paperless.chatonline.ChatVideoActivity.isChatingOpened;
 import static xlk.takstar.paperless.fragment.draw.DrawFragment.isDrawing;
 import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_0;
@@ -102,6 +105,7 @@ public class FabService extends Service implements FabContract.View {
 
 
     private WmScreenMemberAdapter memberAdapter;
+    private WmScreenProjectorAdapter wmScreenProjectorAdapter;
     private WmProjectorAdapter projectorAdapter;
     private WmCanJoinMemberAdapter joinMemberAdapter;
     private WmCanJoinProAdapter joinProAdapter;
@@ -134,8 +138,9 @@ public class FabService extends Service implements FabContract.View {
         cxt = getApplicationContext();
         presenter = new FabPresenter(this, this);
         presenter.queryMember();
-        memberAdapter = new WmScreenMemberAdapter(R.layout.item_single_button, presenter.onLineMember);
-        projectorAdapter = new WmProjectorAdapter(R.layout.item_single_button, presenter.onLineProjectors);
+        memberAdapter = new WmScreenMemberAdapter(R.layout.item_wm_screen, presenter.onLineMember);
+        wmScreenProjectorAdapter = new WmScreenProjectorAdapter(R.layout.item_wm_screen, presenter.onLineProjectors);
+        projectorAdapter = new WmProjectorAdapter(R.layout.item_wm_pro, presenter.onLineProjectors);
         joinMemberAdapter = new WmCanJoinMemberAdapter(R.layout.item_single_button, presenter.canJoinMembers);
         joinProAdapter = new WmCanJoinProAdapter(R.layout.item_single_button, presenter.canJoinPros);
 
@@ -163,9 +168,9 @@ public class FabService extends Service implements FabContract.View {
                 case MotionEvent.ACTION_UP:
                     upTime = System.currentTimeMillis();
                     if (upTime - downTime > 150) {
-//                        mParams.x = windowWidth - hoverButton.getWidth();
+                        mParams.x = 0;//windowWidth - hoverButton.getWidth();
 //                        mParams.y = mTouchStartY - hoverButton.getHeight();
-//                        wm.updateViewLayout(hoverButton, mParams);
+                        wm.updateViewLayout(hoverButton, mParams);
                     } else {
                         showMenuView();
                     }
@@ -200,8 +205,8 @@ public class FabService extends Service implements FabContract.View {
         mParams.height = FrameLayout.LayoutParams.WRAP_CONTENT;
         LogUtil.i(TAG, "initParams 屏幕宽高=" + windowWidth + "," + windowHeight
                 + ",悬浮按钮宽高=" + hoverButton.getWidth() + "," + hoverButton.getHeight());
-        mParams.x = windowWidth - hoverButton.getWidth();
-        mParams.y = windowHeight;//使用windowHeight在首次拖动的时候才会有效
+        mParams.x = 0;
+        mParams.y = windowHeight - 100;//使用windowHeight在首次拖动的时候才会有效
         mParams.windowAnimations = R.style.pop_animation_t_b;
         /** **** **  弹框  ** **** **/
         defaultParams = new WindowManager.LayoutParams();
@@ -247,8 +252,8 @@ public class FabService extends Service implements FabContract.View {
         menuView.setFocusableInTouchMode(true);
         menuView.setTag("menuView");
         CircleMenuLayout circle_menu_layout = menuView.findViewById(R.id.circle_menu_layout);
-        String[] sts = new String[]{"结束投影", "截图批注", "结束同屏", "加入同屏",
-                "发起同屏", "发起投影", "会议笔记", "呼叫服务"};
+        String[] sts = new String[]{getString(R.string.stop_pro), getString(R.string.screenshots), getString(R.string.stop_screen), getString(R.string.join_screen),
+                getString(R.string.launch_screen), getString(R.string.launch_pro), getString(R.string.meeting_note), getString(R.string.call_service)};
         int[] dras = new int[]{
                 R.drawable.menu_stop_pro_status, R.drawable.menu_screenshot_status,
                 R.drawable.menu_stop_screen_status, R.drawable.menu_join_screen_status,
@@ -327,77 +332,6 @@ public class FabService extends Service implements FabContract.View {
                 showPop(menuView, hoverButton, mParams);
             }
         });
-//        CustomMenu custom_menu = menuView.findViewById(R.id.custom_menu);
-//        custom_menu.setFocusable(true);
-//        custom_menu.setFocusableInTouchMode(true);
-//        custom_menu.setListener(index -> {
-//            switch (index) {
-//                //发起同屏
-//                case 0: {
-//                    if (Constant.hasPermission(permission_code_screen)) {
-//                        showScreenView(1);
-//                    } else {
-//                        ToastUtils.showShort(R.string.err_NoPermission);
-//                    }
-//                    break;
-//                }
-//                //结束同屏
-//                case 1: {
-//                    if (Constant.hasPermission(permission_code_screen)) {
-//                        showScreenView(2);
-//                    } else {
-//                        ToastUtils.showShort(R.string.err_NoPermission);
-//                    }
-//                    break;
-//                }
-//                //加入同屏
-//                case 2: {
-//                    presenter.queryCanJoin();
-//                    showJoinView();
-//                    break;
-//                }
-//                //发起投影
-//                case 3: {
-//                    if (Constant.hasPermission(permission_code_projection)) {
-//                        showProView(1);
-//                    } else {
-//                        ToastUtils.showShort(R.string.err_NoPermission);
-//                    }
-//                    break;
-//                }
-//                //结束投影
-//                case 4: {
-//                    if (Constant.hasPermission(permission_code_projection)) {
-//                        showProView(2);
-//                    } else {
-//                        ToastUtils.showShort(R.string.err_NoPermission);
-//                    }
-//                    break;
-//                }
-//                //呼叫服务
-//                case 5: {
-//                    showServiceView();
-//                    break;
-//                }
-//                //截图批注
-//                case 6: {
-//                    screenshot();
-//                    break;
-//                }
-//                //会议笔记
-//                case 7: {
-//
-//                    break;
-//                }
-//                //返回
-//                case 8: {
-//                    showPop(menuView, hoverButton, mParams);
-//                    break;
-//                }
-//                default:
-//                    break;
-//            }
-//        });
         showPop(hoverButton, menuView, wrapParams);
     }
 
@@ -552,10 +486,12 @@ public class FabService extends Service implements FabContract.View {
     }
 
     private void proViewHolderEvent(CustomBaseViewHolder.ProViewHolder holder, int type) {
-        holder.wm_pro_mandatory.setVisibility(type == 1 ? View.VISIBLE : View.INVISIBLE);
-        holder.wm_pro_title.setText(type == 1 ? cxt.getString(R.string.launch_pro_title) : cxt.getString(R.string.stop_pro_title));
-        holder.wm_pro_launch_pro.setText(type == 1 ? cxt.getString(R.string.launch_pro) : cxt.getString(R.string.stop_pro));
-        holder.wm_pro_rv.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
+        holder.mandatory_ll.setVisibility(type == 1 ? View.VISIBLE : View.GONE);
+        holder.output_type_ll.setVisibility(type == 1 ? View.VISIBLE : View.GONE);
+        holder.iv_dividing_line.setVisibility(type == 1 ? View.VISIBLE : View.GONE);
+        holder.dividing_line.setVisibility(type == 1 ? View.GONE : View.VISIBLE);
+        holder.wm_pro_title.setText(type == 1 ? cxt.getString(R.string.launch_pro) : cxt.getString(R.string.stop_pro));
+        holder.wm_pro_rv.setLayoutManager(new LinearLayoutManager(cxt));
         holder.wm_pro_rv.setAdapter(projectorAdapter);
         projectorAdapter.setOnItemClickListener((adapter, view, position) -> {
             projectorAdapter.choose(presenter.onLineProjectors.get(position).getDevcieid());
@@ -566,7 +502,30 @@ public class FabService extends Service implements FabContract.View {
             holder.wm_pro_all.setChecked(checked);
             projectorAdapter.setChooseAll(checked);
         });
-        holder.wm_pro_launch_pro.setOnClickListener(v -> {
+        holder.wm_pro_full.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    holder.wm_pro_flow1.setChecked(false);
+                    holder.wm_pro_flow2.setChecked(false);
+                    holder.wm_pro_flow3.setChecked(false);
+                    holder.wm_pro_flow4.setChecked(false);
+                }
+            }
+        });
+        CompoundButton.OnCheckedChangeListener lll = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    holder.wm_pro_full.setChecked(false);
+                }
+            }
+        };
+        holder.wm_pro_flow1.setOnCheckedChangeListener(lll);
+        holder.wm_pro_flow2.setOnCheckedChangeListener(lll);
+        holder.wm_pro_flow3.setOnCheckedChangeListener(lll);
+        holder.wm_pro_flow4.setOnCheckedChangeListener(lll);
+        holder.btn_ensure.setOnClickListener(v -> {
             List<Integer> ids = projectorAdapter.getChooseIds();
             if (ids.isEmpty()) {
                 ToastUtils.showShort(cxt.getString(R.string.please_choose_projector_first));
@@ -596,7 +555,8 @@ public class FabService extends Service implements FabContract.View {
             }
             showPop(proView, hoverButton, mParams);
         });
-        holder.wm_pro_cancel.setOnClickListener(v -> showPop(proView, hoverButton, mParams));
+        holder.btn_cancel.setOnClickListener(v -> showPop(proView, hoverButton, mParams));
+        holder.iv_close.setOnClickListener(v -> showPop(proView, hoverButton, mParams));
         holder.wm_pro_all.performClick();
     }
 
@@ -611,30 +571,30 @@ public class FabService extends Service implements FabContract.View {
 
     //加入同屏视图事件
     private void joinViewHolderEvent(CustomBaseViewHolder.ScreenViewHolder holder) {
-        holder.wm_screen_mandatory.setVisibility(View.INVISIBLE);
-        holder.wm_screen_cb_attendee.setVisibility(View.INVISIBLE);
-        holder.wm_screen_cb_projector.setVisibility(View.INVISIBLE);
+        holder.mandatory_ll.setVisibility(View.GONE);
+        holder.iv_dividing_line.setVisibility(View.GONE);
+        holder.dividing_line.setVisibility(View.VISIBLE);
         holder.wm_screen_title.setText(cxt.getString(R.string.choose_join_screen));
-        holder.wm_screen_launch.setText(cxt.getString(R.string.join_screen));
-        holder.wm_screen_rv_attendee.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
+        holder.wm_screen_rv_attendee.setLayoutManager(new LinearLayoutManager(cxt));
         holder.wm_screen_rv_attendee.setAdapter(joinMemberAdapter);
-        joinMemberAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        joinMemberAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+            public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 joinMemberAdapter.choose(presenter.canJoinMembers.get(position).getDevceid());
             }
         });
-        holder.wm_screen_rv_projector.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        holder.wm_screen_rv_projector.setLayoutManager(new LinearLayoutManager(cxt));
         holder.wm_screen_rv_projector.setAdapter(joinProAdapter);
-        joinProAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        joinProAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+            public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 joinProAdapter.choose(presenter.canJoinPros.get(position).getResPlay().getDevceid());
             }
         });
-        holder.wm_screen_cancel.setOnClickListener(v -> showPop(joinView, hoverButton, mParams));
+        holder.btn_cancel.setOnClickListener(v -> showPop(joinView, hoverButton, mParams));
+        holder.iv_close.setOnClickListener(v -> showPop(joinView, hoverButton, mParams));
         //加入同屏
-        holder.wm_screen_launch.setOnClickListener(v -> {
+        holder.btn_ensure.setOnClickListener(v -> {
             List<Integer> ids = new ArrayList<>();
             int chooseId = joinMemberAdapter.getChooseId();
             if (chooseId != -1) {
@@ -671,16 +631,19 @@ public class FabService extends Service implements FabContract.View {
 
     private void screenViewHolderEvent(CustomBaseViewHolder.ScreenViewHolder holder, int type) {
         if (type == 1) {
-            holder.wm_screen_mandatory.setVisibility(View.VISIBLE);
-            holder.wm_screen_launch.setText(cxt.getString(R.string.launch_screen));
-            holder.wm_screen_title.setText(cxt.getString(R.string.launch_screen_title));
+            holder.mandatory_ll.setVisibility(View.VISIBLE);
+            holder.iv_dividing_line.setVisibility(View.VISIBLE);
+            holder.dividing_line.setVisibility(View.GONE);
+            holder.wm_screen_title.setText(cxt.getString(R.string.launch_screen));
         } else if (type == 2) {
-            holder.wm_screen_mandatory.setVisibility(View.INVISIBLE);
-            holder.wm_screen_launch.setText(cxt.getString(R.string.stop_screen));
-            holder.wm_screen_title.setText(cxt.getString(R.string.stop_screen_title));
+            holder.mandatory_ll.setVisibility(View.GONE);
+            holder.iv_dividing_line.setVisibility(View.GONE);
+            holder.dividing_line.setVisibility(View.VISIBLE);
+            holder.wm_screen_title.setText(cxt.getString(R.string.stop_screen));
         }
-        holder.wm_screen_cancel.setOnClickListener(v -> showPop(screenView, hoverButton, mParams));
-        holder.wm_screen_rv_attendee.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
+        holder.btn_cancel.setOnClickListener(v -> showPop(screenView, hoverButton, mParams));
+        holder.iv_close.setOnClickListener(v -> showPop(screenView, hoverButton, mParams));
+        holder.wm_screen_rv_attendee.setLayoutManager(new LinearLayoutManager(cxt));
         holder.wm_screen_rv_attendee.setAdapter(memberAdapter);
         memberAdapter.setOnItemClickListener((adapter, view, position) -> {
             memberAdapter.choose(presenter.onLineMember.get(position).getDeviceDetailInfo().getDevcieid());
@@ -691,21 +654,21 @@ public class FabService extends Service implements FabContract.View {
             holder.wm_screen_cb_attendee.setChecked(checked);
             memberAdapter.setChooseAll(checked);
         });
-        holder.wm_screen_rv_projector.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        holder.wm_screen_rv_projector.setAdapter(projectorAdapter);
-        projectorAdapter.setOnItemClickListener((adapter, view, position) -> {
-            projectorAdapter.choose(presenter.onLineProjectors.get(position).getDevcieid());
-            holder.wm_screen_cb_projector.setChecked(projectorAdapter.isChooseAll());
+        holder.wm_screen_rv_projector.setLayoutManager(new LinearLayoutManager(cxt));
+        holder.wm_screen_rv_projector.setAdapter(wmScreenProjectorAdapter);
+        wmScreenProjectorAdapter.setOnItemClickListener((adapter, view, position) -> {
+            wmScreenProjectorAdapter.choose(presenter.onLineProjectors.get(position).getDevcieid());
+            holder.wm_screen_cb_projector.setChecked(wmScreenProjectorAdapter.isChooseAll());
         });
         holder.wm_screen_cb_projector.setOnClickListener(v -> {
             boolean checked = holder.wm_screen_cb_projector.isChecked();
             holder.wm_screen_cb_projector.setChecked(checked);
-            projectorAdapter.setChooseAll(checked);
+            wmScreenProjectorAdapter.setChooseAll(checked);
         });
         //发起/结束同屏
-        holder.wm_screen_launch.setOnClickListener(v -> {
+        holder.btn_ensure.setOnClickListener(v -> {
             List<Integer> ids = memberAdapter.getChooseIds();
-            ids.addAll(projectorAdapter.getChooseIds());
+            ids.addAll(wmScreenProjectorAdapter.getChooseIds());
             if (ids.isEmpty()) {
                 ToastUtils.showShort(R.string.err_target_NotNull);
             } else {
@@ -843,6 +806,10 @@ public class FabService extends Service implements FabContract.View {
         if (projectorAdapter != null) {
             projectorAdapter.notifyDataSetChanged();
             projectorAdapter.notifyChecks();
+        }
+        if (wmScreenProjectorAdapter != null) {
+            wmScreenProjectorAdapter.notifyDataSetChanged();
+            wmScreenProjectorAdapter.notifyChecks();
         }
     }
 

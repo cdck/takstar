@@ -19,7 +19,7 @@ import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.base.BaseFragment;
 import xlk.takstar.paperless.util.LogUtil;
 
-import static xlk.takstar.paperless.MyApplication.appContext;
+import static xlk.takstar.paperless.App.appContext;
 import static xlk.takstar.paperless.model.GlobalValue.initX5Finished;
 
 /**

@@ -48,16 +48,16 @@ public class MulitpleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         MyChatMessage message = data.get(position);
         if (holder instanceof LeftViewHolder) {
             String msg = message.getContent();
-            long utcsecond = message.getUtcSecond();
-            String time = DateUtil.getHHss(utcsecond);
+//            long utcsecond = message.getUtcSecond();
+//            String time = DateUtil.getHHss(utcsecond);
             String name = message.getMemberName();
-            String title = mContext.getResources().getString(R.string.time, name, time);
-            ((LeftViewHolder) holder).i_m_c_l_message_title.setText(title);
+//            String title = mContext.getResources().getString(R.string.time, name, time);
+            ((LeftViewHolder) holder).i_m_c_l_message_title.setText(name);
             ((LeftViewHolder) holder).i_m_c_l_message_content.setText(msg);
         } else {
-            long utcsecond = message.getUtcSecond();
-            String time = DateUtil.getHHss(utcsecond);
-            String title = mContext.getResources().getString(R.string.me_time, time);
+//            long utcsecond = message.getUtcSecond();
+//            String time = DateUtil.getHHss(utcsecond);
+            String title = mContext.getResources().getString(R.string.me_time);
             ((RightViewHolder) holder).i_m_c_r_message_title.setText(title);
             ((RightViewHolder) holder).i_m_c_r_message_content.setText(message.getContent());
         }

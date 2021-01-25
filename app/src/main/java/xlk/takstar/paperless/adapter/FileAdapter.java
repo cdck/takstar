@@ -6,7 +6,7 @@ import android.widget.ImageView;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.mogujie.tt.protobuf.InterfaceFile;
 
 import java.util.List;
@@ -33,8 +33,8 @@ public class FileAdapter extends BaseQuickAdapter<InterfaceFile.pbui_Item_MeetDi
     }
 
     public int getSelectedId() {
-        for (int i = 0; i < mData.size(); i++) {
-            if (mData.get(i).getMediaid() == selectedId) {
+        for (int i = 0; i < getData().size(); i++) {
+            if (getData().get(i).getMediaid() == selectedId) {
                 return selectedId;
             }
         }
@@ -47,7 +47,6 @@ public class FileAdapter extends BaseQuickAdapter<InterfaceFile.pbui_Item_MeetDi
         View root_view = helper.getView(R.id.root_view);
         root_view.setSelected(isSelected);
         String fileName = item.getName().toStringUtf8();
-        helper.addOnClickListener(R.id.item_btn_open, R.id.item_btn_download);
         Button item_btn_download = helper.getView(R.id.item_btn_download);
         ImageView item_iv_icon = helper.getView(R.id.item_iv_icon);
         helper.setText(R.id.item_tv_name, fileName);

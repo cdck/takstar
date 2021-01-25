@@ -2,37 +2,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginStart="30dp"
     android:layout_marginTop="5dp"
     android:layout_marginEnd="30dp"
     android:layout_marginBottom="30dp"
-    android:orientation="horizontal">
+    android:background="@drawable/dialog_full_holo_light"
+    android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_dir"
-        android:layout_width="0dp"
+    <ImageView
+        android:id="@+id/welcome_view"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:gravity="center"
+        android:visibility="gone" />
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:id="@+id/content_view"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="5"
-        android:background="@drawable/dialog_full_holo_light"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_margin="10dp"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btn_upload"
                 style="@style/btn_style"
-                android:layout_marginEnd="1dp"
-                android:layout_marginStart="2dp"
                 android:layout_width="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="1dp"
                 android:drawableStart="@drawable/ic_upload"
                 android:paddingStart="10dp"
                 android:text="@string/upload" />
@@ -40,8 +41,8 @@
             <Button
                 android:id="@+id/btn_export"
                 style="@style/btn_style"
-                android:layout_marginEnd="1dp"
                 android:layout_width="wrap_content"
+                android:layout_marginEnd="1dp"
                 android:drawableStart="@drawable/ic_download"
                 android:paddingStart="10dp"
                 android:text="@string/export" />
@@ -84,13 +85,17 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:background="@color/devline" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_file"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_margin="20dp"
             android:layout_weight="1" />
+
     </LinearLayout>
+
 </LinearLayout>

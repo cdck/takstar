@@ -1,7 +1,7 @@
 package xlk.takstar.paperless.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.mogujie.tt.protobuf.InterfaceMember;
 import com.mogujie.tt.protobuf.InterfaceRoom;
 
@@ -29,10 +29,10 @@ public class MemberRoleAdapter extends BaseQuickAdapter<MemberRoleBean, BaseView
     }
 
     public MemberRoleBean getSelected() {
-        for (int i = 0; i < mData.size(); i++) {
-            int personid = mData.get(i).getMember().getPersonid();
+        for (int i = 0; i < getData().size(); i++) {
+            int personid = getData().get(i).getMember().getPersonid();
             if (selectedId == personid) {
-                return mData.get(i);
+                return getData().get(i);
             }
         }
         return null;
@@ -45,15 +45,15 @@ public class MemberRoleAdapter extends BaseQuickAdapter<MemberRoleBean, BaseView
         helper.setText(R.id.item_view_1, String.valueOf(helper.getLayoutPosition() + 1))
                 .setText(R.id.item_view_2, member.getName().toStringUtf8())
                 .setText(R.id.item_view_3, seat != null ? seat.getDevname().toStringUtf8() : "")
-                .setText(R.id.item_view_4, seat != null ? Constant.getMemberRoleName(mContext, seat.getRole()) : "");
+                .setText(R.id.item_view_4, seat != null ? Constant.getMemberRoleName(getContext(), seat.getRole()) : "");
         boolean isSelected = selectedId == member.getPersonid();
-        int textColor = isSelected ? mContext.getColor(R.color.white) : mContext.getColor(R.color.normal_text_color);
+        int textColor = isSelected ? getContext().getColor(R.color.white) : getContext().getColor(R.color.normal_text_color);
         helper.setTextColor(R.id.item_view_1, textColor)
                 .setTextColor(R.id.item_view_2, textColor)
                 .setTextColor(R.id.item_view_3, textColor)
                 .setTextColor(R.id.item_view_4, textColor);
 
-        int backgroundColor = isSelected ? mContext.getColor(R.color.selected_item_bg) : mContext.getColor(R.color.white);
+        int backgroundColor = isSelected ? getContext().getColor(R.color.selected_item_bg) : getContext().getColor(R.color.white);
         helper.setBackgroundColor(R.id.item_view_1, backgroundColor)
                 .setBackgroundColor(R.id.item_view_2, backgroundColor)
                 .setBackgroundColor(R.id.item_view_3, backgroundColor)

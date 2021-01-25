@@ -104,9 +104,10 @@ public class FabPresenter extends BasePresenter<FabContract.View> implements Fab
                     intent.putExtra(Constant.EXTRA_CAMERA_TYPE, 0);
                     intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                     cxt.startActivity(intent);
-                } else {
-                    ToastUtils.showShort(R.string.not_find_camera);
                 }
+//                else {
+//                    ToastUtils.showShort(R.string.not_find_camera);
+//                }
 //                mView.showOpenCamera();
                 break;
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_DEVICEOPER_VALUE://设备交互信息
@@ -159,30 +160,6 @@ public class FabPresenter extends BasePresenter<FabContract.View> implements Fab
             mView.showVoteWindow(item);
         }
     }
-
-    /**
-     * 查询发起的投票
-     *
-     * @param voteid
-     */
-    private void queryInitiateVote(int voteid) {
-        InterfaceVote.pbui_Type_MeetOnVotingDetailInfo info = jni.queryInitiateVote();
-        if (info == null) {
-            return;
-        }
-        List<InterfaceVote.pbui_Item_MeetOnVotingDetailInfo> itemList = info.getItemList();
-        LogUtil.i(TAG, "queryInitiateVote itemList.size=" + itemList.size());
-        for (int i = 0; i < itemList.size(); i++) {
-            InterfaceVote.pbui_Item_MeetOnVotingDetailInfo item = itemList.get(i);
-            LogUtil.i(TAG, "queryInitiateVote 当前投票id=" + item.getVoteid() + " ---- " + voteid);
-            if (item.getVoteid() == voteid) {
-//                mView.showVoteView(item);
-                mView.showVoteWindow(item);
-                break;
-            }
-        }
-    }
-
 
     public void queryMember() {
         InterfaceMember.pbui_Type_MemberDetailInfo attendPeople = jni.queryMember();
@@ -266,7 +243,6 @@ public class FabPresenter extends BasePresenter<FabContract.View> implements Fab
         }
         return "";
     }
-
 
     public String getMemberNameById(int memberid) {
         for (int i = 0; i < memberDetailInfos.size(); i++) {

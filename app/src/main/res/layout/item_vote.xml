@@ -22,6 +22,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
+            android:singleLine="true"
+            android:ellipsize="middle"
             tools:text="投票表决谁做老大（单选、匿名）" />
 
         <LinearLayout
@@ -44,6 +46,8 @@
                     android:id="@+id/tv_a_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="middle"
                     tools:text="赞成：" />
 
                 <TextView
@@ -66,6 +70,8 @@
                     android:id="@+id/tv_b_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="middle"
                     tools:text="反对：" />
 
                 <TextView
@@ -88,6 +94,8 @@
                     android:id="@+id/tv_c_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="middle"
                     tools:text="赞成：" />
 
                 <TextView
@@ -110,6 +118,8 @@
                     android:id="@+id/tv_d_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="middle"
                     tools:text="赞成：" />
 
                 <TextView
@@ -133,6 +143,8 @@
                     android:id="@+id/tv_e_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="middle"
                     tools:text="赞成：" />
 
                 <TextView

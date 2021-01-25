@@ -13,7 +13,7 @@ import com.mogujie.tt.protobuf.InterfaceRoom;
 import java.util.ArrayList;
 import java.util.List;
 
-import xlk.takstar.paperless.MyApplication;
+import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.base.BasePresenter;
 import xlk.takstar.paperless.model.Constant;
@@ -89,7 +89,7 @@ public class AnnotatePresenter extends BasePresenter<AnnotateContract.View> impl
                         for (int i = 0; i < members.size(); i++) {
                             if (members.get(i).getPersonid() == memberid) {
                                 String name = members.get(i).getName().toStringUtf8();
-                                ToastUtils.showShort(MyApplication.appContext.getString(R.string.agreed_postilview, name));
+                                ToastUtils.showShort(App.appContext.getString(R.string.agreed_postilview, name));
                                 break;
                             }
                         }
@@ -101,7 +101,7 @@ public class AnnotatePresenter extends BasePresenter<AnnotateContract.View> impl
                         for (int i = 0; i < members.size(); i++) {
                             if (members.get(i).getPersonid() == memberid) {
                                 String name = members.get(i).getName().toStringUtf8();
-                                ToastUtils.showShort(MyApplication.appContext.getString(R.string.reject_postilview, name));
+                                ToastUtils.showShort(App.appContext.getString(R.string.reject_postilview, name));
                                 break;
                             }
                         }

@@ -4,18 +4,25 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.view.Gravity;
+import android.text.InputFilter;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.UriUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -30,6 +37,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,13 +51,19 @@ import xlk.takstar.paperless.ui.MyPercentFormatter;
 import xlk.takstar.paperless.ui.RvItemDecoration;
 import xlk.takstar.paperless.util.JxlUtil;
 import xlk.takstar.paperless.util.LogUtil;
+import xlk.takstar.paperless.util.MaxLengthFilter;
 import xlk.takstar.paperless.util.PopUtil;
+
+import static xlk.takstar.paperless.util.ConvertUtil.s2b;
 
 /**
  * @author Created by xlk on 2020/12/8.
  * @desc
  */
 public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implements VoteManageContract.View, View.OnClickListener {
+    /**
+     * =true 投票页面, =false 选举页面
+     */
     public static boolean IS_VOTE_PAGE = true;
     private RecyclerView rv_vote;
     private VoteAdapter voteAdapter;
@@ -59,6 +73,8 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
     private PopupWindow detailPop;
     private PopupWindow chartPop;
     private int REQUEST_CODE_VOTE = 1;
+    private PopupWindow modifyElectionsPop;
+    private PopupWindow modifyVotePop;
 
     @Override
     protected int getLayoutId() {
@@ -120,7 +136,11 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                     ToastUtils.showShort(R.string.please_choose_notvote);
                     return;
                 }
-                modifyVote(vote);
+                if (IS_VOTE_PAGE) {
+                    modifyVote(vote);
+                } else {
+                    modifyElections(vote);
+                }
                 break;
             }
             case R.id.btn_delete: {
@@ -173,9 +193,10 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                 );
                 break;
             }
-            case R.id.btn_import_data:
+            case R.id.btn_import_data: {
                 chooseLocalFile(REQUEST_CODE_VOTE);
                 break;
+            }
             default:
                 break;
         }
@@ -183,6 +204,210 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
 
     private void modifyVote(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote) {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_modify_vote, null, false);
+        modifyVotePop = PopUtil.createHalfPop(inflate, rv_vote);
+        VoteViewHolder viewHolder = new VoteViewHolder(inflate);
+        voteHolderEvent(viewHolder, vote);
+    }
+
+    private void voteHolderEvent(VoteViewHolder holder, InterfaceVote.pbui_Item_MeetVoteDetailInfo vote) {
+        holder.edt_vote_title.setText(vote.getContent().toStringUtf8());
+        holder.sp_notation.setSelection(vote.getMode() == 0 ? 1 : 0);
+        holder.option_a_edt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
+        holder.option_b_edt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
+        holder.option_c_edt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
+
+        List<InterfaceVote.pbui_SubItem_VoteItemInfo> itemList = vote.getItemList();
+        for (int i = 0; i < itemList.size(); i++) {
+            String answer = itemList.get(i).getText().toStringUtf8();
+            if (i == 0) {
+                holder.option_a_edt.setText(answer);
+            } else if (i == 1) {
+                holder.option_b_edt.setText(answer);
+            } else if (i == 2) {
+                holder.option_c_edt.setText(answer);
+            }
+        }
+        holder.btn_cancel.setOnClickListener(v -> modifyVotePop.dismiss());
+        holder.iv_close.setOnClickListener(v -> modifyVotePop.dismiss());
+        holder.btn_ensure.setOnClickListener(v -> {
+            String title = holder.edt_vote_title.getText().toString().trim();
+            if (TextUtils.isEmpty(title)) {
+                ToastUtils.showShort(R.string.title_can_not_empty);
+                return;
+            }
+            String a = holder.option_a_edt.getText().toString().trim();
+            String b = holder.option_b_edt.getText().toString().trim();
+            String c = holder.option_c_edt.getText().toString().trim();
+            if (TextUtils.isEmpty(a) || TextUtils.isEmpty(b) || TextUtils.isEmpty(c)) {
+                ToastUtils.showShort(R.string.answer_can_not_empty);
+                return;
+            }
+            int mode = holder.sp_notation.getSelectedItemPosition() == 0
+                    ? InterfaceMacro.Pb_MeetVoteMode.Pb_VOTEMODE_signed_VALUE
+                    : InterfaceMacro.Pb_MeetVoteMode.Pb_VOTEMODE_agonymous_VALUE;
+
+            List<ByteString> all = new ArrayList<>();
+            all.add(s2b(a));
+            all.add(s2b(b));
+            all.add(s2b(c));
+            InterfaceVote.pbui_Item_MeetOnVotingDetailInfo.Builder builder = InterfaceVote.pbui_Item_MeetOnVotingDetailInfo.newBuilder();
+            builder.setVoteid(vote.getVoteid())
+                    .setContent(s2b(title))
+                    .setMaintype(vote.getMaintype())
+                    .setType(vote.getType())
+                    .setMode(mode)
+                    .setTimeouts(vote.getTimeouts())
+                    .setSelectcount(all.size())
+                    .addAllText(all);
+            jni.modifyVote(builder.build());
+            modifyVotePop.dismiss();
+        });
+    }
+
+    private void modifyElections(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote) {
+        View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_modify_elections, null, false);
+        modifyElectionsPop = PopUtil.createHalfPop(inflate, rv_vote);
+        ElectionsViewHolder viewHolder = new ElectionsViewHolder(inflate);
+        holderEvent(viewHolder, vote);
+    }
+
+    private void holderEvent(ElectionsViewHolder holder, InterfaceVote.pbui_Item_MeetVoteDetailInfo vote) {
+        holder.iv_close.setOnClickListener(v -> modifyElectionsPop.dismiss());
+        holder.btn_cancel.setOnClickListener(v -> modifyElectionsPop.dismiss());
+        String text = vote.getContent().toStringUtf8();
+        holder.edt_elections_title.setText(text);
+        holder.edt_elections_title.setSelection(text.length());
+        holder.sp_vote_type.setSelection(vote.getType());
+        holder.sp_vote_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //指定了3选2模式则隐藏掉后两项
+                if (position == 5) {
+                    holder.option_a_ll.setVisibility(View.VISIBLE);
+                    holder.option_b_ll.setVisibility(View.VISIBLE);
+                    holder.option_c_ll.setVisibility(View.VISIBLE);
+                    holder.option_d_ll.setVisibility(View.GONE);
+                    holder.option_e_ll.setVisibility(View.GONE);
+                } else {
+                    holder.option_a_ll.setVisibility(View.VISIBLE);
+                    holder.option_b_ll.setVisibility(View.VISIBLE);
+                    holder.option_c_ll.setVisibility(View.VISIBLE);
+                    holder.option_d_ll.setVisibility(View.VISIBLE);
+                    holder.option_e_ll.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        holder.sp_notation.setSelection(vote.getMode() == 0 ? 1 : 0);
+//        int timeouts = vote.getTimeouts();
+//        int index = 0;
+//        if (timeouts >= 1800) {
+//            index = 7;
+//        } else if (timeouts >= 900) {
+//            index = 6;
+//        } else if (timeouts >= 300) {
+//            index = 5;
+//        } else if (timeouts >= 120) {
+//            index = 4;
+//        } else if (timeouts >= 60) {
+//            index = 3;
+//        } else if (timeouts >= 30) {
+//            index = 2;
+//        } else if (timeouts >= 10) {
+//            index = 1;
+//        }
+//        holder.sp_count_down.setSelection(index);
+        holder.option_a_edt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
+        holder.option_b_edt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
+        holder.option_c_edt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
+        holder.option_d_edt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
+        holder.option_e_edt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
+
+        List<InterfaceVote.pbui_SubItem_VoteItemInfo> itemList = vote.getItemList();
+        holder.option_a_ll.setVisibility(View.GONE);
+        holder.option_b_ll.setVisibility(View.GONE);
+        holder.option_c_ll.setVisibility(View.GONE);
+        holder.option_d_ll.setVisibility(View.GONE);
+        holder.option_e_ll.setVisibility(View.GONE);
+        for (int i = 0; i < itemList.size(); i++) {
+            InterfaceVote.pbui_SubItem_VoteItemInfo item = itemList.get(i);
+            String option = item.getText().toStringUtf8();
+            if (i == 0) {
+                holder.option_a_ll.setVisibility(View.VISIBLE);
+                holder.option_a_edt.setText(option);
+            } else if (i == 1) {
+                holder.option_b_ll.setVisibility(View.VISIBLE);
+                holder.option_b_edt.setText(option);
+            } else if (i == 2) {
+                holder.option_c_ll.setVisibility(View.VISIBLE);
+                holder.option_c_edt.setText(option);
+            } else if (i == 3) {
+                holder.option_d_ll.setVisibility(View.VISIBLE);
+                holder.option_d_edt.setText(option);
+            } else if (i == 4) {
+                holder.option_e_ll.setVisibility(View.VISIBLE);
+                holder.option_e_edt.setText(option);
+            }
+        }
+        holder.btn_ensure.setOnClickListener(v -> {
+            String title = holder.edt_elections_title.getText().toString().trim();
+            if (TextUtils.isEmpty(title)) {
+                ToastUtils.showShort(R.string.title_can_not_empty);
+                return;
+            }
+            String a = holder.option_a_edt.getText().toString().trim();
+            String b = holder.option_b_edt.getText().toString().trim();
+            String c = holder.option_c_edt.getText().toString().trim();
+            String d = holder.option_d_edt.getText().toString().trim();
+            String e = holder.option_e_edt.getText().toString().trim();
+            int type = holder.sp_vote_type.getSelectedItemPosition();
+            int mode = holder.sp_notation.getSelectedItemPosition() == 0
+                    ? InterfaceMacro.Pb_MeetVoteMode.Pb_VOTEMODE_signed_VALUE
+                    : InterfaceMacro.Pb_MeetVoteMode.Pb_VOTEMODE_agonymous_VALUE;
+
+            List<ByteString> all = new ArrayList<>();
+            //前3个答案必须要填
+            if (TextUtils.isEmpty(a) || TextUtils.isEmpty(b) || TextUtils.isEmpty(c)) {
+                ToastUtils.showShort(getString(R.string.answer_can_not_empty));
+                return;
+            }
+            all.add(s2b(a));
+            all.add(s2b(b));
+            all.add(s2b(c));
+            //判断是否是需要5个答案
+            if (type == InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_4_5_VALUE
+                    || type == InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_3_5_VALUE
+                    || type == InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_2_5_VALUE) {
+                if (TextUtils.isEmpty(d) || TextUtils.isEmpty(e)) {
+                    ToastUtils.showShort(getString(R.string.answer_can_not_empty));
+                    return;
+                }
+                all.add(s2b(d));
+                all.add(s2b(e));
+            } else if (type == InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_SINGLE_VALUE) {
+                if (!TextUtils.isEmpty(d)) {
+                    all.add(s2b(d));
+                }
+                if (!TextUtils.isEmpty(e)) {
+                    all.add(s2b(e));
+                }
+            }
+            InterfaceVote.pbui_Item_MeetOnVotingDetailInfo.Builder builder = InterfaceVote.pbui_Item_MeetOnVotingDetailInfo.newBuilder();
+            builder.setVoteid(vote.getVoteid())
+                    .setContent(s2b(title))
+                    .setMaintype(vote.getMaintype())
+                    .setType(type)
+                    .setMode(mode)
+                    .setTimeouts(vote.getTimeouts())
+                    .setSelectcount(all.size())
+                    .addAllText(all);
+            jni.modifyVote(builder.build());
+            modifyElectionsPop.dismiss();
+        });
     }
 
     @Override
@@ -373,6 +598,8 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_launch_vote, null, false);
         voteConfigPop = PopUtil.createHalfPop(inflate, rv_vote);
         TextView pop_title = inflate.findViewById(R.id.pop_title);
+        pop_title.setText(IS_VOTE_PAGE ? getString(R.string.launch_vote) : getString(R.string.launch_elections));
+
         TextView tv_title = inflate.findViewById(R.id.tv_title);
         RadioButton rb_ten = inflate.findViewById(R.id.rb_ten);
         RadioButton rb_thirty = inflate.findViewById(R.id.rb_thirty);
@@ -387,11 +614,10 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
         rb_notation.setChecked(checked1);
         rb_anonymity.setChecked(!checked1);
 
-        Button btn_ensure = inflate.findViewById(R.id.btn_launch_vote);
         tv_title.setText(vote.getContent().toStringUtf8());
         inflate.findViewById(R.id.btn_cancel).setOnClickListener(v -> voteConfigPop.dismiss());
         inflate.findViewById(R.id.iv_close).setOnClickListener(v -> voteConfigPop.dismiss());
-        btn_ensure.setOnClickListener(v -> {
+        inflate.findViewById(R.id.btn_ensure).setOnClickListener(v -> {
             int time;
             if (rb_ten.isChecked()) {
                 time = 10 * 60;
@@ -476,9 +702,9 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
             rv_vote.setLayoutManager(new LinearLayoutManager(getContext()));
             rv_vote.addItemDecoration(new RvItemDecoration(getContext()));
             rv_vote.setAdapter(voteAdapter);
-            voteAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            voteAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                     voteAdapter.setSelectedId(votes.get(position).getVoteid());
                 }
             });
@@ -487,4 +713,73 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
         }
     }
 
+    public static class ElectionsViewHolder {
+        public View rootView;
+        public TextView pop_title;
+        public ImageView iv_close;
+        public EditText edt_elections_title;
+        public Spinner sp_vote_type;
+        public Spinner sp_count_down;
+        public Spinner sp_notation;
+        public TextView option_a_edt;
+        public LinearLayout option_a_ll;
+        public TextView option_b_edt;
+        public LinearLayout option_b_ll;
+        public TextView option_c_edt;
+        public LinearLayout option_c_ll;
+        public TextView option_d_edt;
+        public LinearLayout option_d_ll;
+        public TextView option_e_edt;
+        public LinearLayout option_e_ll;
+        public Button btn_cancel;
+        public Button btn_ensure;
+
+        public ElectionsViewHolder(View rootView) {
+            this.rootView = rootView;
+            this.pop_title = (TextView) rootView.findViewById(R.id.pop_title);
+            this.iv_close = (ImageView) rootView.findViewById(R.id.iv_close);
+            this.edt_elections_title = (EditText) rootView.findViewById(R.id.edt_elections_title);
+            this.sp_vote_type = (Spinner) rootView.findViewById(R.id.sp_vote_type);
+            this.sp_count_down = (Spinner) rootView.findViewById(R.id.sp_count_down);
+            this.sp_notation = (Spinner) rootView.findViewById(R.id.sp_notation);
+            this.option_a_edt = (TextView) rootView.findViewById(R.id.option_a_edt);
+            this.option_a_ll = (LinearLayout) rootView.findViewById(R.id.option_a_ll);
+            this.option_b_edt = (TextView) rootView.findViewById(R.id.option_b_edt);
+            this.option_b_ll = (LinearLayout) rootView.findViewById(R.id.option_b_ll);
+            this.option_c_edt = (TextView) rootView.findViewById(R.id.option_c_edt);
+            this.option_c_ll = (LinearLayout) rootView.findViewById(R.id.option_c_ll);
+            this.option_d_edt = (TextView) rootView.findViewById(R.id.option_d_edt);
+            this.option_d_ll = (LinearLayout) rootView.findViewById(R.id.option_d_ll);
+            this.option_e_edt = (TextView) rootView.findViewById(R.id.option_e_edt);
+            this.option_e_ll = (LinearLayout) rootView.findViewById(R.id.option_e_ll);
+            this.btn_cancel = (Button) rootView.findViewById(R.id.btn_cancel);
+            this.btn_ensure = (Button) rootView.findViewById(R.id.btn_ensure);
+        }
+
+    }
+
+    public static class VoteViewHolder {
+        public View rootView;
+        public ImageView iv_close;
+        public EditText edt_vote_title;
+        public Spinner sp_notation;
+        public EditText option_a_edt;
+        public EditText option_b_edt;
+        public EditText option_c_edt;
+        public Button btn_cancel;
+        public Button btn_ensure;
+
+        public VoteViewHolder(View rootView) {
+            this.rootView = rootView;
+            this.iv_close = (ImageView) rootView.findViewById(R.id.iv_close);
+            this.edt_vote_title = (EditText) rootView.findViewById(R.id.edt_vote_title);
+            this.sp_notation = (Spinner) rootView.findViewById(R.id.sp_notation);
+            this.option_a_edt = (EditText) rootView.findViewById(R.id.option_a_edt);
+            this.option_b_edt = (EditText) rootView.findViewById(R.id.option_b_edt);
+            this.option_c_edt = (EditText) rootView.findViewById(R.id.option_c_edt);
+            this.btn_cancel = (Button) rootView.findViewById(R.id.btn_cancel);
+            this.btn_ensure = (Button) rootView.findViewById(R.id.btn_ensure);
+        }
+
+    }
 }

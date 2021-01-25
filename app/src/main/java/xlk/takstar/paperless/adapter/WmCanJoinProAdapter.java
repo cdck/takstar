@@ -1,7 +1,7 @@
 package xlk.takstar.paperless.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 
 import java.util.List;
 
@@ -34,9 +34,9 @@ public class WmCanJoinProAdapter extends BaseQuickAdapter<JoinPro, BaseViewHolde
 
     public void notifyChecks() {
         int temp = -1;
-        for (int i = 0; i < mData.size(); i++) {
-            if (id == mData.get(i).getResPlay().getDevceid()) {
-                temp = mData.get(i).getResPlay().getDevceid();
+        for (int i = 0; i < getData().size(); i++) {
+            if (id == getData().get(i).getResPlay().getDevceid()) {
+                temp = getData().get(i).getResPlay().getDevceid();
             }
         }
         id = temp;

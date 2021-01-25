@@ -26,7 +26,7 @@
 
     <xlk.takstar.paperless.ui.CircleMenuLayout
         android:id="@+id/circle_menu_layout"
-        android:layout_width="400dp"
+        android:layout_width="350dp"
         android:layout_height="match_parent"
         android:background="@drawable/shape_menu_bg">
 
@@ -41,7 +41,7 @@
                 android:layout_centerInParent="true"
                 android:drawableTop="@drawable/menu_back_status"
                 android:gravity="center"
-                android:text="返回"
+                android:text="@string/back"
                 android:textColor="@color/white" />
         </RelativeLayout>
     </xlk.takstar.paperless.ui.CircleMenuLayout>

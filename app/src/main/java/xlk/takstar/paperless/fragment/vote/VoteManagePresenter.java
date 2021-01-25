@@ -96,7 +96,7 @@ public class VoteManagePresenter extends BasePresenter<VoteManageContract.View> 
     public void querySubmittedVoters(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote, boolean isDetails) {
         InterfaceVote.pbui_Type_MeetVoteSignInDetailInfo info = jni.querySubmittedVoters(vote.getVoteid());
         submitMembers.clear();
-        if(info!=null){
+        if (info != null) {
             List<InterfaceVote.pbui_SubItem_VoteItemInfo> optionInfo = vote.getItemList();
             List<InterfaceVote.pbui_Item_MeetVoteSignInDetailInfo> submittedMembers = info.getItemList();
             for (int i = 0; i < submittedMembers.size(); i++) {

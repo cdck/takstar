@@ -8,6 +8,7 @@ import android.widget.PopupWindow;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.mogujie.tt.protobuf.InterfaceFile;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 
@@ -16,6 +17,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import xlk.takstar.paperless.R;
@@ -173,9 +175,9 @@ public class AnnotateFragment extends BaseFragment<AnnotatePresenter> implements
             seatMemberAdapter = new SeatMemberAdapter(R.layout.item_seat_member, seatMembers);
             rv_member.setLayoutManager(new LinearLayoutManager(getContext()));
             rv_member.setAdapter(seatMemberAdapter);
-            seatMemberAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            seatMemberAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                     currentDeviceId = seatMembers.get(position).getSeatDetailInfo().getSeatid();
                     currentMemberId = seatMembers.get(position).getMemberDetailInfo().getPersonid();
                     seatMemberAdapter.setSelectedId(currentDeviceId);
@@ -231,9 +233,9 @@ public class AnnotateFragment extends BaseFragment<AnnotatePresenter> implements
                 fileAdapter = new FileAdapter(R.layout.item_file, currentFiles);
                 rv_file.setLayoutManager(new LinearLayoutManager(getContext()));
                 rv_file.setAdapter(fileAdapter);
-                fileAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                fileAdapter.setOnItemClickListener(new OnItemClickListener() {
                     @Override
-                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                         fileAdapter.setSelectedId(currentFiles.get(position).getMediaid());
                     }
                 });
@@ -263,9 +265,9 @@ public class AnnotateFragment extends BaseFragment<AnnotatePresenter> implements
         }
         if (downloadFileAdapter == null) {
             downloadFileAdapter = new DownloadFileAdapter(R.layout.item_download_file, downloadFiles);
-            downloadFileAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            downloadFileAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                     InterfaceFile.pbui_Item_MeetDirFileDetailInfo item = downloadFiles.get(position);
                     int mediaid = item.getMediaid();
                     if (FileUtils.isFileExists(Constant.download_dir + item.getName().toStringUtf8())) {

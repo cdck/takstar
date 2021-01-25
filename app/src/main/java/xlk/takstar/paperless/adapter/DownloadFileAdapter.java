@@ -1,7 +1,7 @@
 package xlk.takstar.paperless.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.mogujie.tt.protobuf.InterfaceFile;
 
 import java.util.ArrayList;
@@ -37,9 +37,9 @@ public class DownloadFileAdapter extends BaseQuickAdapter<InterfaceFile.pbui_Ite
 
     public List<InterfaceFile.pbui_Item_MeetDirFileDetailInfo> getSelected() {
         List<InterfaceFile.pbui_Item_MeetDirFileDetailInfo> temps = new ArrayList<>();
-        for (int i = 0; i < mData.size(); i++) {
-            if (checks.contains(mData.get(i).getMediaid())) {
-                temps.add(mData.get(i));
+        for (int i = 0; i < getData().size(); i++) {
+            if (checks.contains(getData().get(i).getMediaid())) {
+                temps.add(getData().get(i));
             }
         }
         return temps;
@@ -51,12 +51,12 @@ public class DownloadFileAdapter extends BaseQuickAdapter<InterfaceFile.pbui_Ite
                 .setText(R.id.item_view_2, item.getName().toStringUtf8())
                 .setText(R.id.item_view_3, String.valueOf(item.getMediaid()));
         boolean isSelected = checks.contains(item.getMediaid());
-        int textColor = isSelected ? mContext.getColor(R.color.white) : mContext.getColor(R.color.normal_text_color);
+        int textColor = isSelected ? getContext().getColor(R.color.white) : getContext().getColor(R.color.normal_text_color);
         helper.setTextColor(R.id.item_view_1, textColor)
                 .setTextColor(R.id.item_view_2, textColor)
                 .setTextColor(R.id.item_view_3, textColor);
 
-        int backgroundColor = isSelected ? mContext.getColor(R.color.blue) : mContext.getColor(R.color.white);
+        int backgroundColor = isSelected ? getContext().getColor(R.color.blue) : getContext().getColor(R.color.white);
         helper.setBackgroundColor(R.id.item_view_1, backgroundColor)
                 .setBackgroundColor(R.id.item_view_2, backgroundColor)
                 .setBackgroundColor(R.id.item_view_3, backgroundColor);

@@ -3,15 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/dialog_full_holo_light"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:background="@drawable/shape_top_corner_blue">
 
         <TextView
-            android:id="@+id/pop_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -19,7 +19,7 @@
             android:layout_marginBottom="5dp"
             android:text="@string/modify_vote"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <ImageView
@@ -47,6 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="5dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -54,63 +55,113 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    tools:text="选举标题" />
+                    android:text="@string/vote_title_" />
 
                 <EditText
+                    android:id="@+id/edt_vote_title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/editbox_background_normal" />
+                    android:background="@drawable/editbox_background_normal"
+                    android:lines="1"
+                    android:singleLine="true" />
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/notation" />
+
+                    <Spinner
+                        android:id="@+id/sp_notation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:entries="@array/yes_or_no"
+                        android:spinnerMode="dialog" />
+
+                </LinearLayout>
             </LinearLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:id="@+id/option_a_ll"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/vote_type" />
+                        android:text="@string/option_a" />
 
-                    <Spinner
-                        android:layout_width="wrap_content"
+                    <EditText
+                        android:id="@+id/option_a_edt"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:entries="@array/vote_type"
-                        android:spinnerMode="dialog" />
-
+                        android:layout_weight="1"
+                        android:background="@drawable/editbox_background_normal"
+                        android:lines="1"
+                        android:singleLine="true" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:id="@+id/option_b_ll"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:gravity="center"
+                    android:layout_marginTop="5dp"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/count_down" />
+                        android:text="@string/option_b" />
 
-                    <Spinner
+                    <EditText
+                        android:id="@+id/option_b_edt"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/editbox_background_normal"
+                        android:lines="1"
+                        android:singleLine="true" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/option_c_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:entries="@array/vote_time"
-                        android:spinnerMode="dialog" />
+                        android:text="@string/option_c" />
 
+                    <EditText
+                        android:id="@+id/option_c_edt"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/editbox_background_normal"
+                        android:lines="1"
+                        android:singleLine="true" />
                 </LinearLayout>
 
             </LinearLayout>

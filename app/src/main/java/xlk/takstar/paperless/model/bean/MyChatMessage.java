@@ -7,7 +7,7 @@ package xlk.takstar.paperless.model.bean;
  */
 public class MyChatMessage {
     /**
-     * =0收到的信息，=1自己发送的信息
+     * =0收到的信息，=1自己发送的信息,=2新的未读消息提示
      */
     private int type;
     private String memberName;

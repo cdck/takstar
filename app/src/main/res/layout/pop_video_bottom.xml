@@ -52,7 +52,7 @@
 
         <Button
             android:id="@+id/pop_video_play"
-            android:background="@drawable/shape_btn_status_bg"
+            android:background="@drawable/shape_btn_status1_bg"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginEnd="@dimen/dp_10"
@@ -61,7 +61,7 @@
 
         <Button
             android:id="@+id/pop_video_stop"
-            android:background="@drawable/shape_btn_status_bg"
+            android:background="@drawable/shape_btn_status1_bg"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginEnd="@dimen/dp_10"
@@ -70,7 +70,7 @@
 
         <Button
             android:id="@+id/pop_video_screen_shot"
-            android:background="@drawable/shape_btn_status_bg"
+            android:background="@drawable/shape_btn_status1_bg"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginEnd="@dimen/dp_10"
@@ -79,7 +79,7 @@
 
         <Button
             android:id="@+id/pop_video_launch_screen"
-            android:background="@drawable/shape_btn_status_bg"
+            android:background="@drawable/shape_btn_status1_bg"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginEnd="@dimen/dp_10"
@@ -88,7 +88,7 @@
 
         <Button
             android:id="@+id/pop_video_stop_screen"
-            android:background="@drawable/shape_btn_status_bg"
+            android:background="@drawable/shape_btn_status1_bg"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_weight="1"

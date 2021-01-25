@@ -8,10 +8,11 @@ import com.blankj.utilcode.util.ToastUtils;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import xlk.takstar.paperless.MyApplication;
+import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.model.JniHelper;
 import xlk.takstar.paperless.util.IniUtil;
+import xlk.takstar.paperless.util.LogUtil;
 
 /**
  * @author Created by xlk on 2020/11/28.
@@ -22,15 +23,21 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     protected T presenter;
     protected JniHelper jni = JniHelper.getInstance();
     protected IniUtil ini = IniUtil.getInstance();
-    protected MyApplication app;
+    protected App app;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
-        app = (MyApplication) getApplication();
+        app = (App) getApplication();
         presenter = initPresenter();
         init(savedInstanceState);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        LogUtil.i(TAG, "onNewIntent " + this);
+        super.onNewIntent(intent);
     }
 
     protected abstract int getLayoutId();
@@ -57,7 +64,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         startActivityForResult(intent, requestCode);
     }
 
-    protected void showSuccessfulToast(){
+    protected void showSuccessfulToast() {
         ToastUtils.make()
                 .setLeftIcon(R.drawable.ic_successful)
                 .setGravity(Gravity.CENTER, 0, 0)

@@ -6,16 +6,21 @@ import android.widget.CheckBox;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.adapter.DevMemberAdapter;
 import xlk.takstar.paperless.adapter.ProjectionAdapter;
+import xlk.takstar.paperless.adapter.WmScreenMemberAdapter;
+import xlk.takstar.paperless.adapter.WmScreenProjectorAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
 import xlk.takstar.paperless.model.Constant;
 
@@ -26,17 +31,14 @@ import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_0;
  * @desc
  */
 public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> implements ScreenManageContract.View, View.OnClickListener {
-    private RecyclerView rv_screen_source;
+    private RecyclerView rv_screen_source, rv_projection, rv_member;
+    private CheckBox cb_source, cb_projection, cb_member;
     private Button btn_preview;
-    private CheckBox cb_projection;
-    private CheckBox cb_member;
-    private RecyclerView rv_projection;
-    private RecyclerView rv_member;
     private CheckBox cb_mandatory;
-    private Button btn_launch_screen;
-    private Button btn_stop_screen;
-    private DevMemberAdapter sourceAdapter, targetAdapter;
-    private ProjectionAdapter projectionAdapter;
+    private Button btn_launch;
+    private Button btn_stop;
+    private WmScreenMemberAdapter sourceMemberAdapter,targetAdapter;
+    private WmScreenProjectorAdapter projectorAdapter;
 
     @Override
     protected int getLayoutId() {
@@ -45,20 +47,27 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
 
     @Override
     protected void initView(View inflate) {
-        rv_screen_source = inflate.findViewById(R.id.rv_screen_source);
-        btn_preview = inflate.findViewById(R.id.btn_preview);
+        cb_source = inflate.findViewById(R.id.cb_source);
         cb_projection = inflate.findViewById(R.id.cb_projection);
         cb_member = inflate.findViewById(R.id.cb_member);
+
+        rv_screen_source = inflate.findViewById(R.id.rv_screen_source);
         rv_projection = inflate.findViewById(R.id.rv_projection);
         rv_member = inflate.findViewById(R.id.rv_member);
+
         cb_mandatory = inflate.findViewById(R.id.cb_mandatory);
-        btn_launch_screen = inflate.findViewById(R.id.btn_launch_screen);
-        btn_stop_screen = inflate.findViewById(R.id.btn_stop_screen);
+
+        btn_preview = inflate.findViewById(R.id.btn_preview);
+        btn_launch = inflate.findViewById(R.id.btn_launch);
+        btn_stop = inflate.findViewById(R.id.btn_stop);
+
         btn_preview.setOnClickListener(this);
+        btn_launch.setOnClickListener(this);
+        btn_stop.setOnClickListener(this);
+
+        cb_source.setOnClickListener(this);
         cb_projection.setOnClickListener(this);
         cb_member.setOnClickListener(this);
-        btn_launch_screen.setOnClickListener(this);
-        btn_stop_screen.setOnClickListener(this);
     }
 
     @Override
@@ -76,49 +85,53 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
         presenter.queryData();
     }
 
+
     @Override
     public void updateRecyclerView() {
-        if (sourceAdapter == null) {
-            sourceAdapter = new DevMemberAdapter(presenter.sourceMembers);
-            rv_screen_source.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
-            rv_screen_source.setAdapter(sourceAdapter);
-            sourceAdapter.setSingle(true);
-            sourceAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        if (sourceMemberAdapter == null) {
+            sourceMemberAdapter = new WmScreenMemberAdapter(R.layout.item_wm_screen, presenter.sourceMembers);
+            rv_screen_source.setLayoutManager(new LinearLayoutManager(getContext()));
+            sourceMemberAdapter.setSingleCheck(true);
+            rv_screen_source.setAdapter(sourceMemberAdapter);
+            sourceMemberAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    sourceAdapter.setCheck(presenter.sourceMembers.get(position).getMemberDetailInfo().getPersonid());
+                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
+                    sourceMemberAdapter.choose(presenter.sourceMembers.get(position).getDeviceDetailInfo().getDevcieid());
+//                    cb_source.setChecked(sourceMemberAdapter.isChooseAll());
                 }
             });
         } else {
-            sourceAdapter.notifyDataSetChanged();
+            sourceMemberAdapter.notifyChecks();
         }
-        if (targetAdapter == null) {
-            targetAdapter = new DevMemberAdapter(presenter.targetMembers);
-            rv_member.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
-            rv_member.setAdapter(targetAdapter);
-            targetAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+
+        if (projectorAdapter == null) {
+            projectorAdapter = new WmScreenProjectorAdapter(R.layout.item_wm_screen, presenter.onLineProjectors);
+            rv_projection.setLayoutManager(new LinearLayoutManager(getContext()));
+            rv_projection.setAdapter(projectorAdapter);
+            projectorAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    targetAdapter.setCheck(presenter.targetMembers.get(position).getMemberDetailInfo().getPersonid());
-                    cb_member.setChecked(targetAdapter.isCheckAll());
+                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
+                    projectorAdapter.choose(presenter.onLineProjectors.get(position).getDevcieid());
+                    cb_projection.setChecked(projectorAdapter.isChooseAll());
+                }
+            });
+        } else {
+            projectorAdapter.notifyChecks();
+        }
+
+        if (targetAdapter == null) {
+            targetAdapter = new WmScreenMemberAdapter(R.layout.item_wm_screen,presenter.targetMembers);
+            rv_member.setLayoutManager(new LinearLayoutManager(getContext()));
+            rv_member.setAdapter(targetAdapter);
+            targetAdapter.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
+                    targetAdapter.choose(presenter.targetMembers.get(position).getDeviceDetailInfo().getDevcieid());
+                    cb_member.setChecked(targetAdapter.isChooseAll());
                 }
             });
         } else {
             targetAdapter.notifyDataSetChanged();
-        }
-        if (projectionAdapter == null) {
-            projectionAdapter = new ProjectionAdapter(presenter.onLineProjectors);
-            rv_projection.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-            rv_projection.setAdapter(projectionAdapter);
-            projectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    projectionAdapter.setCheck(presenter.onLineProjectors.get(position).getDevcieid());
-                    cb_projection.setChecked(projectionAdapter.isCheckedAll());
-                }
-            });
-        } else {
-            projectionAdapter.notifyDataSetChanged();
         }
     }
 
@@ -126,7 +139,7 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_preview: {
-                List<Integer> checks = sourceAdapter.getCheckDeviceIds();
+                List<Integer> checks = sourceMemberAdapter.getChooseIds();
                 if (checks.isEmpty()) {
                     ToastUtils.showShort(R.string.please_choose_member);
                     return;
@@ -134,26 +147,32 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
                 jni.playTargetScreen(checks.get(0));
                 break;
             }
+            case R.id.cb_source: {
+//                boolean checked = cb_source.isChecked();
+//                cb_source.setChecked(checked);
+//                sourceMemberAdapter.setChooseAll(checked);
+                break;
+            }
             case R.id.cb_projection: {
                 boolean checked = cb_projection.isChecked();
                 cb_projection.setChecked(checked);
-                projectionAdapter.setCheckAll(checked);
+                projectorAdapter.setChooseAll(checked);
                 break;
             }
             case R.id.cb_member: {
                 boolean checked = cb_member.isChecked();
                 cb_member.setChecked(checked);
-                targetAdapter.setCheckAll(checked);
+                targetAdapter.setChooseAll(checked);
                 break;
             }
-            case R.id.btn_launch_screen: {
-                List<Integer> checks = sourceAdapter.getCheckDeviceIds();
+            case R.id.btn_launch: {
+                List<Integer> checks = sourceMemberAdapter.getChooseIds();
                 if (checks.isEmpty()) {
                     ToastUtils.showShort(R.string.please_choose_screen_source);
                     return;
                 }
-                List<Integer> targets = targetAdapter.getCheckDeviceIds();
-                List<Integer> projects = projectionAdapter.getCheckDeviceIds();
+                List<Integer> targets = targetAdapter.getChooseIds();
+                List<Integer> projects = projectorAdapter.getChooseIds();
                 targets.addAll(projects);
                 if (targets.isEmpty()) {
                     ToastUtils.showShort(R.string.please_choose_target);
@@ -167,9 +186,9 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
                 jni.streamPlay(checks.get(0), Constant.SCREEN_SUB_ID, triggeruserval, temps, targets);
                 break;
             }
-            case R.id.btn_stop_screen: {
-                List<Integer> targetIds = targetAdapter.getCheckDeviceIds();
-                targetIds.addAll(projectionAdapter.getCheckDeviceIds());
+            case R.id.btn_stop: {
+                List<Integer> targetIds = targetAdapter.getChooseIds();
+                targetIds.addAll(projectorAdapter.getChooseIds());
                 if (targetIds.isEmpty()) {
                     ToastUtils.showShort(R.string.please_choose_target);
                     return;

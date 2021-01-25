@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="20dp"
-    android:layout_marginEnd="20dp"
-    android:layout_marginBottom="20dp"
+    android:layout_marginStart="30dp"
+    android:layout_marginEnd="30dp"
+    android:layout_marginBottom="30dp"
     android:background="@drawable/dialog_full_holo_light"
     android:orientation="vertical">
 

@@ -1,7 +1,7 @@
 package xlk.takstar.paperless.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.mogujie.tt.protobuf.InterfaceDevice;
 import com.mogujie.tt.protobuf.InterfaceRoom;
 
@@ -35,8 +35,8 @@ public class TerminalControlAdapter extends BaseQuickAdapter<ClientControlBean, 
 
     public List<Integer> getChecks() {
         List<Integer> temps = new ArrayList<>();
-        for (int i = 0; i < mData.size(); i++) {
-            int devcieid = mData.get(i).getDeviceInfo().getDevcieid();
+        for (int i = 0; i < getData().size(); i++) {
+            int devcieid = getData().get(i).getDeviceInfo().getDevcieid();
             if (checks.contains(devcieid)) {
                 temps.add(devcieid);
             }
@@ -52,13 +52,13 @@ public class TerminalControlAdapter extends BaseQuickAdapter<ClientControlBean, 
         boolean isOnline = deviceInfo.getNetstate() == 1;
         helper.setText(R.id.item_view_1, String.valueOf(helper.getLayoutPosition() + 1))
                 .setText(R.id.item_view_2, deviceInfo.getDevname().toStringUtf8())
-                .setText(R.id.item_view_3, Constant.getDeviceTypeName(mContext, deviceInfo.getDevcieid()))
+                .setText(R.id.item_view_3, Constant.getDeviceTypeName(getContext(), deviceInfo.getDevcieid()))
                 .setText(R.id.item_view_4, String.valueOf(deviceInfo.getDevcieid()))
-                .setText(R.id.item_view_5, isOnline ? mContext.getString(R.string.online) : mContext.getString(R.string.offline))
+                .setText(R.id.item_view_5, isOnline ? getContext().getString(R.string.online) : getContext().getString(R.string.offline))
                 .setText(R.id.item_view_6, seatInfo != null ? seatInfo.getMembername().toStringUtf8() : "")
-                .setText(R.id.item_view_7, Constant.getInterfaceStateName(mContext, deviceInfo.getFacestate()));
+                .setText(R.id.item_view_7, Constant.getInterfaceStateName(getContext(), deviceInfo.getFacestate()));
         boolean isSelected = checks.contains(deviceInfo.getDevcieid());
-        int textColor = isSelected ? mContext.getColor(R.color.white) : mContext.getColor(R.color.normal_text_color);
+        int textColor = isSelected ? getContext().getColor(R.color.white) : getContext().getColor(R.color.normal_text_color);
         helper.setTextColor(R.id.item_view_1, textColor)
                 .setTextColor(R.id.item_view_2, textColor)
                 .setTextColor(R.id.item_view_3, textColor)
@@ -67,7 +67,7 @@ public class TerminalControlAdapter extends BaseQuickAdapter<ClientControlBean, 
                 .setTextColor(R.id.item_view_6, textColor)
                 .setTextColor(R.id.item_view_7, textColor);
 
-        int backgroundColor = isSelected ? mContext.getColor(R.color.selected_item_bg) : mContext.getColor(R.color.white);
+        int backgroundColor = isSelected ? getContext().getColor(R.color.selected_item_bg) : getContext().getColor(R.color.white);
         helper.setBackgroundColor(R.id.item_view_1, backgroundColor)
                 .setBackgroundColor(R.id.item_view_2, backgroundColor)
                 .setBackgroundColor(R.id.item_view_3, backgroundColor)

@@ -26,7 +26,7 @@ public class Constant {
      * 各个界面的背景图和logo图标
      */
     public static final String MAIN_BG = "main_bg";
-    public static final String MAIN_LOGO = "main_logo";
+    public static final String MAIN_LOGO = "ic_logo_main";
     public static final String MEET_BG = "meet_bg";
     public static final String MEET_LOGO = "meet_logo";
     public static final String BULLETIN_BG = "bulletin_bg";
@@ -96,7 +96,6 @@ public class Constant {
     public static final int FUN_CODE_VIDEO = FUN_CODE + 4;
     public static final int FUN_CODE_SCREEN = FUN_CODE + 5;
     public static final int FUN_CODE_BULLETIN = FUN_CODE + 6;
-    public static final int FUN_CODE_SCORE = FUN_CODE + 7;
 
     /**
      * 发起播放的类型
@@ -252,6 +251,10 @@ public class Constant {
     public static final String ACTION_START_SCREEN_RECORD = "action_start_screen_record";
     public static final String ACTION_STOP_SCREEN_RECORD = "action_stop_screen_record";
     /**
+     * 退出应用时发送广播通知停止掉屏幕录制
+     */
+    public static final String ACTION_STOP_SCREEN_RECORD_WHEN_EXIT_APP = "action_stop_screen_record_when_exit_app";
+    /**
      * 要采集的类型，值为2或3，屏幕或摄像头
      */
     public static final String EXTRA_CAPTURE_TYPE = "extra_capture_type";
@@ -400,9 +403,14 @@ public class Constant {
      */
     public static final String MIME_VIDEO_VP9 = "video/x-vnd.on2.vp9";
     /**
+     *  H.263 video
+     */
+    public static final String MIME_VIDEO_3GPP = "video/3gpp";
+    /**
      * SCREEN_HEIGHT.264/AVC video
      */
     public static final String MIME_VIDEO_AVC = "video/avc";
+
     /**
      * SCREEN_HEIGHT.265/HEVC video
      */
@@ -421,23 +429,15 @@ public class Constant {
     public static String getMimeType(int codecId) {
         switch (codecId) {
             case 12:
-                return MIME_VIDEO_MPEG4;
             case 13:
                 return MIME_VIDEO_MPEG4;
-            case 27:
-                return MIME_VIDEO_AVC;
-            case 28:
-                return MIME_VIDEO_AVC;
             case 139:
-                return MIME_VIDEO_VP8;
             case 140:
                 return MIME_VIDEO_VP8;
             case 167:
-                return MIME_VIDEO_VP9;
             case 168:
                 return MIME_VIDEO_VP9;
             case 173:
-                return MIME_VIDEO_HEVC;
             case 174:
                 return MIME_VIDEO_HEVC;
             default:

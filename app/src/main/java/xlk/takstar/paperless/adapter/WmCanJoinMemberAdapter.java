@@ -1,7 +1,7 @@
 package xlk.takstar.paperless.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.mogujie.tt.protobuf.InterfaceDevice;
 
 import java.util.List;
@@ -34,9 +34,9 @@ public class WmCanJoinMemberAdapter extends BaseQuickAdapter<InterfaceDevice.pbu
 
     public void notifyChecks() {
         int temp = -1;
-        for (int i = 0; i < mData.size(); i++) {
-            if (id == mData.get(i).getDevceid()) {
-                temp = mData.get(i).getDevceid();
+        for (int i = 0; i < getData().size(); i++) {
+            if (id == getData().get(i).getDevceid()) {
+                temp = getData().get(i).getDevceid();
             }
         }
         id = temp;

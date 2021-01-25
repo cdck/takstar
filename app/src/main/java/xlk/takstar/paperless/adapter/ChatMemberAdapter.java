@@ -4,8 +4,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 
 import java.util.List;
 
@@ -26,8 +27,8 @@ public class ChatMemberAdapter extends BaseQuickAdapter<ChatDeviceMember, BaseVi
     }
 
     public int getSelectedId() {
-        for (int i = 0; i < mData.size(); i++) {
-            if (mData.get(i).getMemberDetailInfo().getPersonid() == selectedId) {
+        for (int i = 0; i < getData().size(); i++) {
+            if (getData().get(i).getMemberDetailInfo().getPersonid() == selectedId) {
                 return selectedId;
             }
         }

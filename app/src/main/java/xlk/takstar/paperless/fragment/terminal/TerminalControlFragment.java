@@ -8,12 +8,15 @@ import android.widget.Spinner;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceMember;
 import com.mogujie.tt.protobuf.InterfaceRoom;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import xlk.takstar.paperless.R;
@@ -22,6 +25,7 @@ import xlk.takstar.paperless.adapter.TerminalControlAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
 import xlk.takstar.paperless.model.bean.ClientControlBean;
 import xlk.takstar.paperless.model.bean.MemberRoleBean;
+import xlk.takstar.paperless.ui.RvItemDecoration;
 import xlk.takstar.paperless.util.PopUtil;
 
 /**
@@ -198,9 +202,9 @@ public class TerminalControlFragment extends BaseFragment<TerminalControlPresent
         roleAdapter = new MemberRoleAdapter(R.layout.item_member_role, presenter.memberRoleBeans);
         rv_member_role.setLayoutManager(new LinearLayoutManager(getContext()));
         rv_member_role.setAdapter(roleAdapter);
-        roleAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        roleAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+            public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 MemberRoleBean memberRoleBean = presenter.memberRoleBeans.get(position);
                 InterfaceMember.pbui_Item_MemberDetailInfo member = memberRoleBean.getMember();
                 roleAdapter.setSelectedId(member.getPersonid());
@@ -278,11 +282,12 @@ public class TerminalControlFragment extends BaseFragment<TerminalControlPresent
     public void updateClient(List<ClientControlBean> clientControlBeans) {
         if (clientControlAdapter == null) {
             clientControlAdapter = new TerminalControlAdapter(R.layout.item_terminal_control, clientControlBeans);
+            rv_client.addItemDecoration(new RvItemDecoration(getContext()));
             rv_client.setLayoutManager(new LinearLayoutManager(getContext()));
             rv_client.setAdapter(clientControlAdapter);
-            clientControlAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            clientControlAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                     clientControlAdapter.setCheck(clientControlBeans.get(position).getDeviceInfo().getDevcieid());
                 }
             });

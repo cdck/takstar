@@ -44,37 +44,6 @@ public class CustomBaseViewHolder {
 
     }
 
-//    public static class MenuViewHolder {
-//        public View rootView;
-//        //        public Button wm_menu_note;
-////        public Button wm_menu_soft;
-////        public Button wm_menu_hand;
-//        public Button wm_menu_service;
-//        public Button wm_menu_start_projection;
-//        public Button wm_menu_back;
-//        public Button wm_menu_stop_projection;
-//        public Button wm_menu_start_screen;
-//        public Button wm_menu_join_screen;
-//        public Button wm_menu_stop_screen;
-//        public Button wm_menu_screenshot;
-//
-//        public MenuViewHolder(View rootView) {
-//            this.rootView = rootView;
-////            this.wm_menu_note = (Button) rootView.findViewById(R.id.wm_menu_note);
-////            this.wm_menu_soft = (Button) rootView.findViewById(R.id.wm_menu_soft);
-////            this.wm_menu_hand = (Button) rootView.findViewById(R.id.wm_menu_hand);
-//            this.wm_menu_service = (Button) rootView.findViewById(R.id.wm_menu_service);
-//            this.wm_menu_start_projection = (Button) rootView.findViewById(R.id.wm_menu_start_projection);
-//            this.wm_menu_back = (Button) rootView.findViewById(R.id.wm_menu_back);
-//            this.wm_menu_stop_projection = (Button) rootView.findViewById(R.id.wm_menu_stop_projection);
-//            this.wm_menu_start_screen = (Button) rootView.findViewById(R.id.wm_menu_start_screen);
-//            this.wm_menu_join_screen = (Button) rootView.findViewById(R.id.wm_menu_join_screen);
-//            this.wm_menu_stop_screen = (Button) rootView.findViewById(R.id.wm_menu_stop_screen);
-//            this.wm_menu_screenshot = (Button) rootView.findViewById(R.id.wm_menu_screenshot);
-//        }
-//
-//    }
-
     public static class ServiceViewHolder {
         public View rootView;
         public TextView textView;
@@ -106,100 +75,78 @@ public class CustomBaseViewHolder {
 
     public static class ScreenViewHolder {
         public View rootView;
-        public CheckBox wm_screen_mandatory;
         public TextView wm_screen_title;
-        public TextView textView2;
+        public ImageView iv_close;
+        public CheckBox wm_screen_mandatory;
+        public LinearLayout mandatory_ll;
+        public ImageView iv_dividing_line;
+        public ImageView dividing_line;
         public CheckBox wm_screen_cb_attendee;
-        public Button wm_screen_launch;
-        public Button wm_screen_cancel;
-        public CheckBox wm_screen_cb_projector;
         public RecyclerView wm_screen_rv_attendee;
+        public CheckBox wm_screen_cb_projector;
         public RecyclerView wm_screen_rv_projector;
+        public Button btn_cancel;
+        public Button btn_ensure;
 
         public ScreenViewHolder(View rootView) {
             this.rootView = rootView;
-            this.wm_screen_mandatory = (CheckBox) rootView.findViewById(R.id.wm_screen_mandatory);
             this.wm_screen_title = (TextView) rootView.findViewById(R.id.wm_screen_title);
-            this.textView2 = (TextView) rootView.findViewById(R.id.textView2);
+            this.iv_close = (ImageView) rootView.findViewById(R.id.iv_close);
+            this.wm_screen_mandatory = (CheckBox) rootView.findViewById(R.id.wm_screen_mandatory);
+            this.mandatory_ll = (LinearLayout) rootView.findViewById(R.id.mandatory_ll);
+            this.iv_dividing_line = (ImageView) rootView.findViewById(R.id.iv_dividing_line);
+            this.dividing_line = (ImageView) rootView.findViewById(R.id.dividing_line);
             this.wm_screen_cb_attendee = (CheckBox) rootView.findViewById(R.id.wm_screen_cb_attendee);
-            this.wm_screen_launch = (Button) rootView.findViewById(R.id.wm_screen_launch);
-            this.wm_screen_cancel = (Button) rootView.findViewById(R.id.wm_screen_cancel);
-            this.wm_screen_cb_projector = (CheckBox) rootView.findViewById(R.id.wm_screen_cb_projector);
             this.wm_screen_rv_attendee = (RecyclerView) rootView.findViewById(R.id.wm_screen_rv_attendee);
+            this.wm_screen_cb_projector = (CheckBox) rootView.findViewById(R.id.wm_screen_cb_projector);
             this.wm_screen_rv_projector = (RecyclerView) rootView.findViewById(R.id.wm_screen_rv_projector);
+            this.btn_cancel = (Button) rootView.findViewById(R.id.btn_cancel);
+            this.btn_ensure = (Button) rootView.findViewById(R.id.btn_ensure);
         }
 
     }
 
     public static class ProViewHolder {
         public View rootView;
-        public CheckBox wm_pro_mandatory;
         public TextView wm_pro_title;
-        public CheckBox wm_pro_all;
-        public RecyclerView wm_pro_rv;
+        public ImageView iv_close;
+        public CheckBox wm_pro_mandatory;
+        public LinearLayout mandatory_ll;
         public CheckBox wm_pro_full;
         public CheckBox wm_pro_flow1;
         public CheckBox wm_pro_flow2;
         public CheckBox wm_pro_flow3;
         public CheckBox wm_pro_flow4;
-        public Button wm_pro_launch_pro;
-        public Button wm_pro_cancel;
+        public LinearLayout output_type_ll;
+        public ImageView iv_dividing_line;
+        public ImageView dividing_line;
+        public CheckBox wm_pro_all;
+        public RecyclerView wm_pro_rv;
+        public Button btn_cancel;
+        public Button btn_ensure;
 
         public ProViewHolder(View rootView) {
             this.rootView = rootView;
-            this.wm_pro_mandatory = (CheckBox) rootView.findViewById(R.id.wm_pro_mandatory);
             this.wm_pro_title = (TextView) rootView.findViewById(R.id.wm_pro_title);
-            this.wm_pro_all = (CheckBox) rootView.findViewById(R.id.wm_pro_all);
-            this.wm_pro_rv = (RecyclerView) rootView.findViewById(R.id.wm_pro_rv);
+            this.iv_close = (ImageView) rootView.findViewById(R.id.iv_close);
+            this.wm_pro_mandatory = (CheckBox) rootView.findViewById(R.id.wm_pro_mandatory);
+            this.mandatory_ll = (LinearLayout) rootView.findViewById(R.id.mandatory_ll);
             this.wm_pro_full = (CheckBox) rootView.findViewById(R.id.wm_pro_full);
             this.wm_pro_flow1 = (CheckBox) rootView.findViewById(R.id.wm_pro_flow1);
             this.wm_pro_flow2 = (CheckBox) rootView.findViewById(R.id.wm_pro_flow2);
             this.wm_pro_flow3 = (CheckBox) rootView.findViewById(R.id.wm_pro_flow3);
             this.wm_pro_flow4 = (CheckBox) rootView.findViewById(R.id.wm_pro_flow4);
-            this.wm_pro_launch_pro = (Button) rootView.findViewById(R.id.wm_pro_launch_pro);
-            this.wm_pro_cancel = (Button) rootView.findViewById(R.id.wm_pro_cancel);
+            this.output_type_ll = (LinearLayout) rootView.findViewById(R.id.output_type_ll);
+            this.iv_dividing_line = (ImageView) rootView.findViewById(R.id.iv_dividing_line);
+            this.dividing_line = (ImageView) rootView.findViewById(R.id.dividing_line);
+            this.wm_pro_all = (CheckBox) rootView.findViewById(R.id.wm_pro_all);
+            this.wm_pro_rv = (RecyclerView) rootView.findViewById(R.id.wm_pro_rv);
+            this.btn_cancel = (Button) rootView.findViewById(R.id.btn_cancel);
+            this.btn_ensure = (Button) rootView.findViewById(R.id.btn_ensure);
         }
 
     }
 
-//    public static class VoteViewHolder {
-//        public View rootView;
-//        public TextView wm_vote_title;
-//        public TextView wm_vote_type;
-//        public LinearLayout wm_vote_election;
-//        public CheckBox checkBox1;
-//        public CheckBox checkBox2;
-//        public CheckBox checkBox3;
-//        public CheckBox checkBox4;
-//        public CheckBox checkBox5;
-//        public LinearLayout wm_vote_linear;
-//        public ImageView vote_favour_tv;
-//        public ImageView vote_against_tv;
-//        public ImageView vote_waiver_tv;
-//        public LinearLayout wm_vote_countdown_ll;
-//        public Chronometer wm_vote_chronometer;
-//        public Button wm_vote_submit;
-//
-//        public VoteViewHolder(View rootView) {
-//            this.rootView = rootView;
-//            this.wm_vote_title = (TextView) rootView.findViewById(R.id.wm_vote_title);
-//            this.wm_vote_type = (TextView) rootView.findViewById(R.id.wm_vote_type);
-//            this.wm_vote_election = (LinearLayout) rootView.findViewById(R.id.wm_vote_election);
-//            this.checkBox1 = (CheckBox) rootView.findViewById(R.id.checkBox1);
-//            this.checkBox2 = (CheckBox) rootView.findViewById(R.id.checkBox2);
-//            this.checkBox3 = (CheckBox) rootView.findViewById(R.id.checkBox3);
-//            this.checkBox4 = (CheckBox) rootView.findViewById(R.id.checkBox4);
-//            this.checkBox5 = (CheckBox) rootView.findViewById(R.id.checkBox5);
-//            this.wm_vote_linear = (LinearLayout) rootView.findViewById(R.id.wm_vote_linear);
-//            this.vote_favour_tv = (ImageView) rootView.findViewById(R.id.vote_favour_tv);
-//            this.vote_against_tv = (ImageView) rootView.findViewById(R.id.vote_against_tv);
-//            this.vote_waiver_tv = (ImageView) rootView.findViewById(R.id.vote_waiver_tv);
-//            this.wm_vote_countdown_ll = (LinearLayout) rootView.findViewById(R.id.wm_vote_countdown_ll);
-//            this.wm_vote_chronometer = (Chronometer) rootView.findViewById(R.id.wm_vote_chronometer);
-//            this.wm_vote_submit = (Button) rootView.findViewById(R.id.wm_vote_submit);
-//        }
-//
-//    }
 
     public static class SubmitViewHolder {
         public View rootView;
@@ -210,40 +157,6 @@ public class CustomBaseViewHolder {
             this.rootView = rootView;
             this.vote_submit_ensure = (Button) rootView.findViewById(R.id.vote_submit_ensure);
             this.vote_submit_cancel = (Button) rootView.findViewById(R.id.vote_submit_cancel);
-        }
-
-    }
-
-
-    public static class VoteViewHolder {
-        public View rootView;
-        public ImageView iv_close;
-        public RelativeLayout top_layout;
-        public TextView tv_title;
-        public TextView tv_time;
-        public Chronometer chronometer;
-        public LinearLayout countdown_view;
-        public CheckBox cb_a;
-        public CheckBox cb_b;
-        public CheckBox cb_c;
-        public CheckBox cb_d;
-        public CheckBox cb_e;
-        public Button btn_ensure;
-
-        public VoteViewHolder(View rootView) {
-            this.rootView = rootView;
-            this.iv_close = (ImageView) rootView.findViewById(R.id.iv_close);
-            this.top_layout = (RelativeLayout) rootView.findViewById(R.id.top_layout);
-            this.tv_title = (TextView) rootView.findViewById(R.id.tv_title);
-            this.tv_time = (TextView) rootView.findViewById(R.id.tv_time);
-            this.chronometer = (Chronometer) rootView.findViewById(R.id.chronometer);
-            this.countdown_view = (LinearLayout) rootView.findViewById(R.id.countdown_view);
-            this.cb_a = (CheckBox) rootView.findViewById(R.id.cb_a);
-            this.cb_b = (CheckBox) rootView.findViewById(R.id.cb_b);
-            this.cb_c = (CheckBox) rootView.findViewById(R.id.cb_c);
-            this.cb_d = (CheckBox) rootView.findViewById(R.id.cb_d);
-            this.cb_e = (CheckBox) rootView.findViewById(R.id.cb_e);
-            this.btn_ensure = (Button) rootView.findViewById(R.id.btn_ensure);
         }
 
     }

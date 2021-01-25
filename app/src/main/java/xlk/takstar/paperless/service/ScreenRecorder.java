@@ -10,6 +10,8 @@ import android.util.Log;
 import android.util.Range;
 import android.view.Surface;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -59,16 +61,27 @@ public class ScreenRecorder extends Thread {
     private final int channelIndex = 2;
 
     public ScreenRecorder(int width, int height, int bitrate, int dpi, MediaProjection projection, String savePath) {
-        LogUtil.e(TAG, "ScreenRecorder: width:" + width + ", height:" + height + ", bitrate: " + bitrate);
+        LogUtils.e(TAG, "ScreenRecorder: width:" + width + ", height:" + height + ", bitrate: " + bitrate);
         jni.InitAndCapture(0, channelIndex);
-        this.width = width > 1280 ? 1280 : width;
-        this.height = height > 720 ? 720 : height;
-        this.width = width;
-        this.height = height;
+//        this.width = width;
+//        this.height = height;
+        checkSize(width, height);
         this.bitrate = bitrate;
         this.dpi = dpi;
         this.projection = projection;
         this.savePath = savePath;
+    }
+
+    /**
+     * 检查宽高，如果宽高是奇数，则会抛出异常：android.media.MediaCodec$CodecException: Error 0xfffffc0e
+     *
+     * @param width
+     * @param height
+     */
+    private void checkSize(int width, int height) {
+        this.width = (width & 1) == 1 ? width - 1 : width;
+        this.height = (height & 1) == 1 ? height - 1 : height;
+        LogUtils.i(TAG, "checkSize 宽高=" + this.width + "," + this.height);
     }
 
     public void quit() {
@@ -113,7 +126,8 @@ public class ScreenRecorder extends Thread {
         // TODO: 2020/9/26 解决宽高不适配的问题 Fix:android.media.MediaCodec$CodecException: Error 0xfffffc0e
         width = supportedWidths.clamp(width);
         height = supportedHeights.clamp(height);
-        Log.e(TAG, "prepareEncoder 修改后录制使用宽高=" + width + "," + height + ",bitrate=" + bitrate);
+        checkSize(width, height);
+        LogUtils.e(TAG, "prepareEncoder 修改后录制使用宽高=" + width + "," + height + ",bitrate=" + bitrate);
 
         MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, width, height);
         // 码率 越高越清晰 仅编码器需要设置
@@ -144,7 +158,7 @@ public class ScreenRecorder extends Thread {
         // 比如设置成10，那就是10秒一个关键帧。但是，如果有需求要做视频的预览，那最好设置成1
         // 因为如果设置成10，会发现，10秒内的预览都是一个截图
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, I_FRAME_INTERVAL);
-        LogUtil.v(TAG, "created video format: " + format);
+        LogUtils.v(TAG, "created video format: " + format);
         encoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         // 这一步非常关键，它设置的，是MediaCodec的编码源，也就是说，要告诉Encoder解码哪些流。
         mSurface = encoder.createInputSurface();
@@ -167,7 +181,9 @@ public class ScreenRecorder extends Thread {
                 LogUtil.v(TAG, "Get H264 Buffer Success! flag = " + bufferInfo.flags + ", pts = " + bufferInfo.presentationTimeUs + "");
                 ByteBuffer outputBuffer = encoder.getOutputBuffer(index);
                 byte[] outData = new byte[bufferInfo.size];
-                outputBuffer.get(outData);
+                if (outputBuffer != null) {
+                    outputBuffer.get(outData);
+                }
                 //这表示带有此标记的缓存包含编解码器初始化或编解码器特定的数据而不是多媒体数据media data
                 if (bufferInfo.flags == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) {
                     LogUtil.v(TAG, "get config byte!");

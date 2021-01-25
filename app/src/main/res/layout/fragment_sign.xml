@@ -3,13 +3,100 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_marginStart="30dp"
+    android:layout_marginEnd="30dp"
+    android:layout_marginBottom="30dp"
+    android:background="@drawable/dialog_full_holo_light"
+    android:orientation="vertical"
+    android:paddingTop="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_yd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                tools:text="签到信息（应到人数：31人）" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:drawableLeft="@drawable/shape_black_point"
+                android:drawablePadding="5dp"
+                android:text="已签到"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:drawableLeft="@drawable/shape_black_point"
+                android:drawablePadding="5dp"
+                android:text="未签到"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_seat_signin_f"
+            android:gravity="center"
+            android:text="未签到"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_yqd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            tools:text="已签到人数：8人" />
+
+        <TextView
+            android:id="@+id/tv_wqd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/gray"
+            tools:text="未签到人数：2人" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dimgray" />
 
     <LinearLayout
         android:id="@+id/seat_root_ll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="10"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <xlk.takstar.paperless.ui.CustomAbsoluteLayout
@@ -19,67 +106,4 @@
             android:visibility="visible" />
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginBottom="5dp">
-
-        <TextView
-            android:id="@+id/tv_yd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/dp_10"
-            android:textSize="18sp"
-            tools:text="应到：31人" />
-
-        <TextView
-            android:id="@+id/tv_yqd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/dp_10"
-            android:layout_toEndOf="@+id/tv_yd"
-            android:textSize="18sp"
-            tools:text="已签到：6人" />
-
-        <TextView
-            android:id="@+id/tv_wqd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/dp_10"
-            android:layout_toEndOf="@+id/tv_yqd"
-            android:textSize="18sp"
-            tools:text="未签到：25人" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_margin="5dp"
-            android:layout_toStartOf="@+id/f_s_yqd_iv"
-            android:drawableStart="@drawable/shape_circle_red"
-            android:drawablePadding="10dp"
-            android:gravity="center"
-            android:text="@string/not_checked_in"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/f_s_yqd_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_margin="5dp"
-            android:drawableStart="@drawable/shape_circle_green"
-            android:drawablePadding="10dp"
-            android:gravity="center"
-            android:text="@string/checked_in"
-            android:textSize="18sp" />
-
-    </RelativeLayout>
 </LinearLayout>

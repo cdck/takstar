@@ -1,5 +1,6 @@
 package xlk.takstar.paperless.chatonline;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -22,12 +23,12 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.adapter.MeetChatMemberAdapter;
 import xlk.takstar.paperless.base.BaseActivity;
+import xlk.takstar.paperless.meet.MeetingActivity;
 import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.model.EventMessage;
 import xlk.takstar.paperless.model.EventType;
@@ -40,7 +41,7 @@ import xlk.takstar.paperless.util.LogUtil;
 import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_10;
 import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_11;
 
-public class ChatVideoActivity extends BaseActivity<ChatVideoPresenter> implements View.OnClickListener ,ChatVideoContract.View{
+public class ChatVideoActivity extends BaseActivity<ChatVideoPresenter> implements View.OnClickListener, ChatVideoContract.View {
 
     private final String TAG = "ChatVideoLog-->";
     private CheckBox pop_video_chat_all;
@@ -356,7 +357,7 @@ public class ChatVideoActivity extends BaseActivity<ChatVideoPresenter> implemen
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.pop_video_chat_launch:
+            case R.id.pop_video_chat_launch: {
                 if (memberAdapter != null && !memberAdapter.getChooseDevid().isEmpty()) {
                     List<Integer> chooseDevids = memberAdapter.getChooseDevid();
                     if (pop_video_chat_paging.isChecked()) {
@@ -400,6 +401,7 @@ public class ChatVideoActivity extends BaseActivity<ChatVideoPresenter> implemen
                     ToastUtils.showShort(R.string.please_choose_member);
                 }
                 break;
+            }
             case R.id.pop_video_chat_stop:
                 if (work_state != 0) {
                     jni.stopDeviceIntercom(mOperdeviceid);
@@ -465,7 +467,9 @@ public class ChatVideoActivity extends BaseActivity<ChatVideoPresenter> implemen
     @Override
     public void onBackPressed() {
         stopAll();
-        super.onBackPressed();
+        startActivity(new Intent(this, MeetingActivity.class));
+        finish();
+//        super.onBackPressed();
     }
 
     private void stopAll() {

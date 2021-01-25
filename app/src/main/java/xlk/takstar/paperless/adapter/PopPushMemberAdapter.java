@@ -1,7 +1,7 @@
 package xlk.takstar.paperless.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +34,9 @@ public class PopPushMemberAdapter extends BaseQuickAdapter<DevMember, BaseViewHo
 
     public void notifyChecks() {
         List<Integer> ids = new ArrayList<>();
-        for (int i = 0; i < mData.size(); i++) {
-            if (devIds.contains(mData.get(i).getDeviceDetailInfo().getDevcieid())) {
-                ids.add(mData.get(i).getDeviceDetailInfo().getDevcieid());
+        for (int i = 0; i < getData().size(); i++) {
+            if (devIds.contains(getData().get(i).getDeviceDetailInfo().getDevcieid())) {
+                ids.add(getData().get(i).getDeviceDetailInfo().getDevcieid());
             }
         }
         devIds = ids;
@@ -53,14 +53,14 @@ public class PopPushMemberAdapter extends BaseQuickAdapter<DevMember, BaseViewHo
     }
 
     public boolean isChooseAll() {
-        return mData.size() == devIds.size();
+        return getData().size() == devIds.size();
     }
 
     public void setChooseAll(boolean isAll) {
         devIds.clear();
         if (isAll) {
-            for (int i = 0; i < mData.size(); i++) {
-                devIds.add(mData.get(i).getDeviceDetailInfo().getDevcieid());
+            for (int i = 0; i < getData().size(); i++) {
+                devIds.add(getData().get(i).getDeviceDetailInfo().getDevcieid());
             }
         }
         notifyDataSetChanged();

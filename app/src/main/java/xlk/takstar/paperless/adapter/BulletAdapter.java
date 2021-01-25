@@ -3,7 +3,7 @@ package xlk.takstar.paperless.adapter;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.mogujie.tt.protobuf.InterfaceBullet;
 
 import java.util.List;
@@ -29,9 +29,9 @@ public class BulletAdapter extends BaseQuickAdapter<InterfaceBullet.pbui_Item_Bu
     }
 
     public InterfaceBullet.pbui_Item_BulletDetailInfo getSelectedBullet() {
-        for (int i = 0; i < mData.size(); i++) {
-            if (selectedId == mData.get(i).getBulletid()) {
-                return mData.get(i);
+        for (int i = 0; i < getData().size(); i++) {
+            if (selectedId == getData().get(i).getBulletid()) {
+                return getData().get(i);
             }
         }
         return null;

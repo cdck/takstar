@@ -3,7 +3,7 @@ package xlk.takstar.paperless.adapter;
 import android.widget.Button;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.mogujie.tt.protobuf.InterfaceDevice;
 
 import java.util.ArrayList;
@@ -39,8 +39,8 @@ public class ProjectionAdapter extends BaseQuickAdapter<InterfaceDevice.pbui_Ite
     public List<Integer> getCheckDeviceIds() {
         List<Integer> temps = new ArrayList<>();
         ;
-        for (int i = 0; i < mData.size(); i++) {
-            int devcieid = mData.get(i).getDevcieid();
+        for (int i = 0; i < getData().size(); i++) {
+            int devcieid = getData().get(i).getDevcieid();
             if (checks.contains(devcieid)) {
                 temps.add(devcieid);
             }
@@ -51,15 +51,15 @@ public class ProjectionAdapter extends BaseQuickAdapter<InterfaceDevice.pbui_Ite
     public void setCheckAll(boolean all) {
         checks.clear();
         if (all) {
-            for (int i = 0; i < mData.size(); i++) {
-                checks.add(mData.get(i).getDevcieid());
+            for (int i = 0; i < getData().size(); i++) {
+                checks.add(getData().get(i).getDevcieid());
             }
         }
         notifyDataSetChanged();
     }
 
     public boolean isCheckedAll() {
-        return checks.size() == mData.size();
+        return checks.size() == getData().size();
     }
 
     @Override

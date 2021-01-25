@@ -99,11 +99,14 @@ public class ChatPresenter extends BasePresenter<ChatContract.View> implements C
     }
 
     public void addImMessage(int memberid, MyChatMessage newImMsg) {
+        LogUtil.i(TAG, "addImMessage memberId=" + memberid);
         List<MyChatMessage> myChatMessages;
         if (imMessages.containsKey(memberid)) {
             myChatMessages = imMessages.get(memberid);
+            LogUtil.i(TAG, "addImMessage 获取消息数据 " + myChatMessages.size());
         } else {
             myChatMessages = new ArrayList<>();
+            LogUtil.i(TAG, "addImMessage 新建消息数据 " + myChatMessages.size());
         }
         myChatMessages.add(newImMsg);
         imMessages.put(memberid, myChatMessages);
@@ -135,6 +138,9 @@ public class ChatPresenter extends BasePresenter<ChatContract.View> implements C
                     }
                 }
             }
+            if (currentMemberId == personid) {
+                newCount = 0;
+            }
             item.setCount(newCount);
         }
         mView.updateDeviceMember(deviceMembers);
@@ -146,8 +152,12 @@ public class ChatPresenter extends BasePresenter<ChatContract.View> implements C
             ChatDeviceMember item = deviceMembers.get(i);
             if (item.getMemberDetailInfo().getPersonid() == memberid) {
                 long lastCheckTime = item.getLastCheckTime();
-                if (utcsecond > lastCheckTime && memberid != currentMemberId) {
-                    item.setCount(item.getCount() + 1);
+                if (utcsecond > lastCheckTime) {
+                    if (memberid != currentMemberId) {
+                        item.setCount(item.getCount() + 1);
+                    } else {
+                        item.setCount(0);
+                    }
                 }
             }
         }

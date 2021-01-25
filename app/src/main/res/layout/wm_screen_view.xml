@@ -1,120 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dialog_full_holo_light">
+    android:background="@drawable/dialog_full_holo_light"
+    android:orientation="vertical">
 
-    <CheckBox
-        android:id="@+id/wm_screen_mandatory"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@drawable/shape_top_corner_blue">
+
+        <TextView
+            android:id="@+id/wm_screen_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/launch_pro"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_close" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/mandatory_ll"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/mandatory"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="center"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/wm_screen_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/launch_screen_title"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/wm_screen_mandatory"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/launch_type_"
+            android:textSize="12sp" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/attendee"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wm_screen_mandatory" />
+        <CheckBox
+            android:id="@+id/wm_screen_mandatory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:button="@drawable/check_box_style"
+            android:gravity="center"
+            android:text="@string/mandatory"
+            android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/wm_screen_cb_attendee"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/check_all"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView2"
-        app:layout_constraintStart_toEndOf="@+id/textView2" />
+    </LinearLayout>
 
+    <ImageView
+        android:id="@+id/iv_dividing_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_margin="5dp"
+        android:background="@color/devline" />
 
-    <Button
-        android:id="@+id/wm_screen_launch"
-        style="@style/btn_style"
-        android:layout_width="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="4dp"
-        android:text="@string/launch_screen"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/wm_screen_title"
-        app:layout_constraintStart_toStartOf="parent" />
+    <ImageView
+        android:id="@+id/dividing_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="20dp"
+        android:visibility="gone" />
 
-    <Button
-        android:id="@+id/wm_screen_cancel"
-        style="@style/btn_style"
-        android:layout_width="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/cancel"
-        app:layout_constraintBaseline_toBaselineOf="@+id/wm_screen_launch"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/wm_screen_title" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="@string/projector"
-        app:layout_constraintBaseline_toBaselineOf="@+id/wm_screen_cb_attendee"
-        app:layout_constraintEnd_toStartOf="@+id/wm_screen_cb_projector" />
-
-    <CheckBox
-        android:id="@+id/wm_screen_cb_projector"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="@string/check_all"
-        app:layout_constraintBaseline_toBaselineOf="@+id/wm_screen_cb_attendee"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/wm_screen_rv_attendee"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="4dp"
-        android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/wm_screen_launch"
-        app:layout_constraintEnd_toStartOf="@+id/wm_screen_rv_projector"
-        app:layout_constraintHorizontal_weight="2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wm_screen_cb_attendee" />
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/wm_screen_rv_projector"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="4dp"
-        android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/wm_screen_cancel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/wm_screen_rv_attendee"
-        app:layout_constraintTop_toBottomOf="@+id/wm_screen_cb_projector" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@color/devline"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/wm_screen_cb_attendee"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/attendee"
+                android:button="@drawable/check_box_style"
+                android:textSize="12sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/wm_screen_rv_attendee"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="1px"
+                android:layout_marginEnd="1px"
+                android:layout_marginBottom="1px"
+                android:layout_weight="1"
+                android:background="@color/white" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@color/devline"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/wm_screen_cb_projector"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:button="@drawable/check_box_style"
+                android:gravity="center"
+                android:text="@string/projector"
+                android:textSize="12sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/wm_screen_rv_projector"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="1px"
+                android:layout_marginEnd="1px"
+                android:layout_marginBottom="1px"
+                android:layout_weight="1"
+                android:background="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <include layout="@layout/include_cancel_ensure" />
+
+</LinearLayout>

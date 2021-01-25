@@ -4,45 +4,49 @@
     android:id="@+id/item_root_seat"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
     android:background="@drawable/seat_status_bg"
-    android:focusable="false"
-    android:gravity="center">
+    android:focusable="false">
+
 
     <ImageView
-        android:id="@+id/item_seat_iv"
+        android:id="@+id/item_seat_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        tools:src="@drawable/icon_seat_bottom" />
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/signin_status_bg" />
 
     <LinearLayout
         android:id="@+id/item_seat_ll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/item_seat_iv"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
+        android:layout_centerInParent="true"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/item_seat_device"
+        <ImageView
+            android:id="@+id/item_seat_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:lines="1"
-            android:textSize="14px"
-            tools:text="设备名称" />
+            android:layout_gravity="center"
+            android:src="@drawable/signin_status_user" />
 
         <TextView
             android:id="@+id/item_seat_member"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:gravity="center"
+            android:layout_gravity="center"
             android:lines="1"
             android:textSize="14px"
             tools:text="参会人名称" />
+
+        <TextView
+            android:id="@+id/item_seat_device"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:layout_gravity="center"
+            android:lines="1"
+            android:textSize="14px"
+            tools:text="设备名称" />
     </LinearLayout>
 </RelativeLayout>

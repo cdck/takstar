@@ -82,6 +82,7 @@ public class FileUtil {
                 fileName.endsWith(".3gp") ||
                 fileName.endsWith(".rmvb") ||
                 fileName.endsWith(".avi") ||
+                fileName.endsWith(".mkv") ||
                 fileName.endsWith(".flv");
     }
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--所有按钮控件的 字体颜色选择器-->
+    <item android:color="@drawable/btn_tv_color_normal" android:state_pressed="true" />
+    <item android:color="@drawable/btn_tv_color_pressed" />
+</selector>

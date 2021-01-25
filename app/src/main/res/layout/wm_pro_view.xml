@@ -1,122 +1,229 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dialog_full_holo_light">
+    android:background="@drawable/dialog_full_holo_light"
+    android:orientation="vertical">
 
-    <CheckBox
-        android:id="@+id/wm_pro_mandatory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/mandatory"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wm_pro_title" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@drawable/shape_top_corner_blue">
 
-    <TextView
-        android:id="@+id/wm_pro_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textSize="@dimen/sp_14"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/wm_pro_all"
-        app:layout_constraintStart_toEndOf="@+id/wm_pro_mandatory"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/wm_pro_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/launch_pro"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
-    <CheckBox
-        android:id="@+id/wm_pro_all"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="@string/check_all"
-        app:layout_constraintBaseline_toBaselineOf="@+id/wm_pro_mandatory"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_close" />
+    </RelativeLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/wm_pro_rv"
-        android:layout_width="0dp"
+    <!--    <ScrollView-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        android:fillViewport="true"-->
+    <!--        android:layout_weight="1">-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/wm_pro_full"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wm_pro_mandatory" />
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <CheckBox
-        android:id="@+id/wm_pro_full"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="@string/full_screen"
-        android:checked="true"
-        app:layout_constraintBottom_toTopOf="@+id/wm_pro_launch_pro"
-        app:layout_constraintEnd_toStartOf="@+id/wm_pro_flow1"
-        app:layout_constraintStart_toStartOf="parent" />
+        <LinearLayout
+            android:id="@+id/mandatory_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal">
 
-    <CheckBox
-        android:id="@+id/wm_pro_flow1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/flow_1"
-        app:layout_constraintBaseline_toBaselineOf="@+id/wm_pro_full"
-        app:layout_constraintEnd_toStartOf="@+id/wm_pro_flow2"
-        app:layout_constraintStart_toEndOf="@+id/wm_pro_full" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/launch_type_"
+                android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/wm_pro_flow2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/flow_2"
-        app:layout_constraintBaseline_toBaselineOf="@+id/wm_pro_full"
-        app:layout_constraintEnd_toStartOf="@+id/wm_pro_flow3"
-        app:layout_constraintStart_toEndOf="@+id/wm_pro_flow1" />
+            <CheckBox
+                android:id="@+id/wm_pro_mandatory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/check_box_style"
+                android:text="@string/mandatory"
+                android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/wm_pro_flow3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/flow_3"
-        app:layout_constraintBaseline_toBaselineOf="@+id/wm_pro_full"
-        app:layout_constraintEnd_toStartOf="@+id/wm_pro_flow4"
-        app:layout_constraintStart_toEndOf="@+id/wm_pro_flow2" />
+        </LinearLayout>
 
-    <CheckBox
-        android:id="@+id/wm_pro_flow4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/flow_4"
-        app:layout_constraintBaseline_toBaselineOf="@+id/wm_pro_full"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/wm_pro_flow3" />
+        <LinearLayout
+            android:id="@+id/output_type_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/wm_pro_launch_pro"
-        style="@style/btn_style"
-        android:layout_width="200dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/launch_pro"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/wm_pro_cancel"
-        app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/output_type_"
+                android:textSize="12sp" />
 
-    <Button
-        android:id="@+id/wm_pro_cancel"
-        style="@style/btn_style"
-        android:layout_width="200dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/cancel"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/wm_pro_launch_pro" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <CheckBox
+                android:id="@+id/wm_pro_full"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:button="@drawable/check_box_style"
+                android:checked="true"
+                android:text="@string/full_screen"
+                android:textSize="12sp" />
+
+            <CheckBox
+                android:id="@+id/wm_pro_flow1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:button="@drawable/check_box_style"
+                android:text="@string/flow_1"
+                android:textSize="12sp" />
+
+            <CheckBox
+                android:id="@+id/wm_pro_flow2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:button="@drawable/check_box_style"
+                android:text="@string/flow_2"
+                android:textSize="12sp" />
+
+            <CheckBox
+                android:id="@+id/wm_pro_flow3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:button="@drawable/check_box_style"
+                android:text="@string/flow_3"
+                android:textSize="12sp" />
+
+            <CheckBox
+                android:id="@+id/wm_pro_flow4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/check_box_style"
+                android:text="@string/flow_4"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_dividing_line"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_margin="5dp"
+            android:background="@color/devline" />
+
+        <ImageView
+            android:id="@+id/dividing_line"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginTop="20dp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="@color/devline"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="1px"
+                    android:layout_marginTop="1px"
+                    android:layout_marginBottom="1px"
+                    android:background="@color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center">
+
+                    <CheckBox
+                        android:id="@+id/wm_pro_all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:button="@drawable/check_box_style"
+                        android:clickable="false" />
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="1px"
+                    android:layout_marginTop="1px"
+                    android:layout_marginBottom="1px"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:text="@string/number"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="1px"
+                    android:layout_marginTop="1px"
+                    android:layout_marginEnd="1px"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="1px"
+                    android:layout_weight="4"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:text="@string/pro_device"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/wm_pro_rv"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/white" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <!--    </ScrollView>-->
+
+    <include layout="@layout/include_cancel_ensure" />
+</LinearLayout>

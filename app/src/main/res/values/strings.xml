@@ -67,6 +67,7 @@
     <string name="meeting_draw">电子白板</string>
     <string name="meeting_web">网页浏览</string>
     <string name="meeting_signin">签到信息</string>
+    <string name="meeting_score">会议评分</string>
     <string name="meeting_annotate">批注查看</string>
     <string name="exit_main_tip">是否确定退出会议界面？</string>
     <string name="init_x5_failure">组件已下载完成，需要进行重启应用才能正常使用。（之后无须再次下载）</string>
@@ -96,16 +97,16 @@
     <string name="reject_postilview">%1$s拒绝了查看批注文件的权限</string>
     <string name="not_checked_in">未签到</string>
     <string name="checked_in">已签到</string>
-    <string name="yqd_">已签到：%1$s</string>
-    <string name="yd_">应到：%1$s</string>
-    <string name="wqd_">未签到：%1$s</string>
+    <string name="yqd_">已签到人数：%1$s人</string>
+    <string name="yd_">签到信息（应到人数：%1$s人）</string>
+    <string name="wqd_">未签到人数：%1$s人</string>
     <string name="play_list">播放列表</string>
     <string name="video">视频</string>
     <string name="screen_video">同屏视频</string>
     <string name="project_video">投影视频</string>
     <string name="send">发送</string>
     <string name="time">%1$s【 %2$s 】</string>
-    <string name="me_time">我【 %1$s 】</string>
+    <string name="me_time">我</string>
     <string name="please_enter_content">请输入内容</string>
     <string name="select_all">全选</string>
     <string name="tip_save_as">保存位置：%1$s</string>
@@ -325,7 +326,29 @@
     <string name="state_meet_not">会议状态：未开始会议</string>
     <string name="state_meet_start">会议状态：已开始会议</string>
     <string name="state_meet_end">会议状态：已结束会议</string>
+    <string name="app_version_">软件版本V%1$s</string>
+    <string name="launch_elections">发起选举</string>
+    <string name="modify_elections">修改选举</string>
+    <string name="option_a">选项一：</string>
+    <string name="option_b">选项二：</string>
+    <string name="option_c">选项三：</string>
+    <string name="option_d">选项四：</string>
+    <string name="option_e">选项五：</string>
+    <string name="answer_can_not_empty">答案不能为空</string>
+    <string name="title_can_not_empty">请先填写选举标题</string>
+    <string name="err_max_length">不能超过%1$s个字符</string>
+    <string name="vote_title_">投票标题：</string>
+    <string name="elections_title_">选举标题：</string>
+    <string name="launch_type_">发起类型：</string>
+    <string name="pro_device">投影设备</string>
+    <string name="output_type_">输出类型：</string>
+    <string name="screenshots">截图批注</string>
+    <string name="end">结束</string>
 
+    <array name="yes_or_no">
+        <item>是</item>
+        <item>否</item>
+    </array>
     <array name="member_role">
         <item>无</item>
         <item>普通参会人</item>

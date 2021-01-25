@@ -1,14 +1,16 @@
 package xlk.takstar.paperless.launch;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.main.MainActivity;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.util.LogUtil;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -58,12 +60,6 @@ public class LaunchActivity extends AppCompatActivity {
                 });
     }
 
-    private void showPermissionDescription(List<String> permissions) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("权限说明");
-
-    }
-
     private void initConfigFile() {
         long l = System.currentTimeMillis();
         LogUtils.d("进入initConfigFile");
@@ -78,7 +74,14 @@ public class LaunchActivity extends AppCompatActivity {
         }
         copyTo("client.dev", Constant.root_dir, "client.dev");
         LogUtil.i("LaunchActivity", "initConfigFile 用时=" + (System.currentTimeMillis() - l));
-        startActivity(new Intent(LaunchActivity.this, MainActivity.class));
+        if (App.activities.size() == 1) {
+            startActivity(new Intent(LaunchActivity.this, MainActivity.class));
+        } else {
+            if (App.activities.size() > 1) {
+                Activity activity = App.activities.get(App.activities.size() - 2);
+                startActivity(new Intent(LaunchActivity.this, activity.getClass()));
+            }
+        }
         finish();
     }
 
@@ -120,4 +123,45 @@ public class LaunchActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Log.i("BA_life", this.getClass().getSimpleName() + ".onNewIntent :   --->>> ");
+        super.onNewIntent(intent);
+    }
+
+    @Override
+    protected void onStart() {
+        Log.i("A_life", this.getClass().getSimpleName() + ".onStart :   --->>> ");
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.i("A_life", this.getClass().getSimpleName() + ".onResume :   --->>> ");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.i("A_life", this.getClass().getSimpleName() + ".onPause :   --->>> ");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.i("A_life", this.getClass().getSimpleName() + ".onStop :   --->>> ");
+        super.onStop();
+    }
+
+    @Override
+    protected void onRestart() {
+        Log.i("A_life", this.getClass().getSimpleName() + ".onRestart :   --->>> ");
+        super.onRestart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i("A_life", this.getClass().getSimpleName() + ".onDestroy :   --->>> ");
+        super.onDestroy();
+    }
 }

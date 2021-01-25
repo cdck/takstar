@@ -26,10 +26,6 @@ import xlk.takstar.paperless.util.LogUtil;
  * @desc
  */
 public class SignPresenter extends BasePresenter<SignContract.View> implements SignContract.Presenter {
-    /**
-     * 存放要过滤掉的人员id
-     */
-    private List<Integer> filterMembers = new ArrayList<>();
     private List<InterfaceMember.pbui_Item_MemberDetailInfo> memberDetailInfos = new ArrayList<>();
     private boolean isShow = true;
     private boolean isDownLoad;
@@ -61,7 +57,7 @@ public class SignPresenter extends BasePresenter<SignContract.View> implements S
             //签到变更
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEETSIGN_VALUE:
                 if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_NOTIFY_VALUE) {
-                    querySignin();
+                    placeDeviceRankingInfo();
                 }
                 break;
             //界面配置变更通知
@@ -121,7 +117,6 @@ public class SignPresenter extends BasePresenter<SignContract.View> implements S
         }
     }
 
-
     /**
      * 1.获取排位图表是否需要显示（小板凳子）
      */
@@ -166,61 +161,19 @@ public class SignPresenter extends BasePresenter<SignContract.View> implements S
         if (meetRoomDevSeatDetailInfo == null) {
             return;
         }
-        filterMembers.clear();
+        List<InterfaceRoom.pbui_Item_MeetRoomDevSeatDetailInfo> temps = new ArrayList<>();
         List<InterfaceRoom.pbui_Item_MeetRoomDevSeatDetailInfo> itemList = meetRoomDevSeatDetailInfo.getItemList();
-//        for (int i = 0; i < itemList.size(); i++) {
-//            InterfaceRoom.pbui_Item_MeetRoomDevSeatDetailInfo item = itemList.get(i);
-//            if (item.getRole() == InterfaceMacro.Pb_MeetMemberRole.Pb_role_member_secretary_VALUE) {
-//                filterMembers.add(item.getMemberid());
-//            }
-//        }
-        mView.updateView(itemList, isShow);
-        queryMember();
-    }
-
-    private void queryMember() {
-        InterfaceMember.pbui_Type_MemberDetailInfo info = jni.queryMember();
-        if (info == null) return;
-        List<InterfaceMember.pbui_Item_MemberDetailInfo> itemList = info.getItemList();
+        int checkedMemberCount = 0, allMemberCount = 0;
         for (int i = 0; i < itemList.size(); i++) {
-            InterfaceMember.pbui_Item_MemberDetailInfo item = itemList.get(i);
-            if (!filterMembers.contains(item.getPersonid())) {
-                memberDetailInfos.add(item);
-            }
-        }
-        querySignin();
-    }
-
-    private void querySignin() {
-        try {
-            InterfaceSignin.pbui_Type_MeetSignInDetailInfo signInDetailInfo = jni.querySignin();
-            if (signInDetailInfo == null) {
-                return;
-            }
-            if (memberDetailInfos.isEmpty()) {
-                return;
-            }
-            List<InterfaceSignin.pbui_Item_MeetSignInDetailInfo> itemList = signInDetailInfo.getItemList();
-            int yqd = 0;
-            for (int i = 0; i < itemList.size(); i++) {
-                InterfaceSignin.pbui_Item_MeetSignInDetailInfo info = itemList.get(i);
-                if (filterMembers.contains(info.getNameId())) {
-                    continue;
-                }
-                long utcseconds = info.getUtcseconds();
-                String[] gtmDate = DateUtil.getGTMDate(utcseconds * 1000);
-                String dateTime = gtmDate[1] + "  " + gtmDate[0];
-                for (InterfaceMember.pbui_Item_MemberDetailInfo item : memberDetailInfos) {
-                    if (item.getPersonid() == info.getNameId()) {
-                        if (!dateTime.isEmpty()) {
-                            yqd++;
-                        }
-                    }
+            InterfaceRoom.pbui_Item_MeetRoomDevSeatDetailInfo item = itemList.get(i);
+            if (Constant.isThisDevType(InterfaceMacro.Pb_DeviceIDType.Pb_DeviceIDType_MeetClient_VALUE, item.getDevid())) {
+                allMemberCount++;
+                temps.add(item);
+                if (item.getIssignin() == 1) {
+                    checkedMemberCount++;
                 }
             }
-            mView.updateSignin(yqd, memberDetailInfos.size());
-        } catch (InvalidProtocolBufferException e) {
-            e.printStackTrace();
         }
+        mView.updateView(itemList, isShow, allMemberCount, checkedMemberCount);
     }
 }

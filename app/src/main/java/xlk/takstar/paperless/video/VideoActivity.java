@@ -2,7 +2,10 @@ package xlk.takstar.paperless.video;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -19,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 
@@ -76,6 +80,25 @@ public class VideoActivity extends BaseActivity<VideoPresenter> implements Video
     private DevMemberAdapter devMemberAdapter;
     private ProjectionAdapter projectionAdapter;
 
+
+    class HomeReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(intent.getAction())) {
+                String reason = intent.getStringExtra("reason");
+                if (reason != null) {
+                    if (reason.equals("homekey")) {
+                        LogUtils.e(TAG, "onReceive 用户点击了home键");
+                        finish();
+                    } else if (reason.equals("recentapps")) {
+                        LogUtils.e(TAG, "onReceive 用户点击了多任务键");
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_video;
@@ -91,6 +114,12 @@ public class VideoActivity extends BaseActivity<VideoPresenter> implements Video
         initView();
         presenter.queryMember();
         showVideoOrMusicUI(getIntent());
+        //创建广播
+        HomeReceiver homeReceiver = new HomeReceiver();
+        //动态注册广播
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        //启动广播
+        registerReceiver(homeReceiver, intentFilter);
     }
 
     @Override

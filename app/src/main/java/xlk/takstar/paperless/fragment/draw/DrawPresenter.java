@@ -26,7 +26,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.appcompat.app.AlertDialog;
-import xlk.takstar.paperless.MyApplication;
+import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.base.BasePresenter;
 import xlk.takstar.paperless.model.Constant;
@@ -157,7 +157,7 @@ public class DrawPresenter extends BasePresenter<DrawContract.View> implements D
         int opermemberid = object.getOpermemberid();
         long srcwbid = object.getSrcwbid();
         if (togetherIDs.contains(opermemberid)) {
-            LogUtil.e(TAG, "DrawBoardActivity.receiveDeleteEmptyRecore :  白板删除记录通知EventBus --->>> ");
+            LogUtil.e(TAG, "delInform :  白板删除记录通知EventBus --->>> ");
             //1.先清空画板
             mView.initCanvas();
             if (type == 1) { //删除
@@ -165,7 +165,7 @@ public class DrawPresenter extends BasePresenter<DrawContract.View> implements D
                 for (int i = 0; i < pathList.size(); i++) {
                     if (pathList.get(i).operid == operid && pathList.get(i).opermemberid == opermemberid
                             && pathList.get(i).srcwbid == srcwbid) {
-                        LogUtil.e(TAG, "DrawBoardActivity.receiveDeleteEmptyRecore :  确认过眼神 --> ");
+                        LogUtil.e(TAG, "delInform :  确认过眼神 --> ");
                         pathList.remove(i);
                         i--;
                     }
@@ -175,7 +175,7 @@ public class DrawPresenter extends BasePresenter<DrawContract.View> implements D
                 Iterator<ArtBoard.DrawPath> iterator = pathList.iterator();
                 while (iterator.hasNext()) {
                     if (iterator.next().opermemberid == opermemberid /*&& iterator.next().srcwbid == srcwbid*/) {
-                        LogUtil.d(TAG, "receiveDeleteEmptyRecore: 删除全部..");
+                        LogUtil.d(TAG, "delInform: 删除全部..");
                         iterator.remove();
                     }
                 }
@@ -670,7 +670,7 @@ public class DrawPresenter extends BasePresenter<DrawContract.View> implements D
             List<Integer> alluserid = new ArrayList<>();
             alluserid.add(GlobalValue.localMemberId);
             jni.broadcastStopWhiteBoard(InterfaceMacro.Pb_MeetPostilOperType.Pb_MEETPOTIL_FLAG_EXIT.getNumber(),
-                    MyApplication.appContext.getString(R.string.exit_white_board), GlobalValue.localMemberId, mSrcmemid, mSrcwbid, alluserid);
+                    App.appContext.getString(R.string.exit_white_board), GlobalValue.localMemberId, mSrcmemid, mSrcwbid, alluserid);
             isSharing = false;
             mView.updateShareStatus();
             mSrcwbid = 0;

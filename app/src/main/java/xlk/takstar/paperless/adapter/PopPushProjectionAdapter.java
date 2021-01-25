@@ -1,7 +1,7 @@
 package xlk.takstar.paperless.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.mogujie.tt.protobuf.InterfaceDevice;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import xlk.takstar.paperless.R;
  * @date 2020/3/14
  * @desc 推送文件投影机列表adapter
  */
-public class PopPushProjectionAdapter extends BaseQuickAdapter<InterfaceDevice.pbui_Item_DeviceDetailInfo,BaseViewHolder> {
+public class PopPushProjectionAdapter extends BaseQuickAdapter<InterfaceDevice.pbui_Item_DeviceDetailInfo, BaseViewHolder> {
     private List<Integer> devIds = new ArrayList<>();
     public PopPushProjectionAdapter(int layoutResId, @Nullable List<InterfaceDevice.pbui_Item_DeviceDetailInfo> data) {
         super(layoutResId, data);
@@ -32,9 +32,9 @@ public class PopPushProjectionAdapter extends BaseQuickAdapter<InterfaceDevice.p
 
     public void notifyChecks() {
         List<Integer> ids = new ArrayList<>();
-        for (int i = 0; i < mData.size(); i++) {
-            if (devIds.contains(mData.get(i).getDevcieid())) {
-                ids.add(mData.get(i).getDevcieid());
+        for (int i = 0; i < getData().size(); i++) {
+            if (devIds.contains(getData().get(i).getDevcieid())) {
+                ids.add(getData().get(i).getDevcieid());
             }
         }
         devIds = ids;
@@ -51,14 +51,14 @@ public class PopPushProjectionAdapter extends BaseQuickAdapter<InterfaceDevice.p
     }
 
     public boolean isChooseAll() {
-        return mData.size() == devIds.size();
+        return getData().size() == devIds.size();
     }
 
     public void setChooseAll(boolean isAll) {
         devIds.clear();
         if (isAll) {
-            for (int i = 0; i < mData.size(); i++) {
-                devIds.add(mData.get(i).getDevcieid());
+            for (int i = 0; i < getData().size(); i++) {
+                devIds.add(getData().get(i).getDevcieid());
             }
         }
         notifyDataSetChanged();

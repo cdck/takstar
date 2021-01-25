@@ -9,7 +9,7 @@ import android.media.MediaFormat;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import xlk.takstar.paperless.MyApplication;
+import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.model.Call;
 import xlk.takstar.paperless.util.ArithUtil;
 import xlk.takstar.paperless.util.CodecUtil;
@@ -126,7 +126,7 @@ class AvcEncoder {
 
     public void startEncoderThread() {
         LogUtil.d(TAG, "startEncoderThread -->");
-        MyApplication.threadPool.execute(()->{
+        App.threadPool.execute(() -> {
 //        Thread encoderThread = new Thread(() -> {
             isRuning = true;
             byte[] input = null;
@@ -195,7 +195,9 @@ class AvcEncoder {
             LogUtil.v(TAG, " sendDatas Get H264 Buffer Success! flag = " + bufferInfo.flags + ",pts = " + bufferInfo.presentationTimeUs);
             ByteBuffer outputBuffer = mediaCodec.getOutputBuffer(index);
             byte[] outData = new byte[bufferInfo.size];
-            outputBuffer.get(outData);
+            if (outputBuffer != null) {
+                outputBuffer.get(outData);
+            }
             //这表示带有此标记的缓存包含编解码器初始化或编解码器特定的数据而不是多媒体数据media data
             if (bufferInfo.flags == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) {// 2
                 configbyte = new byte[bufferInfo.size];

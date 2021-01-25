@@ -2,7 +2,7 @@ package xlk.takstar.paperless.util;
 
 import android.util.Log;
 
-import xlk.takstar.paperless.MyApplication;
+import xlk.takstar.paperless.App;
 
 /**
  * @author Created by xlk on 2020/11/27.
@@ -10,26 +10,26 @@ import xlk.takstar.paperless.MyApplication;
  */
 public class LogUtil {
     public static void d(String tag, String msg) {
-        if (MyApplication.isDebug) {
-            Log.d(tag, msg);
+        if (App.isDebug) {
+            Log.d("cdck======= " + tag, msg);
         }
     }
 
     public static void e(String tag, String msg) {
-        if (MyApplication.isDebug) {
-            Log.e(tag, msg);
+        if (App.isDebug) {
+            Log.e("cdck======= " + tag, msg);
         }
     }
 
     public static void i(String tag, String msg) {
-        if (MyApplication.isDebug) {
-            Log.i(tag, msg);
+        if (App.isDebug) {
+            Log.i("cdck======= " + tag, msg);
         }
     }
 
     public static void v(String tag, String msg) {
-        if (MyApplication.isDebug) {
-            Log.v(tag, msg);
+        if (App.isDebug) {
+            Log.v("cdck======= " + tag, msg);
         }
     }
 }
