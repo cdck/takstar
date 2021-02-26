@@ -78,4 +78,8 @@ public class EventType {
      * 导入的笔记内容
      */
     public static final int BUS_EXPORT_NOTE_CONTENT = BUS_BASE + 23;
+    /**
+     * 新的未读消息
+     */
+    public static final int BUS_UNREAD_MESSAGE_TIP = BUS_BASE + 24;
 }

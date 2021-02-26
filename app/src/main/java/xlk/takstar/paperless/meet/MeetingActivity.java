@@ -53,6 +53,7 @@ import xlk.takstar.paperless.fragment.chat.ChatFragment;
 import xlk.takstar.paperless.fragment.draw.DrawFragment;
 import xlk.takstar.paperless.fragment.livevideo.LiveVideoFragment;
 import xlk.takstar.paperless.fragment.material.MaterialFragment;
+import xlk.takstar.paperless.fragment.score.ScoreManageFragment;
 import xlk.takstar.paperless.fragment.screen.ScreenManageFragment;
 import xlk.takstar.paperless.fragment.sign.SignFragment;
 import xlk.takstar.paperless.fragment.terminal.TerminalControlFragment;
@@ -105,6 +106,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     private ScreenManageFragment screenManageFragment;
     private BulletFragment bulletFragment;
     private LiveVideoFragment liveVideoFragment;
+    private ScoreManageFragment scoreManageFragment;
     private FeaturesNodeAdapter nodeAdapter;
     /**
      * 保存当前点击的目录id
@@ -133,7 +135,12 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         String draw = intent.getStringExtra("draw");
         LogUtil.i(TAG, "onNewIntent draw=" + draw);
         if (draw != null && draw.equals("draw")) {
-            showFragment(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
+            if (nodeAdapter != null) {
+                nodeAdapter.clearChildSelectedStatus();
+                nodeAdapter.setDefaultSelected(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
+                nodeAdapter.clickFeature(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
+                nodeAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -361,6 +368,14 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 ft.show(bulletFragment);
                 break;
             }
+            case 31: {
+                if (scoreManageFragment == null) {
+                    scoreManageFragment = new ScoreManageFragment();
+                    ft.add(R.id.meet_fl, scoreManageFragment);
+                }
+                ft.show(scoreManageFragment);
+                break;
+            }
             default:
                 break;
         }
@@ -381,6 +396,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         if (screenManageFragment != null) ft.hide(screenManageFragment);
         if (bulletFragment != null) ft.hide(bulletFragment);
         if (liveVideoFragment != null) ft.hide(liveVideoFragment);
+        if (scoreManageFragment != null) ft.hide(scoreManageFragment);
     }
 
     @Override

@@ -128,7 +128,7 @@ class FeaturesParentProvider extends BaseNodeProvider {
             }
             //会议评分
             case 31: {
-                item_feature_iv.setImageResource(R.drawable.feature_signin_icon);
+                item_feature_iv.setImageResource(R.drawable.feature_score_manage_icon);
                 item_feature_tv.setText(getContext().getString(R.string.meeting_score));
                 break;
             }

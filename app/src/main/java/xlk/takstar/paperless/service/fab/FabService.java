@@ -54,6 +54,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.adapter.WmCanJoinMemberAdapter;
 import xlk.takstar.paperless.adapter.WmCanJoinProAdapter;
@@ -68,7 +69,7 @@ import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.model.JniHelper;
 import xlk.takstar.paperless.service.CameraActivity;
-import xlk.takstar.paperless.ui.CircleMenuLayout;
+import xlk.takstar.paperless.ui.CircularMenu;
 import xlk.takstar.paperless.util.AppUtil;
 import xlk.takstar.paperless.util.DateUtil;
 import xlk.takstar.paperless.util.DialogUtil;
@@ -223,7 +224,7 @@ public class FabService extends Service implements FabContract.View {
         fullParams.gravity = Gravity.CENTER;
         fullParams.width = FrameLayout.LayoutParams.MATCH_PARENT;
         fullParams.height = FrameLayout.LayoutParams.MATCH_PARENT;
-        fullParams.windowAnimations = R.style.pop_animation_t_b;
+//        fullParams.windowAnimations = R.style.pop_animation_t_b;
         /** **** **  外部不可点击  ** **** **/
         wrapParams = new WindowManager.LayoutParams();
         setParamsType(wrapParams);
@@ -232,7 +233,6 @@ public class FabService extends Service implements FabContract.View {
         wrapParams.width = FrameLayout.LayoutParams.WRAP_CONTENT;
         wrapParams.height = FrameLayout.LayoutParams.WRAP_CONTENT;
         wrapParams.windowAnimations = R.style.pop_animation_t_b;
-
     }
 
     private void initial() {
@@ -251,20 +251,11 @@ public class FabService extends Service implements FabContract.View {
         menuView.setFocusable(true);
         menuView.setFocusableInTouchMode(true);
         menuView.setTag("menuView");
-        CircleMenuLayout circle_menu_layout = menuView.findViewById(R.id.circle_menu_layout);
-        String[] sts = new String[]{getString(R.string.stop_pro), getString(R.string.screenshots), getString(R.string.stop_screen), getString(R.string.join_screen),
-                getString(R.string.launch_screen), getString(R.string.launch_pro), getString(R.string.meeting_note), getString(R.string.call_service)};
-        int[] dras = new int[]{
-                R.drawable.menu_stop_pro_status, R.drawable.menu_screenshot_status,
-                R.drawable.menu_stop_screen_status, R.drawable.menu_join_screen_status,
-                R.drawable.menu_start_screen_status, R.drawable.menu_start_pro_status,
-                R.drawable.menu_meet_note_status, R.drawable.menu_call_service_status,
-        };
-        circle_menu_layout.setMenuItemIconsAndTexts(dras, sts);
-        circle_menu_layout.setOnMenuItemClickListener(new CircleMenuLayout.OnMenuItemClickListener() {
+        CircularMenu circularMenu = menuView.findViewById(R.id.custom_menu);
+        circularMenu.setListener(new CircularMenu.MenuClickListener() {
             @Override
-            public void itemClick(View view, int pos) {
-                switch (pos) {
+            public void onClicked(int index) {
+                switch (index) {
                     //结束投影
                     case 0: {
                         if (Constant.hasPermission(permission_code_projection)) {
@@ -322,17 +313,98 @@ public class FabService extends Service implements FabContract.View {
                         showServiceView();
                         break;
                     }
+                    //返回
+                    case 8: {
+                        showPop(menuView, hoverButton, mParams);
+                        break;
+                    }
                     default:
                         break;
                 }
             }
-
-            @Override
-            public void itemCenterClick(View view) {
-                showPop(menuView, hoverButton, mParams);
-            }
         });
-        showPop(hoverButton, menuView, wrapParams);
+//        CircleMenuLayout circle_menu_layout = menuView.findViewById(R.id.circle_menu_layout);
+//        String[] sts = new String[]{getString(R.string.stop_pro), getString(R.string.screenshots), getString(R.string.stop_screen), getString(R.string.join_screen),
+//                getString(R.string.launch_screen), getString(R.string.launch_pro), getString(R.string.meeting_note), getString(R.string.call_service)};
+//        int[] dras = new int[]{
+//                R.drawable.menu_stop_pro_status, R.drawable.menu_screenshot_status,
+//                R.drawable.menu_stop_screen_status, R.drawable.menu_join_screen_status,
+//                R.drawable.menu_start_screen_status, R.drawable.menu_start_pro_status,
+//                R.drawable.menu_meet_note_status, R.drawable.menu_call_service_status,
+//        };
+//        circle_menu_layout.setMenuItemIconsAndTexts(dras, sts);
+//        circle_menu_layout.setOnMenuItemClickListener(new CircleMenuLayout.OnMenuItemClickListener() {
+//            @Override
+//            public void itemClick(View view, int pos) {
+//                switch (pos) {
+//                    //结束投影
+//                    case 0: {
+//                        if (Constant.hasPermission(permission_code_projection)) {
+//                            showProView(2);
+//                        } else {
+//                            ToastUtils.showShort(R.string.err_NoPermission);
+//                        }
+//                        break;
+//                    }
+//                    //截图批注
+//                    case 1: {
+//                        screenshot();
+//                        break;
+//                    }
+//                    //结束同屏
+//                    case 2: {
+//                        if (Constant.hasPermission(permission_code_screen)) {
+//                            showScreenView(2);
+//                        } else {
+//                            ToastUtils.showShort(R.string.err_NoPermission);
+//                        }
+//                        break;
+//                    }
+//                    //加入同屏
+//                    case 3: {
+//                        presenter.queryCanJoin();
+//                        showJoinView();
+//                        break;
+//                    }
+//                    //发起同屏
+//                    case 4: {
+//                        if (Constant.hasPermission(permission_code_screen)) {
+//                            showScreenView(1);
+//                        } else {
+//                            ToastUtils.showShort(R.string.err_NoPermission);
+//                        }
+//                        break;
+//                    }
+//                    //发起投影
+//                    case 5: {
+//                        if (Constant.hasPermission(permission_code_projection)) {
+//                            showProView(1);
+//                        } else {
+//                            ToastUtils.showShort(R.string.err_NoPermission);
+//                        }
+//                        break;
+//                    }
+//                    //会议笔记
+//                    case 6: {
+//                        showNoteView(menuView, saveNoteContent);
+//                        break;
+//                    }
+//                    //呼叫服务
+//                    case 7: {
+//                        showServiceView();
+//                        break;
+//                    }
+//                    default:
+//                        break;
+//                }
+//            }
+//
+//            @Override
+//            public void itemCenterClick(View view) {
+//                showPop(menuView, hoverButton, mParams);
+//            }
+//        });
+        showPop(hoverButton, menuView, fullParams);
     }
 
     @Override
@@ -1058,7 +1130,6 @@ public class FabService extends Service implements FabContract.View {
             this.btn_ensure = (Button) rootView.findViewById(R.id.btn_ensure);
         }
     }
-
 
     private AlertDialog voteDialog;
 

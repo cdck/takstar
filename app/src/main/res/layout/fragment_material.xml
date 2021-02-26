@@ -2,11 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="30dp"
-    android:layout_marginTop="5dp"
-    android:layout_marginEnd="30dp"
-    android:layout_marginBottom="30dp"
-    android:background="@drawable/dialog_full_holo_light"
     android:orientation="vertical">
 
     <ImageView
@@ -14,12 +9,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:src="@drawable/icon_meet_welcome"
         android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/content_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/dialog_full_holo_light"
         android:orientation="vertical">
 
         <LinearLayout

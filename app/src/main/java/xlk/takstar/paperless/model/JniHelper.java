@@ -14,6 +14,7 @@ import com.mogujie.tt.protobuf.InterfaceDevice;
 import com.mogujie.tt.protobuf.InterfaceDownload;
 import com.mogujie.tt.protobuf.InterfaceFaceconfig;
 import com.mogujie.tt.protobuf.InterfaceFile;
+import com.mogujie.tt.protobuf.InterfaceFilescorevote;
 import com.mogujie.tt.protobuf.InterfaceIM;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceMeetfunction;
@@ -28,7 +29,6 @@ import com.mogujie.tt.protobuf.InterfaceVideo;
 import com.mogujie.tt.protobuf.InterfaceVote;
 import com.mogujie.tt.protobuf.InterfaceWhiteboard;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import xlk.takstar.paperless.R;
@@ -1564,5 +1564,40 @@ public class JniHelper {
         }
         LogUtil.e(TAG, "queryMemberProperty -->" + "查询参会人员属性失败");
         return null;
+    }
+
+    /**
+     * 查询会议文件评分
+     * @return
+     */
+    public InterfaceFilescorevote.pbui_Type_UserDefineFileScore queryFileScore() {
+        byte[] bytes = jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTE_VALUE,
+                InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_QUERY_VALUE, null);
+        if (bytes != null) {
+            try {
+                return InterfaceFilescorevote.pbui_Type_UserDefineFileScore.parseFrom(bytes);
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据媒体ID查询文件名
+     *
+     * @param mediaId 文件id
+     */
+    public String queryFileNameByMediaId(int mediaId) {
+        String fileName = "";
+        byte[] bytes = queryFileProperty(InterfaceMacro.Pb_MeetFilePropertyID.Pb_MEETFILE_PROPERTY_NAME.getNumber(), mediaId);
+        try {
+            InterfaceBase.pbui_CommonTextProperty pbui_commonTextProperty = InterfaceBase.pbui_CommonTextProperty.parseFrom(bytes);
+            fileName = pbui_commonTextProperty.getPropertyval().toStringUtf8();
+        } catch (InvalidProtocolBufferException e) {
+            e.printStackTrace();
+        }
+        LogUtil.i(TAG, "queryFileNameByMediaId 根据媒体ID查询文件名=" + fileName);
+        return fileName;
     }
 }

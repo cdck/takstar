@@ -209,6 +209,7 @@
 
     <drawable name="bg_">#E7F6FD</drawable>
     <color name="feature_dividing_line_color">#5A5A5A</color>
+    <color name="circular_menu_region_color">#E61E5888</color>
 
 
 </resources>

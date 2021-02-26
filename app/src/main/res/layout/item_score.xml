@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="30dp"
+    android:background="@color/gray"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/item_view_1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1px"
+        android:layout_marginEnd="1px"
+        android:layout_marginBottom="1px"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="1"
+        android:singleLine="true"
+        android:text="@string/score_desc" />
+
+    <TextView
+        android:id="@+id/item_view_2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="1px"
+        android:layout_marginBottom="1px"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="1"
+        android:singleLine="true"
+        android:text="@string/score_file" />
+
+    <TextView
+        android:id="@+id/item_view_3"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="1px"
+        android:layout_marginBottom="1px"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="1"
+        android:singleLine="true"
+        android:text="@string/score_status" />
+
+    <TextView
+        android:id="@+id/item_view_4"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="1px"
+        android:layout_marginBottom="1px"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="1"
+        android:singleLine="true"
+        android:text="@string/score_yd" />
+
+    <TextView
+        android:id="@+id/item_view_5"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="1px"
+        android:layout_marginBottom="1px"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="1"
+        android:singleLine="true"
+        android:text="@string/score_registered" />
+
+    <TextView
+        android:id="@+id/item_view_6"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="1px"
+        android:layout_marginBottom="1px"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="1"
+        android:singleLine="true"
+        android:text="@string/score_a" />
+
+    <TextView
+        android:id="@+id/item_view_7"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="1px"
+        android:layout_marginBottom="1px"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="1"
+        android:singleLine="true"
+        android:text="@string/score_b" />
+
+    <TextView
+        android:id="@+id/item_view_8"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="1px"
+        android:layout_marginBottom="1px"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="1"
+        android:singleLine="true"
+        android:text="@string/score_c" />
+
+    <TextView
+        android:id="@+id/item_view_9"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="1px"
+        android:layout_marginBottom="1px"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="1"
+        android:singleLine="true"
+        android:text="@string/score_d" />
+
+    <TextView
+        android:id="@+id/item_view_10"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="1px"
+        android:layout_marginBottom="1px"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="1"
+        android:singleLine="true"
+        android:text="@string/score_total" />
+
+    <TextView
+        android:id="@+id/item_view_11"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="1px"
+        android:layout_marginBottom="1px"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="1"
+        android:singleLine="true"
+        android:text="@string/score_average" />
+</LinearLayout>

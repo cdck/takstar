@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CustomMenu">
-        <!-- 菜单个数 -->
-        <attr name="count" format="integer" />
         <!-- 颜色 -->
         <attr name="colorUnPressed" format="color" />
         <!-- 按下时颜色 -->

@@ -1,34 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#805C5C5C"
+    android:gravity="center">
 
-    <!--    <com.github.mikephil.charting.charts.PieChart-->
-    <!--        android:id="@+id/menu_view"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_centerInParent="true"-->
-    <!--        android:visibility="gone" />-->
-
-    <xlk.takstar.paperless.ui.CustomMenu
+    <xlk.takstar.paperless.ui.CircularMenu
         android:id="@+id/custom_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:visibility="gone"
-        app:colorPressed="#CC00FCA8"
-        app:colorUnPressed="#CC1E5787"
-        app:count="8"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        app:colorUnPressed="@color/circular_menu_region_color"
         app:spacingAngle="2" />
 
     <xlk.takstar.paperless.ui.CircleMenuLayout
         android:id="@+id/circle_menu_layout"
         android:layout_width="350dp"
         android:layout_height="match_parent"
-        android:background="@drawable/shape_menu_bg">
+        android:background="@drawable/shape_menu_bg"
+        android:visibility="gone">
 
         <RelativeLayout
             android:id="@id/id_circle_menu_item_center"

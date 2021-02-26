@@ -344,6 +344,19 @@
     <string name="output_type_">输出类型：</string>
     <string name="screenshots">截图批注</string>
     <string name="end">结束</string>
+    <string name="score_desc">评分描述</string>
+    <string name="score_file">文件</string>
+    <string name="score_status">状态</string>
+    <string name="score_yd">应到/实评</string>
+    <string name="score_registered">记名</string>
+    <string name="score_a">评分1</string>
+    <string name="score_b">评分2</string>
+    <string name="score_c">评分3</string>
+    <string name="score_d">评分4</string>
+    <string name="score_total">总分</string>
+    <string name="score_average">总平均分</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
 
     <array name="yes_or_no">
         <item>是</item>

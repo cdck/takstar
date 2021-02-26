@@ -356,6 +356,10 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                 }
                 break;
             }
+            case EventType.BUS_UNREAD_MESSAGE_TIP: {
+                // TODO: 2021/2/23 添加新的未读消息提示抖动动画
+                break;
+            }
             default:
                 break;
         }

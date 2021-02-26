@@ -166,7 +166,11 @@ public class WebFragment extends BaseFragment<WebPresenter> implements WebContra
                 break;
             case R.id.iv_refresh:
                 String url = edt_url.getText().toString();
-                web_view.loadUrl(uriHttpFirst(url));
+                if (url != null && !url.isEmpty()) {
+                    rv_url.setVisibility(View.GONE);
+                    web_view.setVisibility(View.VISIBLE);
+                    web_view.loadUrl(uriHttpFirst(url));
+                }
                 break;
             default:
                 break;

@@ -89,6 +89,7 @@ public class App extends Application {
             new MyRejectedExecutionHandler()
     );
     public static List<Activity> activities = new ArrayList<>();
+    public static Activity currentActivity;
 
     @Override
     public void onCreate() {
@@ -137,6 +138,7 @@ public class App extends Application {
             @Override
             public void onActivityResumed(@NonNull Activity activity) {
                 LogUtil.i(TAG, "onActivityResumed " + activity);
+                currentActivity = activity;
             }
 
             @Override
