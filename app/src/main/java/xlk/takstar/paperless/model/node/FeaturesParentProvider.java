@@ -6,7 +6,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.entity.node.BaseNode;
 import com.chad.library.adapter.base.provider.BaseNodeProvider;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.model.Constant;
-import xlk.takstar.paperless.model.GlobalValue;
 
 /**
  * @author Created by xlk on 2021/1/21.
@@ -24,7 +22,7 @@ import xlk.takstar.paperless.model.GlobalValue;
  */
 class FeaturesParentProvider extends BaseNodeProvider {
     private final String TAG = "FeaturesParentProvider-->";
-    private int selectedId = -1;
+    private int currentParentId = -1;
 
     @Override
     public int getItemViewType() {
@@ -36,12 +34,13 @@ class FeaturesParentProvider extends BaseNodeProvider {
         return R.layout.item_feature;
     }
 
+    //清除父类的点击状态
     public void clearSelectedStatus() {
-        selectedId = -1;
+        currentParentId = -1;
     }
 
     public void setDefaultSelected(int id) {
-        selectedId = id;
+        currentParentId = id;
         getAdapter().notifyDataSetChanged();
     }
 
@@ -53,19 +52,23 @@ class FeaturesParentProvider extends BaseNodeProvider {
         adapter.clickFeature(featureId);
         if (featureId == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE) {
             if (!parentNode.isExpanded()) {
-                int selectedChildID = adapter.getSelectedDirId();
-                if (selectedChildID != -1 && selectedChildID < Constant.FUN_CODE) {
+                int currentChildId = adapter.getCurrentChildId();
+                if (currentChildId != -1 && currentChildId < Constant.FUN_CODE) {
                     //之前已经选中了某个目录
                     // TODO: 2021/1/22 有可能这个目录已经不存在了
-                    clearSelectedStatus();
+                    //2021年3月1日14:36:24 只要点击了父类，目录的点击状态就清空掉
+                    adapter.clearChildSelectedStatus();
+//                    clearSelectedStatus();
                 }
-            } else {
-                selectedId = featureId;
             }
+//            else {
+//                currentParentId = featureId;
+//            }
+            currentParentId = featureId;
             adapter.expandOrCollapse(position);
             adapter.notifyDataSetChanged();
         } else {
-            selectedId = featureId;
+            currentParentId = featureId;
             adapter.clearChildSelectedStatus();
         }
     }
@@ -128,16 +131,16 @@ class FeaturesParentProvider extends BaseNodeProvider {
             }
             //会议评分
             case 31: {
-                item_feature_iv.setImageResource(R.drawable.feature_score_manage_icon);
+                item_feature_iv.setImageResource(R.drawable.feature_score_view_icon);
                 item_feature_tv.setText(getContext().getString(R.string.meeting_score));
                 break;
             }
             default:
                 break;
         }
-        LogUtils.d(TAG, "当前选中的功能id=" + selectedId + ",funcode=" + funcode);
-        item_feature_root.setSelected(selectedId == funcode);
-        item_feature_iv.setSelected(selectedId == funcode);
-        item_feature_tv.setSelected(selectedId == funcode);
+        LogUtils.d(TAG, "当前选中的功能id=" + currentParentId + ",funcode=" + funcode);
+        item_feature_root.setSelected(currentParentId == funcode);
+        item_feature_iv.setSelected(currentParentId == funcode);
+        item_feature_tv.setSelected(currentParentId == funcode);
     }
 }

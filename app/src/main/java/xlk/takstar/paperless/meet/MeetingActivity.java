@@ -16,7 +16,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileIOUtils;
-import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.UriUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -24,7 +24,6 @@ import com.chad.library.adapter.base.entity.node.BaseNode;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.mogujie.tt.protobuf.InterfaceDevice;
 import com.mogujie.tt.protobuf.InterfaceMacro;
-import com.mogujie.tt.protobuf.InterfaceMeetfunction;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -42,7 +41,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import q.rorbin.badgeview.Badge;
 import q.rorbin.badgeview.QBadgeView;
 import xlk.takstar.paperless.R;
-import xlk.takstar.paperless.adapter.FeaturesAdapter;
 import xlk.takstar.paperless.adapter.PopPushMemberAdapter;
 import xlk.takstar.paperless.adapter.PopPushProjectionAdapter;
 import xlk.takstar.paperless.base.BaseActivity;
@@ -63,7 +61,6 @@ import xlk.takstar.paperless.main.MainActivity;
 import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.model.EventMessage;
 import xlk.takstar.paperless.model.EventType;
-import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.model.bean.DevMember;
 import xlk.takstar.paperless.model.node.FeaturesNodeAdapter;
 import xlk.takstar.paperless.model.node.FeaturesParentNode;
@@ -75,6 +72,7 @@ import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_0;
 
 public class MeetingActivity extends BaseActivity<MeetingPresenter> implements MeetingContract.View, View.OnClickListener {
 
+    public static boolean firstTimeIn = false;
     private LinearLayout meet_left_ll;
     private LinearLayout meet_top_ll;
     private ImageView meet_iv_logo;
@@ -125,6 +123,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
 
     @Override
     protected void init(Bundle savedInstanceState) {
+        firstTimeIn = true;
         initView();
         presenter.initial();
     }
@@ -171,8 +170,8 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     }
 
     @Override
-    public void closeOtherFeaturePage() {
-        if (nodeAdapter != null) nodeAdapter.closeFoot();
+    public void collapseOtherFeature() {
+        if (nodeAdapter != null) nodeAdapter.expandOrCollapseOtherFeature(false);
         if (saveFunCode > Constant.FUN_CODE) {
             saveFunCode = -1;
             updateMeetingFeatures();
@@ -206,22 +205,57 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             nodeAdapter.notifyDataSetChanged();
         }
         if (saveFunCode == -1) {
-            if (!presenter.features.isEmpty()) {
-                BaseNode baseNode = presenter.features.get(0);
-                if (baseNode instanceof FeaturesParentNode) {
-                    FeaturesParentNode parentNode = (FeaturesParentNode) baseNode;
-                    showFragment(parentNode.getFeatureId());
-                    nodeAdapter.setDefaultSelected(parentNode.getFeatureId());
-                } else if (presenter.features.size() > 1) {
-                    BaseNode baseNode1 = presenter.features.get(1);
-                    if (baseNode1 instanceof FeaturesParentNode) {
-                        FeaturesParentNode parentNode = (FeaturesParentNode) baseNode1;
-                        showFragment(parentNode.getFeatureId());
-                        nodeAdapter.setDefaultSelected(parentNode.getFeatureId());
+            setChooseDefaultFeature();
+        } else {
+            LogUtils.i(TAG, "之前展示的功能id=" + saveFunCode);
+            if (saveFunCode < Constant.FUN_CODE) {//之前展示的是后台提供的功能模块
+                //判断更新后之前展示的功能还在不在
+                boolean hasFeature = false;
+                for (int i = 0; i < presenter.features.size(); i++) {
+                    BaseNode baseNode = presenter.features.get(i);
+                    if (baseNode instanceof FeaturesParentNode) {
+                        FeaturesParentNode parentNode = (FeaturesParentNode) baseNode;
+                        if (parentNode.getFeatureId() == saveFunCode) {
+                            hasFeature = true;
+                            break;
+                        }
                     }
                 }
+                if (!hasFeature) {
+                    //更新后没有该功能了
+                    setChooseDefaultFeature();
+                }
+            } else {//之前展示的是固定的其它功能模块
+                //不需要操作
+//                showFragment(saveFunCode);
+//                nodeAdapter.expandOrCollapseOtherFeature(true);
+//                nodeAdapter.setSelectChildFeature(saveFunCode);
             }
         }
+    }
+
+    /**
+     * 设置默认选中第一个功能，如果一个功能都没有就进行隐藏掉之前显示的功能fragment视图
+     */
+    private void setChooseDefaultFeature() {
+        //presenter.features最少都有一个其它功能模块
+        BaseNode baseNode = presenter.features.get(0);
+        if (baseNode instanceof FeaturesParentNode) {
+            FeaturesParentNode parentNode = (FeaturesParentNode) baseNode;
+            showFragment(parentNode.getFeatureId());
+            nodeAdapter.setDefaultSelected(parentNode.getFeatureId());
+        } else {
+            showFragment(-1);
+            nodeAdapter.setDefaultSelected(-1);
+        }
+//            else if (presenter.features.size() > 1) {
+//                BaseNode baseNode1 = presenter.features.get(1);
+//                if (baseNode1 instanceof FeaturesParentNode) {
+//                    FeaturesParentNode parentNode = (FeaturesParentNode) baseNode1;
+//                    showFragment(parentNode.getFeatureId());
+//                    nodeAdapter.setDefaultSelected(parentNode.getFeatureId());
+//                }
+//            }
     }
 
     @Override
@@ -368,11 +402,27 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 ft.show(bulletFragment);
                 break;
             }
-            case 31: {
+            //评分管理
+            case Constant.FUN_CODE_SCORE: {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isScoreManage", true);
                 if (scoreManageFragment == null) {
                     scoreManageFragment = new ScoreManageFragment();
                     ft.add(R.id.meet_fl, scoreManageFragment);
                 }
+                scoreManageFragment.setArguments(bundle);
+                ft.show(scoreManageFragment);
+                break;
+            }
+            //评分查看
+            case 31: {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isScoreManage", false);
+                if (scoreManageFragment == null) {
+                    scoreManageFragment = new ScoreManageFragment();
+                    ft.add(R.id.meet_fl, scoreManageFragment);
+                }
+                scoreManageFragment.setArguments(bundle);
                 ft.show(scoreManageFragment);
                 break;
             }
@@ -546,7 +596,8 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                     devIds.addAll(pushProjectionAdapter.getDevIds());
                     if (!devIds.isEmpty()) {
                         pushPop.dismiss();
-                        jni.mediaPlayOperate(mediaId, devIds, 0, RESOURCE_ID_0, 0, InterfaceMacro.Pb_MeetPlayFlag.Pb_MEDIA_PLAYFLAG_ZERO.getNumber());
+                        jni.mediaPlayOperate(mediaId, devIds, 0, RESOURCE_ID_0,
+                                0, InterfaceMacro.Pb_MeetPlayFlag.Pb_MEDIA_PLAYFLAG_ZERO.getNumber());
                     } else {
                         ToastUtils.showShort(R.string.please_choose_push_target);
                     }
@@ -605,4 +656,5 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             }
         }
     }
+
 }

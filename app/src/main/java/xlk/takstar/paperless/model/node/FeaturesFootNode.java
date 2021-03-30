@@ -17,11 +17,10 @@ import xlk.takstar.paperless.model.Constant;
  * 展开条件是：身份为管理员、秘书、主持人
  */
 public class FeaturesFootNode extends BaseExpandNode {
-    private int feature_id = Constant.FUN_CODE;
     List<BaseNode> otherFeatures;
 
-    public FeaturesFootNode() {
-        setExpanded(false);
+    public FeaturesFootNode(boolean expand) {
+        setExpanded(expand);
         if (otherFeatures == null) {
             otherFeatures = new ArrayList<>();
             otherFeatures.add(new FeaturesChildNode(Constant.FUN_CODE_TERMINAL));
@@ -30,6 +29,7 @@ public class FeaturesFootNode extends BaseExpandNode {
             otherFeatures.add(new FeaturesChildNode(Constant.FUN_CODE_VIDEO));
             otherFeatures.add(new FeaturesChildNode(Constant.FUN_CODE_SCREEN));
             otherFeatures.add(new FeaturesChildNode(Constant.FUN_CODE_BULLETIN));
+            otherFeatures.add(new FeaturesChildNode(Constant.FUN_CODE_SCORE));
         }
     }
 

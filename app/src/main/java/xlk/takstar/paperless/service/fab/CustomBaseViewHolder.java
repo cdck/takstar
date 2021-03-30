@@ -1,5 +1,6 @@
 package xlk.takstar.paperless.service.fab;
 
+import android.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -46,7 +47,6 @@ public class CustomBaseViewHolder {
 
     public static class ServiceViewHolder {
         public View rootView;
-        public TextView textView;
         public ImageView wm_service_close;
         public Button wm_service_pen;
         public Button wm_service_pager;
@@ -59,7 +59,6 @@ public class CustomBaseViewHolder {
 
         public ServiceViewHolder(View rootView) {
             this.rootView = rootView;
-            this.textView = (TextView) rootView.findViewById(R.id.textView);
             this.wm_service_close = (ImageView) rootView.findViewById(R.id.wm_service_close);
             this.wm_service_pen = (Button) rootView.findViewById(R.id.wm_service_pen);
             this.wm_service_pager = (Button) rootView.findViewById(R.id.wm_service_pager);
@@ -147,7 +146,6 @@ public class CustomBaseViewHolder {
 
     }
 
-
     public static class SubmitViewHolder {
         public View rootView;
         public Button vote_submit_ensure;
@@ -159,5 +157,43 @@ public class CustomBaseViewHolder {
             this.vote_submit_cancel = (Button) rootView.findViewById(R.id.vote_submit_cancel);
         }
 
+    }
+
+    public static class ScoreViewHolder {
+        public AlertDialog dialog;
+        public TextView tv_score_desc;
+        public TextView tv_score_file;
+        public TextView tv_register;
+        public TextView tv_score_a;
+        public EditText edt_score_a;
+        public TextView tv_score_b;
+        public EditText edt_score_b;
+        public TextView tv_score_c;
+        public EditText edt_score_c;
+        public TextView tv_score_d;
+        public EditText edt_score_d;
+        public TextView tv_rating_comment;
+        public EditText edt_rating_comment;
+        public Button btn_submit;
+        public Button btn_cancel;
+
+        public ScoreViewHolder(AlertDialog dialog) {
+            this.dialog = dialog;
+            tv_score_desc = (TextView) dialog.findViewById(R.id.tv_score_desc);
+            tv_score_file = (TextView) dialog.findViewById(R.id.tv_score_file);
+            tv_register = (TextView) dialog.findViewById(R.id.tv_register);
+            tv_score_a = (TextView) dialog.findViewById(R.id.tv_score_a);
+            edt_score_a = (EditText) dialog.findViewById(R.id.edt_score_a);
+            tv_score_b = (TextView) dialog.findViewById(R.id.tv_score_b);
+            edt_score_b = (EditText) dialog.findViewById(R.id.edt_score_b);
+            tv_score_c = (TextView) dialog.findViewById(R.id.tv_score_c);
+            edt_score_c = (EditText) dialog.findViewById(R.id.edt_score_c);
+            tv_score_d = (TextView) dialog.findViewById(R.id.tv_score_d);
+            edt_score_d = (EditText) dialog.findViewById(R.id.edt_score_d);
+            tv_rating_comment = (TextView) dialog.findViewById(R.id.tv_rating_comment);
+            edt_rating_comment = (EditText) dialog.findViewById(R.id.edt_rating_comment);
+            btn_submit = (Button) dialog.findViewById(R.id.btn_submit);
+            btn_cancel = (Button) dialog.findViewById(R.id.btn_cancel);
+        }
     }
 }

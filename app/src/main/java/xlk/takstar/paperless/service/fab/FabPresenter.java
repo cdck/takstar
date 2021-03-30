@@ -3,11 +3,14 @@ package xlk.takstar.paperless.service.fab;
 import android.content.Context;
 import android.content.Intent;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.mogujie.tt.protobuf.InterfaceBase;
 import com.mogujie.tt.protobuf.InterfaceBullet;
 import com.mogujie.tt.protobuf.InterfaceDevice;
+import com.mogujie.tt.protobuf.InterfaceFilescorevote;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceMember;
 import com.mogujie.tt.protobuf.InterfaceVote;
@@ -146,6 +149,33 @@ public class FabPresenter extends BasePresenter<FabContract.View> implements Fab
             case EventType.BUS_EXPORT_NOTE_CONTENT: {
                 String content = (String) msg.getObjects()[0];
                 mView.showNoteView(content);
+                break;
+            }
+            //收到文件评分通知
+            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTE_VALUE: {
+                if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_START_VALUE) {
+                    //收到发起文件评分
+                    LogUtils.i(TAG, "收到发起文件评分通知 Pb_METHOD_MEET_INTERFACE_START_VALUE");
+                    byte[] object = (byte[]) msg.getObjects()[0];
+                    InterfaceFilescorevote.pbui_Type_StartUserDefineFileScoreNotify info
+                            = InterfaceFilescorevote.pbui_Type_StartUserDefineFileScoreNotify.parseFrom(object);
+                    if (info != null) {
+                        mView.showScoreView(info);
+                    }
+                } else if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_STOP_VALUE) {
+                    //收到停止文件评分
+                    LogUtils.i(TAG, "收到停止文件评分通知 Pb_METHOD_MEET_INTERFACE_START_VALUE");
+                    mView.closeScoreView();
+                } else if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_NOTIFY_VALUE) {
+                    byte[] data = (byte[]) msg.getObjects()[0];
+                    InterfaceBase.pbui_MeetNotifyMsg pbui_meetNotifyMsg = InterfaceBase.pbui_MeetNotifyMsg.parseFrom(data);
+                    int id = pbui_meetNotifyMsg.getId();
+                    int opermethod = pbui_meetNotifyMsg.getOpermethod();
+                    LogUtils.d(TAG, "BusEvent -->" + "会议评分变更通知 id= " + id + ", opermethod= " + opermethod);
+                    if (opermethod == 30) {
+                        mView.closeScoreView();
+                    }
+                }
                 break;
             }
             default:

@@ -100,8 +100,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     private PopupWindow createPop;
 
     private final int REQUEST_CODE_READ_FRAME_BUFFER = 1;
-    private TextView main_tv_remarks, main_tv_status, main_tv_role;
-    private TextView main_tv_version;
+    private TextView main_tv_remarks, main_tv_status, main_tv_role, main_tv_version;
 
     @Override
     protected int getLayoutId() {
@@ -131,7 +130,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             PackageManager pm = getPackageManager();
             try {
                 PackageInfo packageInfo = pm.getPackageInfo(getPackageName(), 0);
-                main_tv_version.setText(getString(R.string.app_version_, packageInfo.versionName));
+//                main_tv_version.setText(getString(R.string.app_version_, packageInfo.versionName));
                 String hardver = "";
                 String softver = "";
                 if (packageInfo.versionName.contains(".")) {
@@ -406,35 +405,35 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     @Override
     public void updateMemberRole(String string) {
-        main_tv_role.setVisibility(string.isEmpty() ? View.GONE : View.VISIBLE);
-        main_tv_role.setText(getString(R.string.member_role_, string));
+//        main_tv_role.setVisibility(string.isEmpty() ? View.GONE : View.VISIBLE);
+//        main_tv_role.setText(getString(R.string.member_role_, string));
     }
 
     @Override
     public void updateRemarks(String s) {
-        main_tv_remarks.setVisibility(s.isEmpty() ? View.GONE : View.VISIBLE);
-        main_tv_remarks.setText(s);
+//        main_tv_remarks.setVisibility(s.isEmpty() ? View.GONE : View.VISIBLE);
+//        main_tv_remarks.setText(s);
     }
 
     @Override
     public void updateMeetingState(int state) {
-        LogUtil.i(TAG, "updateMeetingState state=" + state);
-        main_tv_status.setVisibility(state == -1 ? View.GONE : View.VISIBLE);
-        //会议状态，0为未开始会议，1为已开始会议，2为已结束会议，其它表示未加入会议无状态
-        switch (state) {
-            case 0:
-                main_tv_status.setText(getString(R.string.state_meet_not));
-                break;
-            case 1:
-                main_tv_status.setText(getString(R.string.state_meet_start));
-                break;
-            case 2:
-                main_tv_status.setText(getString(R.string.state_meet_end));
-                break;
-            default:
-                main_tv_status.setText("");
-                break;
-        }
+//        LogUtil.i(TAG, "updateMeetingState state=" + state);
+//        main_tv_status.setVisibility(state == -1 ? View.GONE : View.VISIBLE);
+//        //会议状态，0为未开始会议，1为已开始会议，2为已结束会议，其它表示未加入会议无状态
+//        switch (state) {
+//            case 0:
+//                main_tv_status.setText(getString(R.string.state_meet_not));
+//                break;
+//            case 1:
+//                main_tv_status.setText(getString(R.string.state_meet_start));
+//                break;
+//            case 2:
+//                main_tv_status.setText(getString(R.string.state_meet_end));
+//                break;
+//            default:
+//                main_tv_status.setText("");
+//                break;
+//        }
     }
 
     @Override

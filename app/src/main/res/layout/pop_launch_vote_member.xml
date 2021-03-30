@@ -14,7 +14,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="@string/choose_vote_member"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,6 +29,7 @@
         android:layout_marginEnd="8dp"
         android:text="@string/vote_tip"
         android:textColor="@color/red"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView12" />
@@ -51,6 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_vertical"
+            android:textSize="12sp"
             android:text="@string/number"
             android:textColor="@color/light_black"
             android:textStyle="bold" />
@@ -61,6 +63,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/member"
+            android:textSize="12sp"
             android:textColor="@color/light_black"
             android:textStyle="bold" />
 
@@ -70,6 +73,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/seat"
+            android:textSize="12sp"
             android:textColor="@color/light_black"
             android:textStyle="bold" />
 
@@ -77,6 +81,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textSize="12sp"
             android:gravity="center_vertical"
             android:text="@string/device_state"
             android:textColor="@color/light_black"
@@ -88,6 +93,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/permission"
+            android:textSize="12sp"
             android:textColor="@color/light_black"
             android:textStyle="bold" />
     </LinearLayout>
@@ -109,6 +115,7 @@
         android:id="@+id/pop_vote_determine"
         style="@style/btn_style"
         android:layout_width="wrap_content"
+        android:textSize="12sp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
@@ -123,6 +130,7 @@
         android:layout_width="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:textSize="12sp"
         android:text="@string/cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

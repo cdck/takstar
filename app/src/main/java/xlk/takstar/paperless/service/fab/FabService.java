@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.text.InputFilter;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,19 +28,23 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Chronometer;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.protobuf.ByteString;
 import com.mogujie.tt.protobuf.InterfaceBullet;
 import com.mogujie.tt.protobuf.InterfaceDevice;
+import com.mogujie.tt.protobuf.InterfaceFilescorevote;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceVote;
 
@@ -54,7 +59,6 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.adapter.WmCanJoinMemberAdapter;
 import xlk.takstar.paperless.adapter.WmCanJoinProAdapter;
@@ -75,9 +79,12 @@ import xlk.takstar.paperless.util.DateUtil;
 import xlk.takstar.paperless.util.DialogUtil;
 import xlk.takstar.paperless.util.FileUtil;
 import xlk.takstar.paperless.util.LogUtil;
+import xlk.takstar.paperless.util.MaxLengthFilter;
+import xlk.takstar.paperless.util.RangeControlFilter;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static xlk.takstar.paperless.App.mMediaProjection;
+import static xlk.takstar.paperless.App.read2file;
 import static xlk.takstar.paperless.chatonline.ChatVideoActivity.isChatingOpened;
 import static xlk.takstar.paperless.fragment.draw.DrawFragment.isDrawing;
 import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_0;
@@ -104,7 +111,6 @@ public class FabService extends Service implements FabContract.View {
     private long downTime, upTime;
     private int mTouchStartX, mTouchStartY;
 
-
     private WmScreenMemberAdapter memberAdapter;
     private WmScreenProjectorAdapter wmScreenProjectorAdapter;
     private WmProjectorAdapter projectorAdapter;
@@ -124,6 +130,7 @@ public class FabService extends Service implements FabContract.View {
     private int currentChooseCount;
     private int voteTimeouts;
     private int maxChooseCount = 1;//当前投票最多可以选择答案的个数
+    private AlertDialog scoreDialog;
 
     @Nullable
     @Override
@@ -252,158 +259,74 @@ public class FabService extends Service implements FabContract.View {
         menuView.setFocusableInTouchMode(true);
         menuView.setTag("menuView");
         CircularMenu circularMenu = menuView.findViewById(R.id.custom_menu);
-        circularMenu.setListener(new CircularMenu.MenuClickListener() {
-            @Override
-            public void onClicked(int index) {
-                switch (index) {
-                    //结束投影
-                    case 0: {
-                        if (Constant.hasPermission(permission_code_projection)) {
-                            showProView(2);
-                        } else {
-                            ToastUtils.showShort(R.string.err_NoPermission);
-                        }
-                        break;
+        circularMenu.setListener(index -> {
+            switch (index) {
+                //结束投影
+                case 0: {
+                    if (Constant.hasPermission(permission_code_projection)) {
+                        showProView(2);
+                    } else {
+                        ToastUtils.showShort(R.string.err_NoPermission);
                     }
-                    //截图批注
-                    case 1: {
-                        screenshot();
-                        break;
-                    }
-                    //结束同屏
-                    case 2: {
-                        if (Constant.hasPermission(permission_code_screen)) {
-                            showScreenView(2);
-                        } else {
-                            ToastUtils.showShort(R.string.err_NoPermission);
-                        }
-                        break;
-                    }
-                    //加入同屏
-                    case 3: {
-                        presenter.queryCanJoin();
-                        showJoinView();
-                        break;
-                    }
-                    //发起同屏
-                    case 4: {
-                        if (Constant.hasPermission(permission_code_screen)) {
-                            showScreenView(1);
-                        } else {
-                            ToastUtils.showShort(R.string.err_NoPermission);
-                        }
-                        break;
-                    }
-                    //发起投影
-                    case 5: {
-                        if (Constant.hasPermission(permission_code_projection)) {
-                            showProView(1);
-                        } else {
-                            ToastUtils.showShort(R.string.err_NoPermission);
-                        }
-                        break;
-                    }
-                    //会议笔记
-                    case 6: {
-                        showNoteView(menuView, saveNoteContent);
-                        break;
-                    }
-                    //呼叫服务
-                    case 7: {
-                        showServiceView();
-                        break;
-                    }
-                    //返回
-                    case 8: {
-                        showPop(menuView, hoverButton, mParams);
-                        break;
-                    }
-                    default:
-                        break;
+                    break;
                 }
+                //截图批注
+                case 1: {
+                    screenshot();
+                    break;
+                }
+                //结束同屏
+                case 2: {
+                    if (Constant.hasPermission(permission_code_screen)) {
+                        showScreenView(2);
+                    } else {
+                        ToastUtils.showShort(R.string.err_NoPermission);
+                    }
+                    break;
+                }
+                //加入同屏
+                case 3: {
+                    presenter.queryCanJoin();
+                    showJoinView();
+                    break;
+                }
+                //发起同屏
+                case 4: {
+                    if (Constant.hasPermission(permission_code_screen)) {
+                        showScreenView(1);
+                    } else {
+                        ToastUtils.showShort(R.string.err_NoPermission);
+                    }
+                    break;
+                }
+                //发起投影
+                case 5: {
+                    if (Constant.hasPermission(permission_code_projection)) {
+                        showProView(1);
+                    } else {
+                        ToastUtils.showShort(R.string.err_NoPermission);
+                    }
+                    break;
+                }
+                //会议笔记
+                case 6: {
+                    showNoteView(menuView, saveNoteContent);
+                    break;
+                }
+                //呼叫服务
+                case 7: {
+                    showServiceView();
+                    break;
+                }
+                //返回
+                case 8: {
+                    showPop(menuView, hoverButton, mParams);
+                    break;
+                }
+                default:
+                    break;
             }
         });
-//        CircleMenuLayout circle_menu_layout = menuView.findViewById(R.id.circle_menu_layout);
-//        String[] sts = new String[]{getString(R.string.stop_pro), getString(R.string.screenshots), getString(R.string.stop_screen), getString(R.string.join_screen),
-//                getString(R.string.launch_screen), getString(R.string.launch_pro), getString(R.string.meeting_note), getString(R.string.call_service)};
-//        int[] dras = new int[]{
-//                R.drawable.menu_stop_pro_status, R.drawable.menu_screenshot_status,
-//                R.drawable.menu_stop_screen_status, R.drawable.menu_join_screen_status,
-//                R.drawable.menu_start_screen_status, R.drawable.menu_start_pro_status,
-//                R.drawable.menu_meet_note_status, R.drawable.menu_call_service_status,
-//        };
-//        circle_menu_layout.setMenuItemIconsAndTexts(dras, sts);
-//        circle_menu_layout.setOnMenuItemClickListener(new CircleMenuLayout.OnMenuItemClickListener() {
-//            @Override
-//            public void itemClick(View view, int pos) {
-//                switch (pos) {
-//                    //结束投影
-//                    case 0: {
-//                        if (Constant.hasPermission(permission_code_projection)) {
-//                            showProView(2);
-//                        } else {
-//                            ToastUtils.showShort(R.string.err_NoPermission);
-//                        }
-//                        break;
-//                    }
-//                    //截图批注
-//                    case 1: {
-//                        screenshot();
-//                        break;
-//                    }
-//                    //结束同屏
-//                    case 2: {
-//                        if (Constant.hasPermission(permission_code_screen)) {
-//                            showScreenView(2);
-//                        } else {
-//                            ToastUtils.showShort(R.string.err_NoPermission);
-//                        }
-//                        break;
-//                    }
-//                    //加入同屏
-//                    case 3: {
-//                        presenter.queryCanJoin();
-//                        showJoinView();
-//                        break;
-//                    }
-//                    //发起同屏
-//                    case 4: {
-//                        if (Constant.hasPermission(permission_code_screen)) {
-//                            showScreenView(1);
-//                        } else {
-//                            ToastUtils.showShort(R.string.err_NoPermission);
-//                        }
-//                        break;
-//                    }
-//                    //发起投影
-//                    case 5: {
-//                        if (Constant.hasPermission(permission_code_projection)) {
-//                            showProView(1);
-//                        } else {
-//                            ToastUtils.showShort(R.string.err_NoPermission);
-//                        }
-//                        break;
-//                    }
-//                    //会议笔记
-//                    case 6: {
-//                        showNoteView(menuView, saveNoteContent);
-//                        break;
-//                    }
-//                    //呼叫服务
-//                    case 7: {
-//                        showServiceView();
-//                        break;
-//                    }
-//                    default:
-//                        break;
-//                }
-//            }
-//
-//            @Override
-//            public void itemCenterClick(View view) {
-//                showPop(menuView, hoverButton, mParams);
-//            }
-//        });
         showPop(hoverButton, menuView, fullParams);
     }
 
@@ -557,6 +480,7 @@ public class FabService extends Service implements FabContract.View {
         showPop(menuView, proView);
     }
 
+    //投影视图事件
     private void proViewHolderEvent(CustomBaseViewHolder.ProViewHolder holder, int type) {
         holder.mandatory_ll.setVisibility(type == 1 ? View.VISIBLE : View.GONE);
         holder.output_type_ll.setVisibility(type == 1 ? View.VISIBLE : View.GONE);
@@ -1089,17 +1013,8 @@ public class FabService extends Service implements FabContract.View {
             currentVoteId = -1;
             currentChooseCount = 0;
         }
-//        if (voteViewIsShowing) {
-//            wm.removeView(voteView);
-//            voteViewIsShowing = false;
-//            currentVoteId = -1;
-//            currentChooseCount = 0;
-//        }
-//        if (voteEnsureViewIsShowing) {
-//            wm.removeView(voteEnsureView);
-//            voteEnsureViewIsShowing = false;
-//        }
     }
+
 
     public static class VoteViewHolder {
         public ImageView iv_close;
@@ -1330,4 +1245,94 @@ public class FabService extends Service implements FabContract.View {
         });
     }
 
+    //展示评分视图
+    @Override
+    public void showScoreView(InterfaceFilescorevote.pbui_Type_StartUserDefineFileScoreNotify info) {
+        LogUtils.i(TAG, "showScoreView");
+        scoreDialog = DialogUtil.createDialog(cxt, R.layout.dialog_score_view, false, GlobalValue.screen_width, GlobalValue.screen_height);
+        CustomBaseViewHolder.ScoreViewHolder scoreViewHolder = new CustomBaseViewHolder.ScoreViewHolder(scoreDialog);
+        scoreViewHolderEvent(scoreViewHolder, info);
+    }
+
+    @Override
+    public void closeScoreView() {
+        LogUtils.i(TAG,"closeScoreView");
+        if (scoreDialog != null && scoreDialog.isShowing()) {
+            scoreDialog.dismiss();
+        }
+    }
+
+    private void scoreViewHolderEvent(CustomBaseViewHolder.ScoreViewHolder holder, InterfaceFilescorevote.pbui_Type_StartUserDefineFileScoreNotify info) {
+        holder.tv_score_desc.setText(info.getContent().toStringUtf8());
+        holder.tv_score_file.setText(jni.queryFileNameByMediaId(info.getFileid()));
+        holder.tv_register.setText(info.getMode() == InterfaceMacro.Pb_MeetVoteMode.Pb_VOTEMODE_signed_VALUE
+                ? cxt.getString(R.string.yes)
+                : cxt.getString(R.string.no));
+        List<ByteString> voteTextList = info.getVoteTextList();
+        holder.edt_score_a.setEnabled(false);
+        holder.edt_score_b.setEnabled(false);
+        holder.edt_score_c.setEnabled(false);
+        holder.edt_score_d.setEnabled(false);
+        if (voteTextList.size() > 0) {
+            String a = voteTextList.get(0).toStringUtf8();
+            holder.tv_score_a.setText(a);
+            holder.edt_score_a.setEnabled(true);
+            holder.edt_score_a.setFilters(new InputFilter[]{new RangeControlFilter(0, 100)});
+        }
+        if (voteTextList.size() > 1) {
+            String b = voteTextList.get(1).toStringUtf8();
+            holder.tv_score_b.setText(b);
+            holder.edt_score_b.setEnabled(true);
+            holder.edt_score_b.setFilters(new InputFilter[]{new RangeControlFilter(0, 100)});
+        }
+        if (voteTextList.size() > 2) {
+            String c = voteTextList.get(2).toStringUtf8();
+            holder.tv_score_c.setText(c);
+            holder.edt_score_c.setEnabled(true);
+            holder.edt_score_c.setFilters(new InputFilter[]{new RangeControlFilter(0, 100)});
+        }
+        if (voteTextList.size() > 3) {
+            String d = voteTextList.get(3).toStringUtf8();
+            holder.tv_score_d.setText(d);
+            holder.edt_score_d.setEnabled(true);
+            holder.edt_score_d.setFilters(new InputFilter[]{new RangeControlFilter(0, 100)});
+        }
+        holder.edt_rating_comment.setFilters(new InputFilter[]{
+                new MaxLengthFilter(InterfaceFilescorevote.Pb_FILESCOREVOTE_LenLimit.Pb_MEET_FILESCORE_MAXITEM_LEN_VALUE)
+        });
+        holder.btn_cancel.setOnClickListener(v -> {
+            scoreDialog.dismiss();
+        });
+        holder.btn_submit.setOnClickListener(v -> {
+            List<Integer> fractions = new ArrayList<>();
+            String sa = holder.edt_score_a.getText().toString();
+            String sb = holder.edt_score_b.getText().toString();
+            String sc = holder.edt_score_c.getText().toString();
+            String sd = holder.edt_score_d.getText().toString();
+            if (!sa.isEmpty()) {
+                int a = Integer.parseInt(sa);
+                fractions.add(a);
+            }
+            if (!sb.isEmpty()) {
+                int b = Integer.parseInt(sb);
+                fractions.add(b);
+            }
+            if (!sc.isEmpty()) {
+                int c = Integer.parseInt(sc);
+                fractions.add(c);
+            }
+            if (!sd.isEmpty()) {
+                int d = Integer.parseInt(sd);
+                fractions.add(d);
+            }
+            if (fractions.size() != voteTextList.size()) {
+                Toast.makeText(cxt, R.string.please_enter_fraction, Toast.LENGTH_SHORT).show();
+//                ToastUtils.showShort(R.string.please_enter_fraction);
+                return;
+            }
+            String opinion = holder.edt_rating_comment.getText().toString();
+            jni.submitScore(info.getVoteid(), GlobalValue.localMemberId, opinion, fractions);
+            scoreDialog.dismiss();
+        });
+    }
 }

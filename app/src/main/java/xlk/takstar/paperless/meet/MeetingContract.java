@@ -28,7 +28,7 @@ public interface MeetingContract {
 
         void jump2main();
 
-        void closeOtherFeaturePage();
+        void collapseOtherFeature();
 
         void updateTime(String[] gtmDate);
 
@@ -54,6 +54,9 @@ public interface MeetingContract {
         void queryDeviceMeetInfo();
 
         void queryLocalRole();
-        void queryMeetingFunction();
+
+        void queryMeetingFeature();
+
+        boolean hasThisFeature(int id);
     }
 }

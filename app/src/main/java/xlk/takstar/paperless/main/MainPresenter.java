@@ -2,13 +2,16 @@ package xlk.takstar.paperless.main;
 
 import android.graphics.drawable.Drawable;
 import android.media.MediaCodecInfo;
+import android.text.TextUtils;
 
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.mogujie.tt.protobuf.InterfaceAdmin;
 import com.mogujie.tt.protobuf.InterfaceBase;
 import com.mogujie.tt.protobuf.InterfaceDevice;
+import com.mogujie.tt.protobuf.InterfaceFaceconfig;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceMember;
 import com.mogujie.tt.protobuf.InterfaceRoom;
@@ -24,6 +27,7 @@ import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.base.BasePresenter;
 import xlk.takstar.paperless.model.Call;
+import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.model.EventMessage;
 import xlk.takstar.paperless.model.GlobalValue;
@@ -32,6 +36,7 @@ import xlk.takstar.paperless.util.DateUtil;
 import xlk.takstar.paperless.util.LogUtil;
 
 import static xlk.takstar.paperless.App.appContext;
+import static xlk.takstar.paperless.App.read2file;
 import static xlk.takstar.paperless.model.GlobalValue.localDeviceId;
 
 /**
@@ -94,38 +99,29 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
 
     @Override
     public void queryInterFaceConfiguration() {
-//        InterfaceFaceconfig.pbui_Type_FaceConfigInfo faceConfigInfo = jni.queryInterFaceConfiguration();
-//        if (faceConfigInfo != null) {
-//            List<InterfaceFaceconfig.pbui_Item_FaceTextItemInfo> textList = faceConfigInfo.getTextList();
-//            List<InterfaceFaceconfig.pbui_Item_FacePictureItemInfo> pictureList = faceConfigInfo.getPictureList();
-//            List<InterfaceFaceconfig.pbui_Item_FaceOnlyTextItemInfo> onlytextList = faceConfigInfo.getOnlytextList();
-//            for (InterfaceFaceconfig.pbui_Item_FacePictureItemInfo item : pictureList) {
-//                int faceid = item.getFaceid();
-//                int mediaid = item.getMediaid();
-//                String userStr = "";
-//                switch (faceid) {
-//                    case InterfaceMacro.Pb_MeetFaceID.Pb_MEET_FACEID_MAINBG_VALUE:
-////                        userStr = Constant.MAIN_BG;
-//                        break;
-//                    case InterfaceMacro.Pb_MeetFaceID.Pb_MEET_FACEID_LOGO_VALUE:
-////                        userStr = Constant.MAIN_LOGO;
-//                        break;
-//                    default:
-//                        userStr = "";
-//                        break;
-//                }
-//                if (!TextUtils.isEmpty(userStr)) {
-//                    FileUtils.createOrExistsDir(Constant.root_file);
-//                    jni.creationFileDownload(Constant.root_file + userStr + ".png", mediaid, 1, 0, userStr);
-//                }
-//            }
-//            for (InterfaceFaceconfig.pbui_Item_FaceTextItemInfo item : textList) {
-//                int faceid = item.getFaceid();
-//            }
-//            for (InterfaceFaceconfig.pbui_Item_FaceOnlyTextItemInfo item : onlytextList) {
-//                int faceid = item.getFaceid();
-//            }
-//        }
+        InterfaceFaceconfig.pbui_Type_FaceConfigInfo info = jni.queryInterFaceConfiguration();
+        if (info == null) {
+            return;
+        }
+        List<InterfaceFaceconfig.pbui_Item_FaceOnlyTextItemInfo> onlytextList = info.getOnlytextList();
+        List<InterfaceFaceconfig.pbui_Item_FacePictureItemInfo> pictureList = info.getPictureList();
+        List<InterfaceFaceconfig.pbui_Item_FaceTextItemInfo> textList = info.getTextList();
+        for (int i = 0; i < pictureList.size(); i++) {
+            InterfaceFaceconfig.pbui_Item_FacePictureItemInfo pic = pictureList.get(i);
+            int faceid = pic.getFaceid();
+            int mediaid = pic.getMediaid();
+            String userStr="";
+            //主界面背景
+            if (faceid == InterfaceMacro.Pb_MeetFaceID.Pb_MEET_FACEID_MAINBG_VALUE) {
+                userStr = Constant.MAIN_BG_PNG_TAG;
+                //logo图标
+            } else if (faceid == InterfaceMacro.Pb_MeetFaceID.Pb_MEET_FACEID_LOGO_VALUE) {
+                userStr = Constant.MAIN_LOGO_PNG_TAG;
+            }
+            if(!TextUtils.isEmpty(userStr)){
+                // TODO: 2021年3月1日19:00:53
+            }
+        }
     }
 
     private void cacheData() {

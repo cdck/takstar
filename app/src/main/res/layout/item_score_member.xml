@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         android:layout_marginStart="1px"
         android:layout_marginEnd="1px"
+        android:textSize="12sp"
         android:layout_marginBottom="1px"
         android:layout_weight="2"
         android:background="@color/white"
@@ -18,14 +19,14 @@
         android:gravity="center"
         android:lines="1"
         android:singleLine="true"
-        android:text="@string/score_desc"
-        android:textSize="12sp" />
+        android:text="@string/member" />
 
     <TextView
         android:id="@+id/item_view_2"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginEnd="1px"
+        android:textSize="12sp"
         android:layout_marginBottom="1px"
         android:layout_weight="2"
         android:background="@color/white"
@@ -33,38 +34,37 @@
         android:gravity="center"
         android:lines="1"
         android:singleLine="true"
-        android:text="@string/score_file"
-        android:textSize="12sp" />
+        android:text="@string/score_a" />
 
     <TextView
         android:id="@+id/item_view_3"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:textSize="12sp"
         android:layout_marginEnd="1px"
         android:layout_marginBottom="1px"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:background="@color/white"
         android:ellipsize="end"
         android:gravity="center"
         android:lines="1"
         android:singleLine="true"
-        android:text="@string/score_status"
-        android:textSize="12sp" />
+        android:text="@string/score_b" />
 
     <TextView
         android:id="@+id/item_view_4"
         android:layout_width="0dp"
+        android:textSize="12sp"
         android:layout_height="match_parent"
         android:layout_marginEnd="1px"
         android:layout_marginBottom="1px"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:background="@color/white"
         android:ellipsize="end"
         android:gravity="center"
         android:lines="1"
         android:singleLine="true"
-        android:text="@string/score_yd"
-        android:textSize="12sp" />
+        android:text="@string/score_c" />
 
     <TextView
         android:id="@+id/item_view_5"
@@ -72,14 +72,14 @@
         android:layout_height="match_parent"
         android:layout_marginEnd="1px"
         android:layout_marginBottom="1px"
-        android:layout_weight="1"
+        android:textSize="12sp"
+        android:layout_weight="2"
         android:background="@color/white"
         android:ellipsize="end"
         android:gravity="center"
         android:lines="1"
         android:singleLine="true"
-        android:text="@string/score_registered"
-        android:textSize="12sp" />
+        android:text="@string/score_d" />
 
     <TextView
         android:id="@+id/item_view_6"
@@ -87,14 +87,14 @@
         android:layout_height="match_parent"
         android:layout_marginEnd="1px"
         android:layout_marginBottom="1px"
-        android:layout_weight="1.5"
+        android:layout_weight="1"
         android:background="@color/white"
+        android:textSize="12sp"
         android:ellipsize="end"
         android:gravity="center"
         android:lines="1"
         android:singleLine="true"
-        android:text="@string/score_a"
-        android:textSize="12sp" />
+        android:text="@string/score_total" />
 
     <TextView
         android:id="@+id/item_view_7"
@@ -103,71 +103,11 @@
         android:layout_marginEnd="1px"
         android:layout_marginBottom="1px"
         android:layout_weight="1.5"
+        android:textSize="12sp"
         android:background="@color/white"
         android:ellipsize="end"
         android:gravity="center"
         android:lines="1"
         android:singleLine="true"
-        android:text="@string/score_b"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/item_view_8"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="1px"
-        android:layout_marginBottom="1px"
-        android:layout_weight="1.5"
-        android:background="@color/white"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:lines="1"
-        android:singleLine="true"
-        android:text="@string/score_c"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/item_view_9"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="1px"
-        android:layout_marginBottom="1px"
-        android:layout_weight="1.5"
-        android:background="@color/white"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:lines="1"
-        android:singleLine="true"
-        android:text="@string/score_d"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/item_view_10"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="1px"
-        android:layout_marginBottom="1px"
-        android:layout_weight="1"
-        android:background="@color/white"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:lines="1"
-        android:singleLine="true"
-        android:text="@string/score_total"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/item_view_11"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="1px"
-        android:layout_marginBottom="1px"
-        android:layout_weight="1"
-        android:background="@color/white"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:lines="1"
-        android:singleLine="true"
-        android:text="@string/score_average"
-        android:textSize="12sp" />
+        android:text="@string/average_score" />
 </LinearLayout>

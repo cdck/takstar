@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
-        android:src="@drawable/ic_logo_main"
         android:gravity="center"
+        android:src="@drawable/ic_logo_main"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,8 +36,8 @@
         android:layout_height="20dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="15dp"
-        android:visibility="visible"
         android:src="@drawable/ic_min_black"
+        android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/main_iv_close"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -110,8 +110,8 @@
         android:id="@+id/main_tv_meeting_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
         android:textColor="@color/black"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -138,8 +138,8 @@
         android:id="@+id/main_ll_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -187,6 +187,7 @@
         android:textColor="@color/blue"
         android:textSize="12sp"
         android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -195,9 +196,10 @@
     <TextView
         android:id="@+id/main_tv_version"
         android:layout_width="wrap_content"
-        android:textSize="12sp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
+        android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"

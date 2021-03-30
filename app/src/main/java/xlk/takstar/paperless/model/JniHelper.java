@@ -1249,6 +1249,19 @@ public class JniHelper {
 
 
     /**
+     * 添加公告
+     *
+     * @param item
+     */
+    public void addNotice(InterfaceBullet.pbui_Item_BulletDetailInfo item) {
+        InterfaceBullet.pbui_BulletDetailInfo.Builder builder = InterfaceBullet.pbui_BulletDetailInfo.newBuilder();
+        builder.addItem(item);
+        InterfaceBullet.pbui_BulletDetailInfo build = builder.build();
+        jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEETBULLET.getNumber(), InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_ADD.getNumber(), build.toByteArray());
+        LogUtil.e(TAG, "addNotice:  添加公告 --->>> ");
+    }
+
+    /**
      * 查询公告
      */
     public InterfaceBullet.pbui_BulletDetailInfo queryBullet() {
@@ -1566,22 +1579,6 @@ public class JniHelper {
         return null;
     }
 
-    /**
-     * 查询会议文件评分
-     * @return
-     */
-    public InterfaceFilescorevote.pbui_Type_UserDefineFileScore queryFileScore() {
-        byte[] bytes = jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTE_VALUE,
-                InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_QUERY_VALUE, null);
-        if (bytes != null) {
-            try {
-                return InterfaceFilescorevote.pbui_Type_UserDefineFileScore.parseFrom(bytes);
-            } catch (InvalidProtocolBufferException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
 
     /**
      * 根据媒体ID查询文件名
@@ -1599,5 +1596,115 @@ public class JniHelper {
         }
         LogUtil.i(TAG, "queryFileNameByMediaId 根据媒体ID查询文件名=" + fileName);
         return fileName;
+    }
+
+    //*************************************************************** 文件评分相关 **************************************************************
+
+    /**
+     * 查询会议文件评分
+     *
+     * @return
+     */
+    public InterfaceFilescorevote.pbui_Type_UserDefineFileScore queryFileScore() {
+        byte[] bytes = jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTE_VALUE,
+                InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_QUERY_VALUE, null);
+        if (bytes != null) {
+            try {
+                return InterfaceFilescorevote.pbui_Type_UserDefineFileScore.parseFrom(bytes);
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 查询指定id的文件评分
+     * @param id 评分id
+     * @return InterfaceFilescorevote.pbui_Type_UserDefineFileScore
+     */
+    public InterfaceFilescorevote.pbui_Type_UserDefineFileScore queryFileScoreById(int id) {
+        InterfaceBase.pbui_QueryInfoByID build = InterfaceBase.pbui_QueryInfoByID.newBuilder().setId(id).build();
+        byte[] bytes = jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTE_VALUE, InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_SINGLEQUERYBYID_VALUE, build.toByteArray());
+        if (bytes != null) {
+            try {
+                InterfaceFilescorevote.pbui_Type_UserDefineFileScore pbui_type_userDefineFileScore = InterfaceFilescorevote.pbui_Type_UserDefineFileScore.parseFrom(bytes);
+                LogUtils.e(TAG,"查询指定id的文件评分 成功");
+                return pbui_type_userDefineFileScore;
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
+        }
+        LogUtils.e(TAG,"查询指定id的文件评分 失败");
+        return null;
+    }
+
+    /**
+     * 查询指定评分的提交人
+     *
+     * @param voteid
+     * @return
+     */
+    public InterfaceFilescorevote.pbui_Type_UserDefineFileScoreMemberStatistic queryScoreSubmittedScore(int voteid) {
+        InterfaceBase.pbui_QueryInfoByID build = InterfaceBase.pbui_QueryInfoByID.newBuilder().setId(voteid).build();
+        byte[] bytes = jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTESIGN_VALUE, InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_QUERY_VALUE, build.toByteArray());
+        if (bytes != null) {
+            try {
+                LogUtil.e(TAG, "queryScoreSubmittedScore -->" + "查询指定评分提交人成功");
+                return InterfaceFilescorevote.pbui_Type_UserDefineFileScoreMemberStatistic.parseFrom(bytes);
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
+        }
+        LogUtil.e(TAG, "queryScoreSubmittedScore -->" + "查询指定评分提交人失败");
+        return null;
+    }
+
+    /**
+     * 发起评分
+     *
+     * @param voteid    评分ID
+     * @param voteflag  Pb_VoteStartFlag
+     * @param timeouts
+     * @param memberIds 人员ID
+     */
+    public void startScore(int voteid, int voteflag, int timeouts, List<Integer> memberIds) {
+        InterfaceFilescorevote.pbui_Type_StartUserDefineFileScore build = InterfaceFilescorevote.pbui_Type_StartUserDefineFileScore.newBuilder()
+                .addAllMemberid(memberIds)
+                .setTimeouts(timeouts)
+                .setVoteflag(voteflag)
+                .setVoteid(voteid)
+                .build();
+        LogUtil.d(TAG, "startScore -->" + "发起评分：votid= " + voteid + "，memberIds: " + memberIds.toString());
+        jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTE_VALUE, InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_START_VALUE, build.toByteArray());
+    }
+
+    /**
+     * 停止评分
+     *
+     * @param voteid
+     */
+    public void stopScore(int voteid) {
+        InterfaceFilescorevote.pbui_Type_DeleteUserDefineFileScore build = InterfaceFilescorevote.pbui_Type_DeleteUserDefineFileScore.newBuilder()
+                .addVoteid(voteid).build();
+        jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTE_VALUE, InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_STOP_VALUE, build.toByteArray());
+    }
+
+    /**
+     * 提交文件评分
+     *
+     * @param voteid
+     * @param memberid
+     * @param opinion  评分意见
+     * @param allscore 所有分数
+     */
+    public void submitScore(int voteid, int memberid, String opinion, List<Integer> allscore) {
+        InterfaceFilescorevote.pbui_Type_UserDefineFileScoreMemberStatisticNotify build = InterfaceFilescorevote.pbui_Type_UserDefineFileScoreMemberStatisticNotify.newBuilder()
+                .setContent(s2b(opinion))
+                .setMemberid(memberid)
+                .addAllScore(allscore)
+                .setVoteid(voteid).build();
+        LogUtil.d(TAG, "submitScore -->" + "提交文件评分");
+        jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTESIGN_VALUE, InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_SUBMIT_VALUE, build.toByteArray());
     }
 }

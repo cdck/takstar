@@ -1,5 +1,6 @@
 package xlk.takstar.paperless.model.node;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseNodeAdapter;
 import com.chad.library.adapter.base.entity.node.BaseNode;
 
@@ -31,12 +32,13 @@ public class FeaturesNodeAdapter extends BaseNodeAdapter {
         addFooterNodeProvider(footProvider);
     }
 
-    public void closeFoot() {
+    public void expandOrCollapseOtherFeature(boolean expand) {
         for (int i = 0; i < getData().size(); i++) {
             BaseNode baseNode = getData().get(i);
             if (baseNode instanceof FeaturesFootNode) {
                 FeaturesFootNode footNode = (FeaturesFootNode) baseNode;
-                footNode.setExpanded(false);
+                LogUtils.i("xlklog", "expandOrCollapseOtherFeature 展开=" + expand);
+                footNode.setExpanded(expand);
                 notifyDataSetChanged();
                 return;
             }
@@ -53,12 +55,17 @@ public class FeaturesNodeAdapter extends BaseNodeAdapter {
     }
 
     public void clearChildSelectedStatus() {
-        childProvider.clearSelectedStatus();
+        childProvider.clearCurrentChildId();
         notifyDataSetChanged();
     }
 
-    public int getSelectedDirId() {
-        return childProvider.getSelectedDirId();
+    public void setSelectChildFeature(int id) {
+        childProvider.setSelectedChildFeature(id);
+        notifyDataSetChanged();
+    }
+
+    public int getCurrentChildId() {
+        return childProvider.getCurrentChildId();
     }
 
     public void clickFeature(Object... obj) {

@@ -1,6 +1,5 @@
 package xlk.takstar.paperless.adapter;
 
-import android.graphics.Color;
 import android.widget.CheckBox;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;

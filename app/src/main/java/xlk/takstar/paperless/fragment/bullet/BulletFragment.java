@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -79,34 +80,44 @@ public class BulletFragment extends BaseFragment<BulletPresenter> implements Bul
 
     @Override
     public void onClick(View v) {
-        InterfaceBullet.pbui_Item_BulletDetailInfo bullet = bulletAdapter.getSelectedBullet();
-        if (bullet == null) {
-            ToastUtils.showShort(R.string.please_choose_bullet);
-            return;
-        }
         switch (v.getId()) {
             case R.id.btn_launch:
-                jni.launchBullet(bullet);
-                showSuccessfulToast();
+                showBulletPop(null, true);
                 break;
-            case R.id.btn_modify:
-                showBulletPop(bullet);
+            case R.id.btn_modify: {
+                InterfaceBullet.pbui_Item_BulletDetailInfo bullet = bulletAdapter.getSelectedBullet();
+                if (bullet == null) {
+                    ToastUtils.showShort(R.string.please_choose_bullet);
+                    return;
+                }
+                showBulletPop(bullet, false);
                 break;
-            case R.id.btn_delete:
+            }
+            case R.id.btn_delete: {
+                InterfaceBullet.pbui_Item_BulletDetailInfo bullet = bulletAdapter.getSelectedBullet();
+                if (bullet == null) {
+                    ToastUtils.showShort(R.string.please_choose_bullet);
+                    return;
+                }
                 jni.deleteBullet(bullet);
                 break;
+            }
             default:
                 break;
         }
     }
 
-    private void showBulletPop(InterfaceBullet.pbui_Item_BulletDetailInfo bullet) {
+    private void showBulletPop(InterfaceBullet.pbui_Item_BulletDetailInfo bullet, boolean isLaunch) {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_bullet, null, false);
         bulletPop = PopUtil.createHalfPop(inflate, rv_bullet);
+        TextView tv_bullet_title = inflate.findViewById(R.id.tv_bullet_title);
+        tv_bullet_title.setText(isLaunch ? getString(R.string.launch_bullet) : getString(R.string.modify_bullet));
         EditText edt_title = inflate.findViewById(R.id.edt_title);
         EditText edt_content = inflate.findViewById(R.id.edt_content);
-        edt_title.setText(bullet.getTitle().toStringUtf8());
-        edt_content.setText(bullet.getContent().toStringUtf8());
+        if (!isLaunch) {
+            edt_title.setText(bullet.getTitle().toStringUtf8());
+            edt_content.setText(bullet.getContent().toStringUtf8());
+        }
         inflate.findViewById(R.id.iv_close).setOnClickListener(v -> {
             bulletPop.dismiss();
         });
@@ -120,13 +131,21 @@ public class BulletFragment extends BaseFragment<BulletPresenter> implements Bul
                 ToastUtils.showShort(R.string.tip_title_content_empty);
                 return;
             }
-            InterfaceBullet.pbui_Item_BulletDetailInfo build = InterfaceBullet.pbui_Item_BulletDetailInfo.newBuilder()
-                    .setBulletid(bullet.getBulletid())
-                    .setTitle(ConvertUtil.s2b(title))
-                    .setContent(ConvertUtil.s2b(content))
-                    .build();
-            jni.modifyBullet(build);
-            bulletPop.dismiss();
+            InterfaceBullet.pbui_Item_BulletDetailInfo.Builder builder = InterfaceBullet.pbui_Item_BulletDetailInfo.newBuilder();
+            builder.setTitle(ConvertUtil.s2b(title));
+            builder.setContent(ConvertUtil.s2b(content));
+            if (isLaunch) {
+//            builder.setType();
+//            builder.setStarttime();
+//            builder.setTimeouts();
+                jni.launchBullet(builder.build());
+                bulletPop.dismiss();
+                showSuccessfulToast();
+            } else {
+                builder.setBulletid(bullet.getBulletid());
+                jni.modifyBullet(builder.build());
+                bulletPop.dismiss();
+            }
         });
     }
 }

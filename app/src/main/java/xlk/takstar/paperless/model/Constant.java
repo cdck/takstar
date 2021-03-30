@@ -43,6 +43,92 @@ public class Constant {
      */
     public static final int ANNOTATION_FILE_DIRECTORY_ID = 2;
 
+
+    //图片名称和下载标识
+
+    /**
+     * 主界面背景图
+     */
+    public static final String MAIN_BG_PNG_TAG = "main_bg";
+    /**
+     * 主界面logo图标
+     */
+    public static final String MAIN_LOGO_PNG_TAG = "main_logo";
+    /**
+     * 会议界面背景图
+     */
+    public static final String SUB_BG_PNG_TAG = "sub_bg";
+    /**
+     * 会议室背景图
+     */
+    public static final String ROOM_BG_PNG_TAG = "room_bg";
+    /**
+     * 公告背景图
+     */
+    public static final String NOTICE_BG_PNG_TAG = "notice_bg";
+    /**
+     * 公告logo图标
+     */
+    public static final String NOTICE_LOGO_PNG_TAG = "notice_logo";
+    /**
+     * 投影界面背景图
+     */
+    public static final String PROJECTIVE_BG_PNG_TAG = "projective_bg";
+    /**
+     * 投影界面logo图标
+     */
+    public static final String PROJECTIVE_LOGO_PNG_TAG = "projective_logo";
+
+    //下载标识
+    /**
+     * 下载会议文件时的标识
+     */
+    public static final String DOWNLOAD_MEETING_FILE = "download_meeting_file";
+    /**
+     * 下载批注文件时的标识
+     */
+    public static final String DOWNLOAD_ANNOTATION_FILE = "download_annotation_file";
+    /**
+     * 下载完成应该打开的文件标识
+     */
+    public static final String DOWNLOAD_SHOULD_OPEN_FILE = "download_should_open_file";
+
+    /**
+     * 后台下载批注文件
+     */
+    public static final String DOWNLOAD_ADMIN_ANNOTATION_FILE = "download_admin_annotation_file";
+    /**
+     * 下载桌牌背景图片
+     */
+    public static final String DOWNLOAD_TABLE_CARD_BG = "download_table_card_bg";
+    /**
+     * 下载标识：下载无进度通知
+     */
+    public static final String DOWNLOAD_NO_INFORM = "download_no_inform";
+
+
+    /**
+     * 归档文件时的下载标识
+     */
+    public static final String ARCHIVE_DOWNLOAD_FILE = "archive_download_file";
+    /**
+     * 归档议程文件下载标识
+     */
+    public static final String ARCHIVE_AGENDA_FILE = "archive_agenda_file";
+    /**
+     * 归档共享文件下载标识
+     */
+    public static final String ARCHIVE_SHARE_FILE = "archive_share_file";
+    /**
+     * 归档批注文件下载标识
+     */
+    public static final String ARCHIVE_ANNOTATION_FILE = "archive_annotation_file";
+    /**
+     * 归档会议资料下载标识
+     */
+    public static final String ARCHIVE_MEET_DATA_FILE = "archive_meet_data_file";
+
+
     //上传文件标识
     public static final String UPLOAD_CHOOSE_FILE = "upload_choose_file";
     public static final String UPLOAD_DRAW_PIC = "upload_draw_pic";
@@ -70,10 +156,6 @@ public class Constant {
      * 下载会议资料文件
      */
     public static final String DOWNLOAD_MATERIAL_FILE = "download_material_file";
-    /**
-     * 下载完成需要打开的文件
-     */
-    public static final String DOWNLOAD_SHOULD_OPEN_FILE = "download_should_open_file";
 
     public static final int RESOURCE_ID_0 = 0;
     public static final int RESOURCE_ID_1 = 1;
@@ -96,6 +178,7 @@ public class Constant {
     public static final int FUN_CODE_VIDEO = FUN_CODE + 4;
     public static final int FUN_CODE_SCREEN = FUN_CODE + 5;
     public static final int FUN_CODE_BULLETIN = FUN_CODE + 6;
+    public static final int FUN_CODE_SCORE = FUN_CODE + 7;
 
     /**
      * 发起播放的类型

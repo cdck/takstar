@@ -1,4 +1,4 @@
-package xlk.takstar.paperless.fragment.score;
+package xlk.takstar.paperless.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
@@ -19,25 +19,45 @@ import xlk.takstar.paperless.model.JniHelper;
  * @author Created by xlk on 2021/2/23.
  * @desc 文件评分adapter
  */
-class ScoreAdapter extends BaseQuickAdapter<InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore, BaseViewHolder> {
+public class ScoreAdapter extends BaseQuickAdapter<InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore, BaseViewHolder> {
     private int selectedId = -1;
 
     public ScoreAdapter(int layoutResId, @Nullable List<InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore> data) {
         super(layoutResId, data);
     }
 
+    public void setSelectedId(int id) {
+        selectedId = id;
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedId() {
+        for (int i = 0; i < getData().size(); i++) {
+            InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore item = getData().get(i);
+            if (item.getVoteid() == selectedId) {
+                return selectedId;
+            }
+        }
+        return -1;
+    }
+
     @Override
     protected void convert(@NotNull BaseViewHolder helper, InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore item) {
         double total = getTotal(item);
+        double average;
         BigDecimal b1 = new BigDecimal(Double.toString(total));
-        BigDecimal b2 = new BigDecimal(Double.toString(item.getSelectcount()));
-        //默认保留两位会有错误，这里设置保留小数点后4位
-        double average = b1.divide(b2, 2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        BigDecimal b2 = new BigDecimal(Double.toString(item.getSelectcount() * item.getRealmembernum()));
+        if (item.getRealmembernum() == 0) {
+            average = 0;
+        } else {
+            //默认保留两位会有错误，这里设置保留小数点后4位
+            average = b1.divide(b2, 2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        }
         helper.setText(R.id.item_view_1, item.getContent().toStringUtf8())
                 .setText(R.id.item_view_2, JniHelper.getInstance().queryFileNameByMediaId(item.getFileid()))
                 .setText(R.id.item_view_3, Constant.getVoteState(getContext(), item.getVotestate()))
                 .setText(R.id.item_view_4, item.getShouldmembernum() + "|" + item.getRealmembernum())
-                .setText(R.id.item_view_5, item.getMode() == InterfaceMacro.Pb_MeetVoteMode.Pb_VOTEMODE_agonymous_VALUE
+                .setText(R.id.item_view_5, item.getMode() == InterfaceMacro.Pb_MeetVoteMode.Pb_VOTEMODE_signed_VALUE
                         ? getContext().getString(R.string.yes)
                         : getContext().getString(R.string.no)
                 )
@@ -92,5 +112,26 @@ class ScoreAdapter extends BaseQuickAdapter<InterfaceFilescorevote.pbui_Type_Ite
             total += i;
         }
         return total;
+    }
+
+    public void notifySelectedScore() {
+        int id = -1;
+        for (int i = 0; i < getData().size(); i++) {
+            if (getData().get(i).getVoteid() == selectedId) {
+                id = selectedId;
+                break;
+            }
+        }
+        selectedId = id;
+        notifyDataSetChanged();
+    }
+
+    public InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore getSelectedScore() {
+        for (int i = 0; i < getData().size(); i++) {
+            if (getData().get(i).getVoteid() == selectedId) {
+                return getData().get(i);
+            }
+        }
+        return null;
     }
 }

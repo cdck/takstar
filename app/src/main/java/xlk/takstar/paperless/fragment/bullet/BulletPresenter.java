@@ -1,5 +1,6 @@
 package xlk.takstar.paperless.fragment.bullet;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.mogujie.tt.protobuf.InterfaceBullet;
 import com.mogujie.tt.protobuf.InterfaceMacro;
@@ -41,6 +42,13 @@ public class BulletPresenter extends BasePresenter<BulletContract.View> implemen
         bullets.clear();
         if (info != null) {
             bullets.addAll(info.getItemList());
+            for (int i = 0; i < bullets.size(); i++) {
+                InterfaceBullet.pbui_Item_BulletDetailInfo item = bullets.get(i);
+                String title = item.getTitle().toStringUtf8();
+                int starttime = item.getStarttime();
+                int timeouts = item.getTimeouts();
+                LogUtils.e(TAG, "公告：" + title + ",starttime=" + starttime + ",timeouts=" + timeouts);
+            }
         }
         mView.updateBullet(bullets);
     }

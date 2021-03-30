@@ -31,6 +31,7 @@ import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.model.JniHelper;
 import xlk.takstar.paperless.model.bean.SeatMember;
+import xlk.takstar.paperless.ui.RvItemDecoration;
 import xlk.takstar.paperless.util.FileUtil;
 import xlk.takstar.paperless.util.LogUtil;
 import xlk.takstar.paperless.util.PopUtil;
@@ -232,6 +233,7 @@ public class AnnotateFragment extends BaseFragment<AnnotatePresenter> implements
             if (fileAdapter == null) {
                 fileAdapter = new FileAdapter(R.layout.item_file, currentFiles);
                 rv_file.setLayoutManager(new LinearLayoutManager(getContext()));
+                rv_file.addItemDecoration(new RvItemDecoration(getContext()));
                 rv_file.setAdapter(fileAdapter);
                 fileAdapter.setOnItemClickListener(new OnItemClickListener() {
                     @Override

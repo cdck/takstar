@@ -76,9 +76,9 @@ public class App extends Application {
         System.loadLibrary("z");
     }
 
-    public static final boolean read2file = true;
+    public static final boolean read2file = false;
     private final String TAG = "App-->";
-    public static boolean isDebug = true;
+    public static boolean isDebug = false;
     public static Context appContext;
     public static ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
             1,
@@ -119,7 +119,7 @@ public class App extends Application {
             @Override
             public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
                 activities.add(activity);
-                LogUtil.d(TAG, "onActivityCreated " + activity + ",Activity数量=" + activities.size() + logAxt());
+                LogUtil.d("activityLife", "onActivityCreated " + activity + ",Activity数量=" + activities.size() + logAxt());
                 if (activity.getClass().getName().equals(MeetingActivity.class.getName())) {
                     openFabService(true);
                 }
@@ -132,34 +132,34 @@ public class App extends Application {
 
             @Override
             public void onActivityStarted(@NonNull Activity activity) {
-                LogUtil.i(TAG, "onActivityStarted " + activity);
+                LogUtil.i("activityLife", "onActivityStarted " + activity);
             }
 
             @Override
             public void onActivityResumed(@NonNull Activity activity) {
-                LogUtil.i(TAG, "onActivityResumed " + activity);
+                LogUtil.i("activityLife", "onActivityResumed " + activity);
                 currentActivity = activity;
             }
 
             @Override
             public void onActivityPaused(@NonNull Activity activity) {
-                LogUtil.i(TAG, "onActivityPaused " + activity);
+                LogUtil.i("activityLife", "onActivityPaused " + activity);
             }
 
             @Override
             public void onActivityStopped(@NonNull Activity activity) {
-                LogUtil.i(TAG, "onActivityStopped " + activity);
+                LogUtil.i("activityLife", "onActivityStopped " + activity);
             }
 
             @Override
             public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
-                LogUtil.i(TAG, "onActivitySaveInstanceState " + activity);
+                LogUtil.i("activityLife", "onActivitySaveInstanceState " + activity);
             }
 
             @Override
             public void onActivityDestroyed(@NonNull Activity activity) {
                 activities.remove(activity);
-                LogUtil.e(TAG, "onActivityDestroyed " + activity + ",Activity数量=" + activities.size() + logAxt());
+                LogUtil.e("activityLife", "onActivityDestroyed " + activity + ",Activity数量=" + activities.size() + logAxt());
                 if (activity.getClass().getName().equals(MeetingActivity.class.getName())) {
                     openFabService(false);
                 }

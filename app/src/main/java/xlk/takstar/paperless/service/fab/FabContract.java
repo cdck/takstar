@@ -2,6 +2,7 @@ package xlk.takstar.paperless.service.fab;
 
 import com.mogujie.tt.protobuf.InterfaceBullet;
 import com.mogujie.tt.protobuf.InterfaceDevice;
+import com.mogujie.tt.protobuf.InterfaceFilescorevote;
 import com.mogujie.tt.protobuf.InterfaceVote;
 
 import xlk.takstar.paperless.base.IBasePresenter;
@@ -38,6 +39,14 @@ public interface FabContract {
          * @param content 笔记内容
          */
         void showNoteView(String content);
+
+        /**
+         * 展示提交评分视图
+         * @param info
+         */
+        void showScoreView(InterfaceFilescorevote.pbui_Type_StartUserDefineFileScoreNotify info);
+
+        void closeScoreView();
     }
     interface Presenter extends IBasePresenter{}
 }

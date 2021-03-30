@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:clickable="false"
         android:layout_weight="1"
+        android:textSize="12sp"
         android:gravity="center_vertical"
         tools:text="序号" />
 
@@ -19,6 +20,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:textSize="12sp"
         android:gravity="center_vertical"
         tools:text="参会人" />
 
@@ -28,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center_vertical"
+        android:textSize="12sp"
         tools:text="席位" />
 
     <TextView
@@ -35,6 +38,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:textSize="12sp"
         android:gravity="center_vertical"
         tools:text="设备状态" />
 
@@ -42,6 +46,7 @@
         android:id="@+id/item_vote_member_permissions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textSize="12sp"
         android:layout_weight="1"
         android:gravity="center_vertical"
         tools:text="权限" />

@@ -5,27 +5,34 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:paddingTop="5dp"
     android:background="@drawable/item_file_bg_color"
     android:gravity="center"
     android:orientation="horizontal"
+    android:paddingTop="5dp"
     android:paddingBottom="5dp">
 
-    <ImageView
-        android:id="@+id/item_iv_icon"
+    <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        tools:src="@drawable/ic_ppt" />
+        android:layout_weight="0.7">
+
+        <ImageView
+            android:id="@+id/item_iv_icon"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
+            tools:src="@drawable/ic_ppt" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/item_tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="6"
+        android:layout_weight="7"
         android:ellipsize="end"
         android:lines="1"
         android:singleLine="true"
+        android:textSize="12sp"
         tools:text="资料名称资料名称资料名称.doc" />
 
     <Button
@@ -35,7 +42,8 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:gravity="center"
-        android:text="@string/open" />
+        android:text="@string/open"
+        android:textSize="12sp" />
 
     <Button
         android:id="@+id/item_btn_download"
@@ -44,5 +52,6 @@
         android:layout_marginEnd="10dp"
         android:enabled="false"
         android:gravity="center"
-        android:text="@string/download" />
+        android:text="@string/download"
+        android:textSize="12sp" />
 </LinearLayout>

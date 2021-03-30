@@ -5,7 +5,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseNodeAdapter;
+import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.entity.node.BaseNode;
 import com.chad.library.adapter.base.provider.BaseNodeProvider;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
@@ -20,7 +20,7 @@ import xlk.takstar.paperless.model.Constant;
  * @desc
  */
 public class FeaturesChildProvider extends BaseNodeProvider {
-    private int selectedDirId = -1;
+    private int currentChildId = -1;
 
     @Override
     public int getItemViewType() {
@@ -40,9 +40,9 @@ public class FeaturesChildProvider extends BaseNodeProvider {
         TextView item_feature_tv = baseViewHolder.getView(R.id.item_feature_tv);
         FeaturesChildNode childNode = (FeaturesChildNode) baseNode;
         Object[] objects = childNode.getObjects();
-        int dirId = (int) objects[0];
-        if (dirId > Constant.FUN_CODE) {
-            switch (dirId) {
+        int currentId = (int) objects[0];
+        if (currentId > Constant.FUN_CODE) {
+            switch (currentId) {
                 //终端控制
                 case Constant.FUN_CODE_TERMINAL:
                     item_feature_tv.setText(getContext().getResources().getString(R.string.terminal_control));
@@ -68,35 +68,50 @@ public class FeaturesChildProvider extends BaseNodeProvider {
                     item_feature_tv.setText(getContext().getResources().getString(R.string.bulletin));
                     item_feature_iv.setImageResource(R.drawable.feature_bulletin_icon);
                     break;
+                case Constant.FUN_CODE_SCORE:
+                    item_feature_tv.setText(getContext().getResources().getString(R.string.score_manage));
+                    item_feature_iv.setImageResource(R.drawable.feature_score_manage_icon);
+                    break;
             }
         } else {
             String dirName = (String) objects[1];
             item_feature_tv.setText(dirName);
             item_feature_iv.setVisibility(View.INVISIBLE);
         }
-        item_feature_root.setSelected(selectedDirId == dirId);
-        item_feature_iv.setSelected(selectedDirId == dirId);
-        item_feature_tv.setSelected(selectedDirId == dirId);
+        item_feature_root.setSelected(currentChildId == currentId);
+        item_feature_iv.setSelected(currentChildId == currentId);
+        item_feature_tv.setSelected(currentChildId == currentId);
     }
 
     @Override
     public void onClick(@NotNull BaseViewHolder helper, @NotNull View view, BaseNode data, int position) {
         FeaturesChildNode childNode = (FeaturesChildNode) data;
-        selectedDirId = (int) childNode.getObjects()[0];
+        currentChildId = (int) childNode.getObjects()[0];
         FeaturesNodeAdapter adapter = (FeaturesNodeAdapter) getAdapter();
         adapter.clearParentSelectedStatus();
-        if (selectedDirId > Constant.FUN_CODE) {
-            adapter.clickFeature(selectedDirId);
+        if (currentChildId > Constant.FUN_CODE) {
+            adapter.clickFeature(currentChildId);
         } else {
-            adapter.clickFeature(selectedDirId, adapter.findParentNode(childNode));
+            adapter.clickFeature(currentChildId, 0);
         }
     }
 
-    public void clearSelectedStatus() {
-        selectedDirId = -1;
+    public void setSelectedChildFeature(int id) {
+        currentChildId = id;
+        FeaturesNodeAdapter adapter = (FeaturesNodeAdapter) getAdapter();
+        adapter.clearParentSelectedStatus();
+        if (currentChildId > Constant.FUN_CODE) {
+            adapter.clickFeature(currentChildId);
+        } else {
+            adapter.clickFeature(currentChildId, 0);
+        }
     }
 
-    public int getSelectedDirId() {
-        return selectedDirId;
+    public void clearCurrentChildId() {
+        currentChildId = -1;
+    }
+
+    public int getCurrentChildId() {
+        return currentChildId;
     }
 }

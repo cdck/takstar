@@ -13,12 +13,13 @@
         android:padding="5dp">
 
         <TextView
+            android:id="@+id/tv_bullet_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="@string/bullet"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <ImageView
@@ -42,6 +43,7 @@
             android:id="@+id/edt_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="12sp"
             android:background="@drawable/editbox_background_normal"
             android:hint="@string/please_enter_title" />
 
@@ -54,7 +56,7 @@
             android:background="@drawable/editbox_background_normal"
             android:gravity="top|start"
             android:hint="@string/bullet_content"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
     </LinearLayout>
 
     <include layout="@layout/include_cancel_ensure" />

@@ -14,13 +14,15 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="5"
-        android:background="@drawable/dialog_full_holo_light"
+        android:background="@drawable/ic_dialog_bg"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:orientation="horizontal">
 
@@ -56,14 +58,15 @@
             <Button
                 android:id="@+id/btn_push"
                 style="@style/btn_style"
-                android:layout_marginEnd="1dp"
                 android:layout_width="wrap_content"
+                android:layout_marginEnd="1dp"
                 android:text="@string/push_file" />
+
             <Button
                 android:id="@+id/btn_export"
                 style="@style/btn_style"
-                android:layout_marginEnd="1dp"
                 android:layout_width="wrap_content"
+                android:layout_marginEnd="1dp"
                 android:drawableStart="@drawable/ic_download"
                 android:paddingStart="10dp"
                 android:text="@string/export" />
@@ -72,13 +75,24 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:background="@color/devline" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_file"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="20dp"
-            android:layout_weight="1" />
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_file"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="30dp" />
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

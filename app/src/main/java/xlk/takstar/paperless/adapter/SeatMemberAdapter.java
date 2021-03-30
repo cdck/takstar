@@ -40,6 +40,5 @@ public class SeatMemberAdapter extends BaseQuickAdapter<SeatMember, BaseViewHold
         boolean iss = selectedId == devid;
         helper.getView(R.id.item_seat_member_ll).setSelected(iss);
         helper.getView(R.id.item_iv_icon).setSelected(iss);
-        helper.getView(R.id.item_iv_icon).setSelected(iss);
     }
 }

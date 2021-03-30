@@ -8,11 +8,22 @@ import xlk.takstar.paperless.base.IBaseView;
  * @desc
  */
 interface ScoreManageContract {
-    interface View extends IBaseView{
+    interface View extends IBaseView {
 
         void updateScoreRv();
+
+        void updateOnlineMemberRv();
+
+        void updateScoreMemberRv();
     }
-    interface Presenter extends IBasePresenter{
+
+    interface Presenter extends IBasePresenter {
         void queryScore();
+
+        void queryMember();
+
+        void queryDevice();
+
+        void querySubmittedVoters(int voteId);
     }
 }

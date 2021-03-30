@@ -118,7 +118,7 @@ public class WebFragment extends BaseFragment<WebPresenter> implements WebContra
         if (web_view != null) {
             web_view.onResume();
             web_view.resumeTimers();
-            web_view.setVisibility(View.VISIBLE);
+//            web_view.setVisibility(View.VISIBLE);
         }
     }
 
@@ -131,7 +131,7 @@ public class WebFragment extends BaseFragment<WebPresenter> implements WebContra
             web_view.loadUrl(videoJs);//遍历所有的Vedio标签，主动调用暂停方法
             web_view.onPause();
             web_view.pauseTimers();
-            web_view.setVisibility(View.GONE);
+//            web_view.setVisibility(View.GONE);
         }
     }
 

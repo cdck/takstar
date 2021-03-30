@@ -2,6 +2,7 @@ package xlk.takstar.paperless.main;
 
 import android.graphics.drawable.Drawable;
 
+import com.mogujie.tt.protobuf.InterfaceAdmin;
 import com.mogujie.tt.protobuf.InterfaceBase;
 import com.mogujie.tt.protobuf.InterfaceDevice;
 
@@ -83,6 +84,7 @@ public interface MainContract {
          * @param s
          */
         void updateRemarks(String s);
+
     }
     interface Presenter extends IBasePresenter {
         /**

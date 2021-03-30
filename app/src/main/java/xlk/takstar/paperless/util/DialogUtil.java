@@ -4,12 +4,16 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.model.GlobalValue;
 
 /**
@@ -42,21 +46,16 @@ public class DialogUtil {
     }
 
 
-    public static AlertDialog createDialog(Context cxt, String title, String positive, String negative, @NonNull onDialogClickListener listener) {
+    public static AlertDialog createDialog(Context cxt, String message, String positive, String negative, @NonNull onDialogClickListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(cxt);
-        builder.setTitle(title);
-        builder.setPositiveButton(positive, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                listener.positive(dialog);
-            }
-        });
-        builder.setNegativeButton(negative, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                listener.negative(dialog);
-            }
-        });
+        View inflate = LayoutInflater.from(cxt).inflate(R.layout.dialog_operation_tip_view, null);
+        TextView tv_message = inflate.findViewById(R.id.tv_message);
+        Button btn_ensure = inflate.findViewById(R.id.btn_ensure);
+        Button btn_cancel = inflate.findViewById(R.id.btn_cancel);
+        tv_message.setText(message);
+        btn_ensure.setText(positive);
+        btn_cancel.setText(negative);
+        builder.setView(inflate);
         builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
@@ -68,6 +67,13 @@ public class DialogUtil {
         dialog.setCanceledOnTouchOutside(false);//点击外部不消失
         dialog.setCancelable(false);//用户点击返回键使其无效
         dialog.show();//这行代码要在设置宽高的前面，宽高才有用
+        //宽高必须要在show之后设置
+        WindowManager.LayoutParams attributes = dialog.getWindow().getAttributes();
+        attributes.width = GlobalValue.screen_width / 3;
+        attributes.height = GlobalValue.screen_height / 3;
+        dialog.getWindow().setAttributes(attributes);
+        inflate.findViewById(R.id.btn_ensure).setOnClickListener(v -> listener.positive(dialog));
+        inflate.findViewById(R.id.btn_cancel).setOnClickListener(v -> listener.negative(dialog));
         return dialog;
     }
 

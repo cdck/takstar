@@ -2,6 +2,7 @@ package xlk.takstar.paperless.fragment.material;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -267,6 +268,7 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
             fileAdapter = new FileAdapter(R.layout.item_file, currentFiles);
             rv_file.setLayoutManager(new LinearLayoutManager(getContext()));
             rv_file.addItemDecoration(new RvItemDecoration(getContext()));
+            rv_file.setHasFixedSize(true);
             rv_file.setAdapter(fileAdapter);
             fileAdapter.addChildClickViewIds(R.id.item_btn_open, R.id.item_btn_download);
             fileAdapter.setOnItemClickListener(new OnItemClickListener() {

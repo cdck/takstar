@@ -211,5 +211,7 @@
     <color name="feature_dividing_line_color">#5A5A5A</color>
     <color name="circular_menu_region_color">#E61E5888</color>
 
+    <color name="score_tv_bg">#c6efee</color>
+
 
 </resources>

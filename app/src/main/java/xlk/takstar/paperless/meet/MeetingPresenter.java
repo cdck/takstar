@@ -98,7 +98,7 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
         initVideoRes();
         queryIsOnline();
         queryDeviceMeetInfo();
-        queryMeetingFunction();
+        queryMeetingFeature();
         queryPermission();
     }
 
@@ -176,15 +176,25 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                 }
             } else {
                 GlobalValue.hasAllPermission = false;
-                mView.closeOtherFeaturePage();
+                mView.collapseOtherFeature();
                 mView.updateMemberRole(appContext.getString(R.string.role_member_));
             }
         }
     }
 
     @Override
-    public void queryMeetingFunction() {
+    public void queryMeetingFeature() {
         InterfaceMeetfunction.pbui_Type_MeetFunConfigDetailInfo funConfigDetailInfo = jni.queryMeetFunction();
+        //获取之前的其它功能模块是否展开
+        boolean isExpanded = false;
+        for (int i = 0; i < features.size(); i++) {
+            BaseNode baseNode = features.get(i);
+            if (baseNode instanceof FeaturesFootNode) {
+                FeaturesFootNode node = (FeaturesFootNode) baseNode;
+                isExpanded = node.isExpanded();
+                break;
+            }
+        }
         features.clear();
         materialNode = null;
         if (funConfigDetailInfo != null) {
@@ -206,8 +216,16 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                 }
             }
         }
-        features.add(new FeaturesFootNode());
+        features.add(new FeaturesFootNode(isExpanded));
         mView.updateMeetingFeatures();
+    }
+
+    @Override
+    public boolean hasThisFeature(int id) {
+        for (int i = 0; i < features.size(); i++) {
+
+        }
+        return false;
     }
 
     public void queryDir(FeaturesParentNode parentNode) {
@@ -270,7 +288,7 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
             //会议功能变更通知
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FUNCONFIG_VALUE: {
                 LogUtil.d(TAG, "BusEvent -->" + "会议功能变更通知");
-                queryMeetingFunction();
+                queryMeetingFeature();
                 break;
             }
             //会议排位变更通知
