@@ -3,9 +3,11 @@ package xlk.takstar.paperless.fragment.vote;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.text.InputFilter;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,6 +21,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.UriUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -47,6 +50,7 @@ import xlk.takstar.paperless.adapter.SubmitMemberAdapter;
 import xlk.takstar.paperless.adapter.VoteAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
 import xlk.takstar.paperless.model.Constant;
+import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.ui.MyPercentFormatter;
 import xlk.takstar.paperless.ui.RvItemDecoration;
 import xlk.takstar.paperless.util.JxlUtil;
@@ -204,7 +208,14 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
 
     private void modifyVote(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote) {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_modify_vote, null, false);
-        modifyVotePop = PopUtil.createHalfPop(inflate, rv_vote);
+        View meet_fl = getActivity().findViewById(R.id.meet_fl);
+        View meet_left_ll = getActivity().findViewById(R.id.meet_left_ll);
+        int width = meet_fl.getWidth();
+        int height = meet_fl.getHeight();
+        int width1 = meet_left_ll.getWidth();
+        int height1 = meet_left_ll.getHeight();
+        LogUtils.i(TAG, "showDetailsPop 宽高=" + width + "," + height + ",功能菜单宽高=" + width1 + "," + height1);
+        modifyVotePop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_vote, Gravity.CENTER, width1 / 2, 0);
         VoteViewHolder viewHolder = new VoteViewHolder(inflate);
         voteHolderEvent(viewHolder, vote);
     }
@@ -266,7 +277,14 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
 
     private void modifyElections(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote) {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_modify_elections, null, false);
-        modifyElectionsPop = PopUtil.createHalfPop(inflate, rv_vote);
+        View meet_fl = getActivity().findViewById(R.id.meet_fl);
+        View meet_left_ll = getActivity().findViewById(R.id.meet_left_ll);
+        int width = meet_fl.getWidth();
+        int height = meet_fl.getHeight();
+        int width1 = meet_left_ll.getWidth();
+        int height1 = meet_left_ll.getHeight();
+        LogUtils.i(TAG, "showDetailsPop 宽高=" + width + "," + height + ",功能菜单宽高=" + width1 + "," + height1);
+        modifyElectionsPop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_vote, Gravity.CENTER, width1 / 2, 0);
         ElectionsViewHolder viewHolder = new ElectionsViewHolder(inflate);
         holderEvent(viewHolder, vote);
     }
@@ -434,7 +452,15 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
     @Override
     public void showDetailsPop(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote) {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_vote_detail, null, false);
-        detailPop = PopUtil.createBigPop(inflate, rv_vote);
+        View meet_fl = getActivity().findViewById(R.id.meet_fl);
+        View meet_left_ll = getActivity().findViewById(R.id.meet_left_ll);
+        int width = meet_fl.getWidth();
+        int height = meet_fl.getHeight();
+        int width1 = meet_left_ll.getWidth();
+        int height1 = meet_left_ll.getHeight();
+        LogUtils.i(TAG, "showDetailsPop 宽高=" + width + "," + height + ",功能菜单宽高=" + width1 + "," + height1);
+        detailPop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_vote, Gravity.CENTER, width1 / 2, 0);
+
         TextView tv_title = inflate.findViewById(R.id.tv_title);
 
         String content = vote.getContent().toStringUtf8();
@@ -471,7 +497,17 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
             return;
         }
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_vote_chart, null, false);
-        chartPop = PopUtil.createBigPop(inflate, rv_vote);
+        View meet_fl = getActivity().findViewById(R.id.meet_fl);
+        View meet_left_ll = getActivity().findViewById(R.id.meet_left_ll);
+        int width = meet_fl.getWidth();
+        int height = meet_fl.getHeight();
+        int width1 = meet_left_ll.getWidth();
+        int height1 = meet_left_ll.getHeight();
+        LogUtils.i(TAG, "showDetailsPop 宽高=" + width + "," + height + ",功能菜单宽高=" + width1 + "," + height1);
+        chartPop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_vote, Gravity.CENTER, width1 / 2, 0);
+
+//        chartPop = PopUtil.createBigPop(inflate, rv_vote);
+
         PieChart chart = inflate.findViewById(R.id.pic_chart);
         TextView tv_title = inflate.findViewById(R.id.tv_title);
         String content = vote.getContent().toStringUtf8();
@@ -519,8 +555,10 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
 
         //返回图表的Legend对象。本方法可以用来获取图例的实例，以便自定义自动生成的图例
         Legend l = chart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+//        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+//        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
         l.setOrientation(Legend.LegendOrientation.VERTICAL);
         l.setDrawInside(false);
         //在水平轴上设置图例条目之间的空间，单位为像素，内部转换为dp
@@ -546,7 +584,8 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
             InterfaceVote.pbui_SubItem_VoteItemInfo item = itemList.get(i);
             String s = item.getText().toStringUtf8();
             int selcnt = item.getSelcnt();
-            pieEntries.add(new PieEntry((float) selcnt, s));
+            PieEntry pieEntry = new PieEntry((float) selcnt, s);
+            pieEntries.add(pieEntry);
             if (i == 0) {
                 colors.add(getResources().getColor(R.color.option_a));
             } else if (i == 1) {
@@ -596,11 +635,19 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
 
     private void launchVote(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote) {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_launch_vote, null, false);
-        voteConfigPop = PopUtil.createHalfPop(inflate, rv_vote);
+        View meet_fl = getActivity().findViewById(R.id.meet_fl);
+        View meet_left_ll = getActivity().findViewById(R.id.meet_left_ll);
+        int width = meet_fl.getWidth();
+        int height = meet_fl.getHeight();
+        int width1 = meet_left_ll.getWidth();
+        int height1 = meet_left_ll.getHeight();
+        LogUtils.i(TAG, "showDetailsPop 宽高=" + width + "," + height + ",功能菜单宽高=" + width1 + "," + height1);
+        voteConfigPop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_vote, Gravity.CENTER, width1 / 2, 0);
         TextView pop_title = inflate.findViewById(R.id.pop_title);
         pop_title.setText(IS_VOTE_PAGE ? getString(R.string.launch_vote) : getString(R.string.launch_elections));
 
         TextView tv_title = inflate.findViewById(R.id.tv_title);
+        EditText edt_remarks = inflate.findViewById(R.id.edt_remarks);
         RadioButton rb_ten = inflate.findViewById(R.id.rb_ten);
         RadioButton rb_thirty = inflate.findViewById(R.id.rb_thirty);
         RadioButton rb_notation = inflate.findViewById(R.id.rb_notation);
@@ -653,7 +700,14 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
 
     private void showMember(int voteId, int time) {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_launch_vote_member, null, false);
-        memberPop = PopUtil.createHalfPop(inflate, rv_vote);
+        View meet_fl = getActivity().findViewById(R.id.meet_fl);
+        View meet_left_ll = getActivity().findViewById(R.id.meet_left_ll);
+        int width = meet_fl.getWidth();
+        int height = meet_fl.getHeight();
+        int width1 = meet_left_ll.getWidth();
+        int height1 = meet_left_ll.getHeight();
+        LogUtils.i(TAG, "showDetailsPop 宽高=" + width + "," + height + ",功能菜单宽高=" + width1 + "," + height1);
+        memberPop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_vote, Gravity.CENTER, width1 / 2, 0);
         RecyclerView pop_vote_rv = inflate.findViewById(R.id.pop_vote_rv);
         CheckBox pop_vote_all = inflate.findViewById(R.id.pop_vote_all);
         memberDetailAdapter = new MemberDetailAdapter(R.layout.item_member_detail, presenter.memberDetails);

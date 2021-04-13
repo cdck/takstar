@@ -107,7 +107,7 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
         ids.add(RESOURCE_ID_4);
         memberAdapter = new WmScreenMemberAdapter(R.layout.item_wm_screen, presenter.onLineMember);
         projectorAdapter = new WmProjectorAdapter(R.layout.item_wm_pro, presenter.onLineProjectors);
-        wmScreenProjectorAdapter = new WmScreenProjectorAdapter(R.layout.item_wm_screen, presenter.onLineProjectors);
+        wmScreenProjectorAdapter = new WmScreenProjectorAdapter(presenter.onLineProjectors);
         f_l_v_v.post(() -> {
             pvWidth = f_l_v_v.getWidth();
             pvHeight = f_l_v_v.getHeight();

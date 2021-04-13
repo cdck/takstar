@@ -282,7 +282,7 @@ public class TerminalControlFragment extends BaseFragment<TerminalControlPresent
     public void updateClient(List<ClientControlBean> clientControlBeans) {
         if (clientControlAdapter == null) {
             clientControlAdapter = new TerminalControlAdapter(R.layout.item_terminal_control, clientControlBeans);
-            rv_client.addItemDecoration(new RvItemDecoration(getContext()));
+//            rv_client.addItemDecoration(new RvItemDecoration(getContext()));
             rv_client.setLayoutManager(new LinearLayoutManager(getContext()));
             rv_client.setAdapter(clientControlAdapter);
             clientControlAdapter.setOnItemClickListener(new OnItemClickListener() {

@@ -138,7 +138,7 @@
 
         <Button
             android:id="@+id/btn_ensure"
-            style="@style/file_open_btn_style"
+            style="@style/button_style_rect_blue_white_radius10"
             android:layout_width="150dp"
             android:layout_height="30dp"
             android:layout_centerInParent="true"

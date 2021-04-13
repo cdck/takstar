@@ -1,13 +1,17 @@
 package xlk.takstar.paperless.fragment.agenda;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.mogujie.tt.protobuf.InterfaceAgenda;
 import com.mogujie.tt.protobuf.InterfaceBase;
+import com.mogujie.tt.protobuf.InterfaceFile;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.base.BasePresenter;
@@ -22,6 +26,10 @@ import xlk.takstar.paperless.util.LogUtil;
  * @desc
  */
 public class AgendaPresenter extends BasePresenter<AgendaContract.View> implements AgendaContract.Presenter {
+
+    public List<InterfaceAgenda.pbui_ItemAgendaTimeInfo> agendaTimeInfos = new ArrayList<>();
+    public List<InterfaceFile.pbui_Item_MeetDirFileDetailInfo> files = new ArrayList<>();
+
     public AgendaPresenter(AgendaContract.View view) {
         super(view);
     }
@@ -66,17 +74,30 @@ public class AgendaPresenter extends BasePresenter<AgendaContract.View> implemen
                 FileUtils.createOrExistsDir(Constant.download_dir);
                 File file = new File(Constant.download_dir + fileName);
                 if (file.exists()) {
-                    if(GlobalValue.downloadingFiles.contains(mediaid)){
+                    if (GlobalValue.downloadingFiles.contains(mediaid)) {
                         ToastUtils.showShort(R.string.file_downloading);
-                    }else {
+                    } else {
                         mView.displayFile(file.getAbsolutePath());
                     }
-                }else {
+                } else {
                     jni.creationFileDownload(Constant.download_dir + fileName, mediaid, 1, 0, Constant.DOWNLOAD_AGENDA_FILE);
                 }
             } else if (agendatype == InterfaceMacro.Pb_AgendaType.Pb_MEET_AGENDA_TYPE_TIME_VALUE) {
-
+                agendaTimeInfos.clear();
+                agendaTimeInfos.addAll(meetAgenda.getItemList());
+                mView.showTimeAgenda();
             }
         }
+    }
+
+    @Override
+    public void queryFileByDir(int dirid) {
+        LogUtils.e("queryFileByDir dirid="+dirid);
+        InterfaceFile.pbui_Type_MeetDirFileDetailInfo info = jni.queryMeetDirFile(dirid);
+        files.clear();
+        if (info != null) {
+            files.addAll(info.getItemList());
+        }
+        mView.updateFileList();
     }
 }

@@ -350,9 +350,9 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
             //收到打开白板通知
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_WHITEBOARD_VALUE: {
                 if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_ASK_VALUE) {
-                    if (!isDrawing) {
+//                    if (!isDrawing) {
                         openArtBoardInform(msg);
-                    }
+//                    }
                 }
                 break;
             }
@@ -374,8 +374,14 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                 }
                 break;
             }
+            //添加新的未读消息提示抖动动画
             case EventType.BUS_UNREAD_MESSAGE_TIP: {
                 // TODO: 2021/2/23 添加新的未读消息提示抖动动画
+                break;
+            }
+            //退出电子白板
+            case EventType.BUS_EXIT_DRAW:{
+                mView.exitDraw();
                 break;
             }
             default:
@@ -453,7 +459,6 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                         DrawFragment.isSharing = true;//如果同意加入就设置已经在共享中
                         DrawFragment.mSrcmemid = srcmemid;//设置发起的人员ID
                         DrawFragment.mSrcwbid = srcwbidd;
-
                         if (tempPicData != null) {
                             savePicData = tempPicData;
                             /** **** **  作为接收者保存  ** **** **/

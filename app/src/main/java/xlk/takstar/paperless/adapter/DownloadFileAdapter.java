@@ -26,7 +26,7 @@ public class DownloadFileAdapter extends BaseQuickAdapter<InterfaceFile.pbui_Ite
         notifyDataSetChanged();
     }
 
-    public void setSelected(int mediaId) {
+    public void choose(int mediaId) {
         if (checks.contains(mediaId)) {
             checks.remove(checks.indexOf(mediaId));
         } else {

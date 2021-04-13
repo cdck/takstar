@@ -1,16 +1,19 @@
 package xlk.takstar.paperless.fragment.bullet;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.mogujie.tt.protobuf.InterfaceBullet;
 
+import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -21,6 +24,7 @@ import xlk.takstar.paperless.adapter.BulletAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
 import xlk.takstar.paperless.ui.RvItemDecoration;
 import xlk.takstar.paperless.util.ConvertUtil;
+import xlk.takstar.paperless.util.DateUtil;
 import xlk.takstar.paperless.util.PopUtil;
 
 /**
@@ -63,7 +67,7 @@ public class BulletFragment extends BaseFragment<BulletPresenter> implements Bul
     @Override
     public void updateBullet(List<InterfaceBullet.pbui_Item_BulletDetailInfo> bullets) {
         if (bulletAdapter == null) {
-            bulletAdapter = new BulletAdapter(R.layout.item_bullet, bullets);
+            bulletAdapter = new BulletAdapter(bullets);
             rv_bullet.setLayoutManager(new LinearLayoutManager(getContext()));
             rv_bullet.addItemDecoration(new RvItemDecoration(getContext()));
             rv_bullet.setAdapter(bulletAdapter);
@@ -109,7 +113,14 @@ public class BulletFragment extends BaseFragment<BulletPresenter> implements Bul
 
     private void showBulletPop(InterfaceBullet.pbui_Item_BulletDetailInfo bullet, boolean isLaunch) {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_bullet, null, false);
-        bulletPop = PopUtil.createHalfPop(inflate, rv_bullet);
+        View meet_fl = getActivity().findViewById(R.id.meet_fl);
+        View meet_left_ll = getActivity().findViewById(R.id.meet_left_ll);
+        int width = meet_fl.getWidth();
+        int height = meet_fl.getHeight();
+        int width1 = meet_left_ll.getWidth();
+        int height1 = meet_left_ll.getHeight();
+        LogUtils.i(TAG, "showDetailsPop 宽高=" + width + "," + height + ",功能菜单宽高=" + width1 + "," + height1);
+        bulletPop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_bullet, Gravity.CENTER, width1 / 2, 0);
         TextView tv_bullet_title = inflate.findViewById(R.id.tv_bullet_title);
         tv_bullet_title.setText(isLaunch ? getString(R.string.launch_bullet) : getString(R.string.modify_bullet));
         EditText edt_title = inflate.findViewById(R.id.edt_title);
@@ -135,15 +146,21 @@ public class BulletFragment extends BaseFragment<BulletPresenter> implements Bul
             builder.setTitle(ConvertUtil.s2b(title));
             builder.setContent(ConvertUtil.s2b(content));
             if (isLaunch) {
-//            builder.setType();
-//            builder.setStarttime();
-//            builder.setTimeouts();
-                jni.launchBullet(builder.build());
+                builder.setType(0);
+                Date tTime = new Date(System.currentTimeMillis());
+                int sT = (int) (tTime.getTime() / 1000);
+                builder.setStarttime(sT);
+//                builder.setTimeouts(0);
+            }
+            InterfaceBullet.pbui_Item_BulletDetailInfo build = builder.build();
+            if (isLaunch) {
+                jni.addBullet(build);
+                jni.launchBullet(build);
                 bulletPop.dismiss();
                 showSuccessfulToast();
             } else {
                 builder.setBulletid(bullet.getBulletid());
-                jni.modifyBullet(builder.build());
+                jni.modifyBullet(build);
                 bulletPop.dismiss();
             }
         });

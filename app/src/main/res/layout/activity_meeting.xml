@@ -158,14 +158,21 @@
                     android:textColor="@color/white"
                     tools:text="在线" />
 
-                <ImageView
-                    android:id="@+id/meet_iv_message"
+                <RelativeLayout
+                    android:id="@+id/rl_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="15dp"
-                    android:layout_toStartOf="@+id/meet_tv_online"
-                    android:src="@drawable/ic_message" />
+                    android:layout_toStartOf="@+id/meet_tv_online">
+
+                    <ImageView
+                        android:id="@+id/meet_iv_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/ic_message" />
+                </RelativeLayout>
 
                 <ImageView
                     android:id="@+id/meet_iv_news"
@@ -173,7 +180,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="15dp"
-                    android:layout_toStartOf="@+id/meet_iv_message"
+                    android:layout_toStartOf="@+id/rl_message"
                     android:src="@drawable/ic_news"
                     android:visibility="visible" />
             </RelativeLayout>

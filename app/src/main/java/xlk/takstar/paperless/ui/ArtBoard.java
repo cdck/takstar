@@ -15,6 +15,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.google.protobuf.ByteString;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 
@@ -147,6 +148,7 @@ public class ArtBoard extends View {
         paintWidth = width;
         initPaint();
     }
+
     public int getPaintWidth() {
         return paintWidth;
     }
@@ -385,7 +387,18 @@ public class ArtBoard extends View {
                     LocalSharingPathList.add(drawPath);
                 }
                 if (currentDrawGraphics == DRAW_TEXT) {
-                    mListener.showEdtPop(x, y);
+                    LogUtils.e("距离屏幕左边=" + event.getRawX() + ",距离屏幕上边=" + event.getRawY()
+                            + "\n画板坐标=" + x + "," + y
+                            + "\n屏幕大小=" + GlobalValue.screen_width + "," + GlobalValue.screen_height);
+                    int rawX = (int) event.getRawX();
+                    int rawY = (int) event.getRawY();
+                    if (GlobalValue.screen_width - rawX < 300) {
+                        rawX = GlobalValue.screen_width - 300;
+                    }
+                    if (GlobalValue.screen_height - rawY < 100) {
+                        rawY = GlobalValue.screen_height - 100;
+                    }
+                    mListener.showEdtPop(x, y, rawX, rawY);
                 } else {
                     mCanvas.drawPath(mPath, mPaint);
                     mPath = null;
@@ -783,6 +796,6 @@ public class ArtBoard extends View {
     }
 
     public interface DrawTextListener {
-        void showEdtPop(float x, float y);
+        void showEdtPop(float x, float y, int screenX, int screenY);
     }
 }

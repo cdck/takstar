@@ -697,7 +697,6 @@ public class JniHelper {
         return array;
     }
 
-
     /**
      * 查询会议目录
      */
@@ -760,7 +759,6 @@ public class JniHelper {
         jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_UPLOAD.getNumber(), InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_ADD.getNumber(), build.toByteArray());
         LogUtil.e(TAG, "uploadFile :   --> 上传文件 " + newname + ", dirid= " + dirid + ", pathname= " + pathname);
     }
-
 
     /**
      * 媒体播放操作
@@ -1253,7 +1251,7 @@ public class JniHelper {
      *
      * @param item
      */
-    public void addNotice(InterfaceBullet.pbui_Item_BulletDetailInfo item) {
+    public void addBullet(InterfaceBullet.pbui_Item_BulletDetailInfo item) {
         InterfaceBullet.pbui_BulletDetailInfo.Builder builder = InterfaceBullet.pbui_BulletDetailInfo.newBuilder();
         builder.addItem(item);
         InterfaceBullet.pbui_BulletDetailInfo build = builder.build();
@@ -1620,6 +1618,7 @@ public class JniHelper {
 
     /**
      * 查询指定id的文件评分
+     *
      * @param id 评分id
      * @return InterfaceFilescorevote.pbui_Type_UserDefineFileScore
      */
@@ -1629,13 +1628,13 @@ public class JniHelper {
         if (bytes != null) {
             try {
                 InterfaceFilescorevote.pbui_Type_UserDefineFileScore pbui_type_userDefineFileScore = InterfaceFilescorevote.pbui_Type_UserDefineFileScore.parseFrom(bytes);
-                LogUtils.e(TAG,"查询指定id的文件评分 成功");
+                LogUtils.e(TAG, "查询指定id的文件评分 成功");
                 return pbui_type_userDefineFileScore;
             } catch (InvalidProtocolBufferException e) {
                 e.printStackTrace();
             }
         }
-        LogUtils.e(TAG,"查询指定id的文件评分 失败");
+        LogUtils.e(TAG, "查询指定id的文件评分 失败");
         return null;
     }
 

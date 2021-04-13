@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="10dp"
-        android:layout_weight="1"
+        android:layout_weight="5"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
@@ -41,13 +41,14 @@
 
     <TextView
         android:id="@+id/tv_time"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:gravity="center"
         android:textColor="@color/black"
-        android:textSize="16sp"
-        tools:text="16:11" />
+        android:textSize="14sp"
+        tools:text="2021/04/08 15:38" />
 </LinearLayout>

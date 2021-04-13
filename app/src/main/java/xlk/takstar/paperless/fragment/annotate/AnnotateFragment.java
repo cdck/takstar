@@ -128,6 +128,7 @@ public class AnnotateFragment extends BaseFragment<AnnotatePresenter> implements
                 showFile();
                 break;
             case R.id.btn_push: {
+                if (fileAdapter == null) return;
                 int mediaId = fileAdapter.getSelectedId();
                 if (mediaId != 0) {
                     EventBus.getDefault().post(new EventMessage.Builder().type(EventType.BUS_PUSH_FILE).objects(mediaId).build());
@@ -275,7 +276,7 @@ public class AnnotateFragment extends BaseFragment<AnnotatePresenter> implements
                     if (FileUtils.isFileExists(Constant.download_dir + item.getName().toStringUtf8())) {
                         ToastUtils.showShort(getString(R.string._file_already_exists, item.getName().toStringUtf8()));
                     } else {
-                        downloadFileAdapter.setSelected(mediaid);
+                        downloadFileAdapter.choose(mediaid);
                     }
                 }
             });

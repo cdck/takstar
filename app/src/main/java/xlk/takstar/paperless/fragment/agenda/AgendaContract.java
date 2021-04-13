@@ -14,9 +14,15 @@ public interface AgendaContract {
         void updateAgendaTv(String content);
 
         void displayFile(String path);
+
+        void showTimeAgenda();
+
+        void updateFileList();
     }
 
     interface Presenter extends IBasePresenter {
         void queryAgenda();
+
+        void queryFileByDir(int dirid);
     }
 }

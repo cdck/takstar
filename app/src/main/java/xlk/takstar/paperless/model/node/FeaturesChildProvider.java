@@ -32,6 +32,10 @@ public class FeaturesChildProvider extends BaseNodeProvider {
         return R.layout.item_feature_child_layout;
     }
 
+    public void setCurrentChildId(int id) {
+        currentChildId = id;
+    }
+
     @Override
     public void convert(@NotNull BaseViewHolder baseViewHolder, BaseNode baseNode) {
         LinearLayout item_feature_root = baseViewHolder.getView(R.id.item_feature_root);
@@ -89,10 +93,11 @@ public class FeaturesChildProvider extends BaseNodeProvider {
         currentChildId = (int) childNode.getObjects()[0];
         FeaturesNodeAdapter adapter = (FeaturesNodeAdapter) getAdapter();
         adapter.clearParentSelectedStatus();
+        adapter.clearFootSelectedStatus();
         if (currentChildId > Constant.FUN_CODE) {
-            adapter.clickFeature(currentChildId);
+            adapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, currentChildId);
         } else {
-            adapter.clickFeature(currentChildId, 0);
+            adapter.clickFeature(FeaturesNodeAdapter.ClickType.DIRECTORY, currentChildId);
         }
     }
 
@@ -101,9 +106,10 @@ public class FeaturesChildProvider extends BaseNodeProvider {
         FeaturesNodeAdapter adapter = (FeaturesNodeAdapter) getAdapter();
         adapter.clearParentSelectedStatus();
         if (currentChildId > Constant.FUN_CODE) {
-            adapter.clickFeature(currentChildId);
+            //更多功能下的子功能
+            adapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, currentChildId);
         } else {
-            adapter.clickFeature(currentChildId, 0);
+            adapter.clickFeature(FeaturesNodeAdapter.ClickType.DIRECTORY, currentChildId);
         }
     }
 

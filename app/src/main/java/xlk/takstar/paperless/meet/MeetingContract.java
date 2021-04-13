@@ -39,6 +39,8 @@ public interface MeetingContract {
         void showPushView(List<DevMember> onlineMembers, List<InterfaceDevice.pbui_Item_DeviceDetailInfo> onLineProjectors, int mediaId);
 
         void exportNoteFile();
+
+        void exitDraw();
     }
 
     interface Presenter extends IBasePresenter {

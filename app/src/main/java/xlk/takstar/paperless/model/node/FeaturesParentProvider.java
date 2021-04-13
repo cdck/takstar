@@ -49,7 +49,7 @@ class FeaturesParentProvider extends BaseNodeProvider {
         FeaturesParentNode parentNode = (FeaturesParentNode) data;
         int featureId = parentNode.getFeatureId();
         FeaturesNodeAdapter adapter = (FeaturesNodeAdapter) getAdapter();
-        adapter.clickFeature(featureId);
+        adapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, featureId);
         if (featureId == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE) {
             if (!parentNode.isExpanded()) {
                 int currentChildId = adapter.getCurrentChildId();
@@ -58,6 +58,7 @@ class FeaturesParentProvider extends BaseNodeProvider {
                     // TODO: 2021/1/22 有可能这个目录已经不存在了
                     //2021年3月1日14:36:24 只要点击了父类，目录的点击状态就清空掉
                     adapter.clearChildSelectedStatus();
+                    adapter.clearFootSelectedStatus();
 //                    clearSelectedStatus();
                 }
             }
@@ -65,11 +66,13 @@ class FeaturesParentProvider extends BaseNodeProvider {
 //                currentParentId = featureId;
 //            }
             currentParentId = featureId;
+            adapter.clearFootSelectedStatus();
             adapter.expandOrCollapse(position);
             adapter.notifyDataSetChanged();
         } else {
             currentParentId = featureId;
             adapter.clearChildSelectedStatus();
+            adapter.clearFootSelectedStatus();
         }
     }
 

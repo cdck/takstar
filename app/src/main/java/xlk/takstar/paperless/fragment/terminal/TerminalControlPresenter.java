@@ -89,7 +89,6 @@ public class TerminalControlPresenter extends BasePresenter<TerminalControlContr
         queryDevice();
     }
 
-
     private void queryDevice() {
         InterfaceDevice.pbui_Type_DeviceDetailInfo info = jni.queryDeviceInfo();
         clientControlBeans.clear();

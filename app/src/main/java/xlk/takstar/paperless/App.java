@@ -39,6 +39,7 @@ import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.service.BackService;
 import xlk.takstar.paperless.service.fab.FabService;
 import xlk.takstar.paperless.service.ScreenRecorder;
+import xlk.takstar.paperless.util.CrashHandler;
 import xlk.takstar.paperless.util.LogUtil;
 import xlk.takstar.paperless.util.MyRejectedExecutionHandler;
 import xlk.takstar.paperless.util.NamingThreadFactory;
@@ -96,6 +97,7 @@ public class App extends Application {
         super.onCreate();
         System.out.println("程序创建的时候执行");
         appContext = this;
+        CrashHandler.getInstance().init(this);
         LogUtils.Config config = LogUtils.getConfig();
         config.setLog2FileSwitch(true);
         config.setDir(Constant.logcat_dir);

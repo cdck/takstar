@@ -5,21 +5,18 @@
     android:layout_marginStart="30dp"
     android:layout_marginEnd="30dp"
     android:layout_marginBottom="30dp"
-    android:background="@drawable/dialog_full_holo_light"
+    android:background="@drawable/dialog_bg"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginBottom="5dp"
+        android:layout_margin="5dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/btn_rise"
-            style="@style/btn_style"
+            style="@style/button_blue_rect_style"
             android:layout_width="0dp"
             android:layout_marginStart="1dp"
             android:layout_weight="1"
@@ -27,7 +24,7 @@
 
         <Button
             android:id="@+id/btn_fall"
-            style="@style/btn_style"
+            style="@style/button_blue_rect_style"
             android:layout_width="0dp"
             android:layout_marginStart="1dp"
             android:layout_weight="1"
@@ -35,7 +32,7 @@
 
         <Button
             android:id="@+id/btn_stop"
-            style="@style/btn_style"
+            style="@style/button_blue_rect_style"
             android:layout_width="0dp"
             android:layout_marginStart="1dp"
             android:layout_weight="1"
@@ -43,7 +40,7 @@
 
         <Button
             android:id="@+id/btn_restart_app"
-            style="@style/btn_style"
+            style="@style/button_blue_rect_style"
             android:layout_width="0dp"
             android:layout_marginStart="1dp"
             android:layout_weight="1"
@@ -51,7 +48,7 @@
 
         <Button
             android:id="@+id/btn_restart_client"
-            style="@style/btn_style"
+            style="@style/button_blue_rect_style"
             android:layout_width="0dp"
             android:layout_marginStart="1dp"
             android:layout_weight="1"
@@ -59,7 +56,7 @@
 
         <Button
             android:id="@+id/btn_shutdown_client"
-            style="@style/btn_style"
+            style="@style/button_blue_rect_style"
             android:layout_width="0dp"
             android:layout_marginStart="1dp"
             android:layout_weight="1"
@@ -67,7 +64,7 @@
 
         <Button
             android:id="@+id/btn_assisted_sign_in"
-            style="@style/btn_style"
+            style="@style/button_blue_rect_style"
             android:layout_width="0dp"
             android:layout_marginStart="1dp"
             android:layout_weight="1"
@@ -75,7 +72,7 @@
 
         <Button
             android:id="@+id/btn_set_role"
-            style="@style/btn_style"
+            style="@style/button_blue_rect_style"
             android:layout_width="0dp"
             android:layout_marginStart="1dp"
             android:layout_weight="1"
@@ -83,7 +80,7 @@
 
         <Button
             android:id="@+id/btn_wake_up"
-            style="@style/btn_style"
+            style="@style/button_blue_rect_style"
             android:layout_width="0dp"
             android:layout_marginStart="1dp"
             android:layout_marginEnd="1dp"
@@ -91,11 +88,24 @@
             android:text="@string/web_wake_up" />
     </LinearLayout>
 
-    <include layout="@layout/item_terminal_control" />
+    <include layout="@layout/horizontal_line"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_client"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <include layout="@layout/horizontal_line"/>
+
+        <include layout="@layout/item_terminal_control" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_client"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
 </LinearLayout>

@@ -2,9 +2,7 @@ package xlk.takstar.paperless.fragment.material;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Canvas;
 import android.net.Uri;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -35,7 +34,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import xlk.takstar.paperless.R;
-import xlk.takstar.paperless.adapter.DirAdapter;
 import xlk.takstar.paperless.adapter.DownloadFileAdapter;
 import xlk.takstar.paperless.adapter.FileAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
@@ -157,7 +155,7 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
                 return;
             }
             jni.uploadFile(InterfaceMacro.Pb_Upload_Flag.Pb_MEET_UPLOADFLAG_ONLYENDCALLBACK_VALUE,
-                    currentDirId, 0, fileName, file.getParentFile().getAbsolutePath() + "/" + fileName, 0, Constant.UPLOAD_CHOOSE_FILE);
+                    currentDirId, 0, fileName, file.getParentFile().getAbsolutePath(), 0, Constant.UPLOAD_CHOOSE_FILE);
             dialog.dismiss();
         });
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
@@ -280,21 +278,25 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
             fileAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
                 @Override
                 public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                    InterfaceFile.pbui_Item_MeetDirFileDetailInfo item = currentFiles.get(position);
-                    String fileName = item.getName().toStringUtf8();
-                    int mediaid = item.getMediaid();
-                    if (view.getId() == R.id.item_btn_open) {
-                        if (FileUtil.isVideo(fileName)) {
-                            List<Integer> devIds = new ArrayList<>();
-                            devIds.add(GlobalValue.localDeviceId);
-                            JniHelper.getInstance().mediaPlayOperate(mediaid, devIds, 0, RESOURCE_ID_0, 0, 0);
+                    if (Constant.hasPermission(Constant.permission_code_download)) {
+                        InterfaceFile.pbui_Item_MeetDirFileDetailInfo item = currentFiles.get(position);
+                        String fileName = item.getName().toStringUtf8();
+                        int mediaid = item.getMediaid();
+                        if (view.getId() == R.id.item_btn_open) {
+                            if (FileUtil.isVideo(fileName)) {
+                                List<Integer> devIds = new ArrayList<>();
+                                devIds.add(GlobalValue.localDeviceId);
+                                JniHelper.getInstance().mediaPlayOperate(mediaid, devIds, 0, RESOURCE_ID_0, 0, 0);
+                            } else {
+                                FileUtil.openFile(getContext(), fileName, mediaid);
+                            }
                         } else {
-                            FileUtil.openFile(getContext(), fileName, mediaid);
+                            LogUtil.i(TAG, "onItemChildClick fileName=" + fileName);
+                            JniHelper.getInstance().creationFileDownload(Constant.download_dir + fileName,
+                                    mediaid, 1, 0, Constant.DOWNLOAD_MATERIAL_FILE);
                         }
                     } else {
-                        LogUtil.i(TAG, "onItemChildClick fileName=" + fileName);
-                        JniHelper.getInstance().creationFileDownload(Constant.download_dir + fileName,
-                                mediaid, 1, 0, Constant.DOWNLOAD_MATERIAL_FILE);
+                        ToastUtils.showShort(R.string.you_have_no_permission);
                     }
                 }
             });
@@ -309,9 +311,10 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
                     InterfaceFile.pbui_Item_MeetDirFileDetailInfo item = meetFiles.get(position);
                     int mediaid = item.getMediaid();
                     if (FileUtils.isFileExists(Constant.download_dir + item.getName().toStringUtf8())) {
-                        ToastUtils.showShort(getString(R.string._file_already_exists, item.getName().toStringUtf8()));
+//                        ToastUtils.showShort(getString(R.string._file_already_exists, item.getName().toStringUtf8()));
+                        Toast.makeText(getContext(), getString(R.string._file_already_exists, item.getName().toStringUtf8()), Toast.LENGTH_SHORT).show();
                     } else {
-                        downloadFileAdapter.setSelected(mediaid);
+                        downloadFileAdapter.choose(mediaid);
                     }
                 }
             });

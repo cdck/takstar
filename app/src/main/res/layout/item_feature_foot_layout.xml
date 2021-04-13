@@ -14,8 +14,7 @@
         android:layout_gravity="center"
         android:background="@drawable/meeting_feature_bg"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingEnd="10dp">
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="0dp"

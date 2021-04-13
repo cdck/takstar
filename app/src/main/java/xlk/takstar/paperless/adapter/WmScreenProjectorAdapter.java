@@ -1,5 +1,6 @@
 package xlk.takstar.paperless.adapter;
 
+import android.view.View;
 import android.widget.CheckBox;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -19,15 +20,16 @@ import xlk.takstar.paperless.R;
 public class WmScreenProjectorAdapter extends BaseQuickAdapter<InterfaceDevice.pbui_Item_DeviceDetailInfo, BaseViewHolder> {
     List<Integer> ids = new ArrayList<>();
 
-    public WmScreenProjectorAdapter(int layoutResId, @Nullable List<InterfaceDevice.pbui_Item_DeviceDetailInfo> data) {
-        super(layoutResId, data);
+    public WmScreenProjectorAdapter( @Nullable List<InterfaceDevice.pbui_Item_DeviceDetailInfo> data) {
+        super(R.layout.item_wm_screen, data);
     }
 
     @Override
     protected void convert(BaseViewHolder helper, InterfaceDevice.pbui_Item_DeviceDetailInfo item) {
         int layoutPosition = helper.getLayoutPosition();
         CheckBox cb = helper.getView(R.id.cb_name);
-        cb.setBackgroundColor(isOdd(layoutPosition)
+        View item_root_view = helper.getView(R.id.item_root_view);
+        item_root_view.setBackgroundColor(isOdd(layoutPosition)
                 ? getContext().getColor(R.color.table_bg_color) : getContext().getColor(R.color.table_bg_color1));
         helper.setText(R.id.cb_name, item.getDevname().toStringUtf8());
         cb.setChecked(ids.contains(item.getDevcieid()));

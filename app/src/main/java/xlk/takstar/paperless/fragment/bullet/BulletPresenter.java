@@ -45,9 +45,11 @@ public class BulletPresenter extends BasePresenter<BulletContract.View> implemen
             for (int i = 0; i < bullets.size(); i++) {
                 InterfaceBullet.pbui_Item_BulletDetailInfo item = bullets.get(i);
                 String title = item.getTitle().toStringUtf8();
+                String content = item.getContent().toStringUtf8();
+                int type = item.getType();
                 int starttime = item.getStarttime();
                 int timeouts = item.getTimeouts();
-                LogUtils.e(TAG, "公告：" + title + ",starttime=" + starttime + ",timeouts=" + timeouts);
+                LogUtils.e(TAG, "公告title：" + title + ",内容=" + content + "\ntype=" + type + ",starttime=" + starttime + ",timeouts=" + timeouts);
             }
         }
         mView.updateBullet(bullets);

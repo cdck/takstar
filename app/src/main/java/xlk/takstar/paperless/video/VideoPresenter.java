@@ -165,7 +165,7 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
                 if (packet != null) {
                     lastPushTime = System.currentTimeMillis();
                     length = packet.length;
-                    //LogUtil.d(TAG, "getEventMessage :  mimeType --> " + mimeType + "，宽高：" + width + "," + height + ", pts=" + pts);
+                    //LogUtils.d(TAG, "getEventMessage :  mimeType --> " + mimeType + "，宽高：" + width + "," + height + ", pts=" + pts);
                     if (!saveMimeType.equals(mimeType) || initW != width || initH != height || mediaCodec == null) {
                         if (mediaCodec != null) {
                             //调用stop方法使其进入 uninitialzed 状态，这样才可以重新配置MediaCodec
@@ -189,7 +189,7 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
                     byte[] o = (byte[]) msg.getObjects()[0];
                     InterfaceStop.pbui_Type_MeetStopPlay stopPlay = InterfaceStop.pbui_Type_MeetStopPlay.parseFrom(o);
                     if (stopPlay.getRes() == 0) {
-                        LogUtil.d(TAG, "BusEvent -->" + "停止播放通知");
+                        LogUtils.d(TAG, "BusEvent -->" + "停止播放通知");
                         mView.close();
                     }
                 }
@@ -197,19 +197,19 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
             }
             //设备寄存器变更通知
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_DEVICEINFO_VALUE: {
-                LogUtil.d(TAG, "BusEvent -->" + "设备寄存器变更通知");
+                LogUtils.d(TAG, "BusEvent -->" + "设备寄存器变更通知");
                 queryDevice();
                 break;
             }
             //参会人员变更通知
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEMBER_VALUE: {
-                LogUtil.d(TAG, "BusEvent -->" + "参会人员变更通知");
+                LogUtils.d(TAG, "BusEvent -->" + "参会人员变更通知");
                 queryMember();
                 break;
             }
             //界面状态变更通知
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_DEVICEMEETSTATUS_VALUE: {
-                LogUtil.d(TAG, "BusEvent -->" + "界面状态变更通知");
+                LogUtils.d(TAG, "BusEvent -->" + "界面状态变更通知");
                 queryMember();
                 break;
             }
@@ -243,10 +243,10 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
             initH = h;
             w = supportedWidths.clamp(w);
             h = supportedHeights.clamp(h);
-            LogUtil.e(TAG, "initCodec :   --> " + upper + ", " + lower + " ,,高：" + upper1 + ", " + lower1);
+            LogUtils.d(TAG, "initCodec :   --> " + upper + ", " + lower + " ,,高：" + upper1 + ", " + lower1);
             initMediaFormat(w, h, codecdata);
             boolean formatSupported = capabilitiesForType.isFormatSupported(mediaFormat);
-            LogUtil.i(TAG, "initCodec :  是否支持 --> " + formatSupported);
+            LogUtils.i(TAG, "initCodec :  是否支持 --> " + formatSupported);
             info = new MediaCodec.BufferInfo();
             try {
                 //2.对编解码器进行配置，这将使编解码器转为配置状态（Configured）
@@ -337,7 +337,7 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
                         break;
                     }
                 }
-                LogUtil.e(TAG, "mediaCodecDecode 其它帧在此丢掉 -->");
+                LogUtils.d(TAG, "mediaCodecDecode 其它帧在此丢掉 -->");
                 //其它帧在此丢掉,不处理
                 queue.poll();
             }
@@ -359,15 +359,15 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
                     //将视频队列中的头取出送到解码队列中
                     MediaBean poll = queue.poll();
                     byteBuffer.put(poll.getBytes());
-                    LogUtil.i(TAG, "mediaCodecDecode pts=" + poll.getPts());
+                    LogUtils.i(TAG, "mediaCodecDecode pts=" + poll.getPts());
                     mediaCodec.queueInputBuffer(inputBufferIndex, 0, poll.getSize(), poll.getPts(), 0);
                 } else {
-                    LogUtil.e(TAG, "mediaCodecDecode dequeueInputBuffer inputBufferIndex=" + inputBufferIndex);
+                    LogUtils.d(TAG, "mediaCodecDecode dequeueInputBuffer inputBufferIndex=" + inputBufferIndex);
                 }
             } catch (IllegalStateException e) {
                 //如果解码出错，需要提示用户或者程序自动重新初始化解码
                 mediaCodec = null;
-                LogUtil.e(TAG, "mediaCodecDecode dequeueInputBuffer " + e);
+                LogUtils.d(TAG, "mediaCodecDecode dequeueInputBuffer " + e);
                 return;
             }
         }
@@ -396,7 +396,7 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
             //如果配置编码器时指定了有效的surface，传true将此输出缓冲区显示在surface
             mediaCodec.releaseOutputBuffer(index, true);
         } else {
-            LogUtil.e(TAG, "mediaCodecDecode dequeueOutputBuffer值=" + index);
+            LogUtils.d(TAG, "mediaCodecDecode dequeueOutputBuffer值=" + index);
         }
     }
 
@@ -485,7 +485,7 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
 
     @Override
     public void releaseMediaRes() {
-        LogUtil.e(TAG, "releaseMediaRes ");
+        LogUtils.d(TAG, "releaseMediaRes ");
         isStop = true;
         List<Integer> b = new ArrayList<>();
         b.add(GlobalValue.localDeviceId);
@@ -508,7 +508,7 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
         App.threadPool.execute(() -> {
             if (mediaCodec != null) {
                 try {
-                    LogUtil.e(TAG, "releaseMediaCodec :   --> ");
+                    LogUtils.d(TAG, "releaseMediaCodec :   --> ");
                     mediaCodec.reset();
                     //调用stop()方法使编解码器返回到未初始化状态（Uninitialized），此时这个编解码器可以再次重新配置
                     mediaCodec.stop();
@@ -517,11 +517,11 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
                     //使用完编解码器后，你必须调用release()方法释放其资源
                     mediaCodec.release();
                 } catch (MediaCodec.CodecException e) {
-                    LogUtil.e(TAG, "run :  CodecException --> " + e.getMessage());
+                    LogUtils.d(TAG, "run :  CodecException --> " + e.getMessage());
                 } catch (IllegalStateException e) {
-                    LogUtil.e(TAG, "run :  IllegalStateException --> " + e.getMessage());
+                    LogUtils.d(TAG, "run :  IllegalStateException --> " + e.getMessage());
                 } catch (Exception e) {
-                    LogUtil.e(TAG, "run :  Exception --> " + e.getMessage());
+                    LogUtils.d(TAG, "run :  Exception --> " + e.getMessage());
                 }
             }
             mediaCodec = null;

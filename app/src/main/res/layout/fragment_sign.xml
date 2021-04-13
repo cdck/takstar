@@ -6,7 +6,7 @@
     android:layout_marginStart="30dp"
     android:layout_marginEnd="30dp"
     android:layout_marginBottom="30dp"
-    android:background="@drawable/dialog_full_holo_light"
+    android:background="@drawable/dialog_bg"
     android:orientation="vertical"
     android:paddingTop="10dp">
 
@@ -38,7 +38,7 @@
                 android:layout_marginStart="20dp"
                 android:drawableLeft="@drawable/shape_black_point"
                 android:drawablePadding="5dp"
-                android:text="已签到"
+                android:text="@string/already_sign_in"
                 android:textColor="@color/black" />
 
             <TextView
@@ -47,7 +47,7 @@
                 android:layout_marginStart="20dp"
                 android:drawableLeft="@drawable/shape_black_point"
                 android:drawablePadding="5dp"
-                android:text="未签到"
+                android:text="@string/un_signin"
                 android:textColor="@color/black" />
         </LinearLayout>
 
@@ -55,9 +55,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/ic_seat_signin_f"
+            android:background="@drawable/ic_seat_signin_t"
             android:gravity="center"
-            android:text="未签到"
+            android:text="@string/already_sign_in"
             android:textColor="@color/white" />
     </LinearLayout>
 
@@ -81,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:textColor="@color/gray"
+            android:textColor="@color/grey"
             tools:text="未签到人数：2人" />
 
     </LinearLayout>

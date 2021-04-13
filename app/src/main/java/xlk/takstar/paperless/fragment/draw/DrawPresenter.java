@@ -567,7 +567,7 @@ public class DrawPresenter extends BasePresenter<DrawContract.View> implements D
             }
         } else if (operflag == InterfaceMacro.Pb_MeetPostilOperType.Pb_MEETPOTIL_FLAG_REQUESTOPEN.getNumber()) {
             //询问打开白板
-            whetherOpen(disposePicSrcmemid, disposePicSrcwbidd, medianame, disposePicOpermemberid);
+//            whetherOpen(disposePicSrcmemid, disposePicSrcwbidd, medianame, disposePicOpermemberid);
         }
     }
 

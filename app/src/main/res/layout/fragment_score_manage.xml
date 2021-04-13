@@ -7,10 +7,42 @@
     android:layout_marginStart="30dp"
     android:layout_marginEnd="30dp"
     android:layout_marginBottom="30dp"
-    android:background="@drawable/dialog_full_holo_light"
-    android:orientation="horizontal">
+    android:background="@drawable/dialog_bg"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btn_launch"
+        style="@style/button_blue_rect_style"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:text="@string/launch" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="10dp"
+        android:background="@color/dimgray" />
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <include layout="@layout/horizontal_line"/>
+
+        <include layout="@layout/item_score" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_score"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <!--<LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_margin="2dp"
@@ -395,5 +427,5 @@
                 android:textSize="10sp" />
         </LinearLayout>
 
-    </LinearLayout>
+    </LinearLayout>-->
 </LinearLayout>

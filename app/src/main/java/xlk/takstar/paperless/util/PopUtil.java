@@ -109,4 +109,46 @@ public class PopUtil {
         LogUtil.i(TAG, "createAs xoff=" + xoff + ",yoff=" + yoff);
         return popupWindow;
     }
+
+    /**
+     * 创建默认点击外部弹框消失的PopupWindow
+     *
+     * @param contentView 内容布局
+     * @param width       弹框的宽
+     * @param height      弹框的高
+     * @param parent      父控件
+     * @param gravity     Gravity
+     * @param x           x轴偏移
+     * @param y           y轴偏移
+     * @return PopupWindow
+     */
+    public static PopupWindow createPopupWindow(View contentView, int width, int height, View parent, int gravity, int x, int y) {
+        return createPopupWindow(contentView, width, height, true, parent, gravity, x, y);
+    }
+
+    /**
+     * 创建默认居中显示的PopupWindow
+     *
+     * @param contentView 内容布局
+     * @param width       弹框的宽
+     * @param height      弹框的高
+     * @param parent      父控件
+     * @return PopupWindow
+     */
+    public static PopupWindow createPopupWindow(View contentView, int width, int height, View parent) {
+        return createPopupWindow(contentView, width, height, true, parent, Gravity.CENTER, 0, 0);
+    }
+
+    public static PopupWindow createPopupWindow(View contentView, int width, int height, boolean outside, View parent, int gravity, int x, int y) {
+        PopupWindow popupWindow = new PopupWindow(contentView, width, height);
+        popupWindow.setBackgroundDrawable(new BitmapDrawable());
+        // 设置popWindow弹出窗体可点击，这句话必须添加，并且是true
+        popupWindow.setTouchable(true);
+        // true:设置触摸外面时消失
+        popupWindow.setOutsideTouchable(outside);
+        popupWindow.setFocusable(outside);
+        popupWindow.setAnimationStyle(R.style.pop_animation_t_b);
+        popupWindow.showAtLocation(parent, gravity, x, y);
+        return popupWindow;
+    }
 }

@@ -38,6 +38,7 @@ public class DateUtil {
 
         return new String[]{timt,dayt};
     }
+
     /**
      * 转成时分秒 00:00:00
      *
@@ -84,17 +85,18 @@ public class DateUtil {
         return format.format(date);
     }
 
-
     /**
+     * 装换成 11:30
      * @param seconds 秒
-     * @return
      */
     public static String getHHss(long seconds) {
         Date date = new Date(seconds * 1000);
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
         return timeFormat.format(date);
     }
+
     /**
+     * 转换成 xx分xx秒
      * @param seconds 秒
      */
     public static String countdown(long seconds) {

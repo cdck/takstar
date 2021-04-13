@@ -19,8 +19,8 @@ import xlk.takstar.paperless.util.DateUtil;
 public class BulletAdapter extends BaseQuickAdapter<InterfaceBullet.pbui_Item_BulletDetailInfo, BaseViewHolder> {
     int selectedId;
 
-    public BulletAdapter(int layoutResId, @Nullable List<InterfaceBullet.pbui_Item_BulletDetailInfo> data) {
-        super(layoutResId, data);
+    public BulletAdapter(@Nullable List<InterfaceBullet.pbui_Item_BulletDetailInfo> data) {
+        super(R.layout.item_bullet, data);
     }
 
     public void setSelectedId(int id) {
@@ -40,8 +40,8 @@ public class BulletAdapter extends BaseQuickAdapter<InterfaceBullet.pbui_Item_Bu
     @Override
     protected void convert(BaseViewHolder helper, InterfaceBullet.pbui_Item_BulletDetailInfo item) {
         helper.setText(R.id.tv_title, item.getTitle().toStringUtf8())
-                .setText(R.id.tv_content, item.getContent().toStringUtf8());
-//                .setText(R.id.tv_time, item.getTimeouts() == 0 ? "" : DateUtil.convertTime(item.getTimeouts() * 1000));
+                .setText(R.id.tv_content, item.getContent().toStringUtf8())
+                .setText(R.id.tv_time, item.getStarttime() == 0 ? "" : DateUtil.secondFormatDateTime(item.getStarttime()));
         View bullet_root = helper.getView(R.id.bullet_root);
         bullet_root.setSelected(selectedId == item.getBulletid());
     }

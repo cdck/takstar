@@ -13,6 +13,7 @@ import java.util.List;
  * @author Created by xlk on 2021/1/21.
  * @desc
  */
+
 public class FeaturesNodeAdapter extends BaseNodeAdapter {
     public static final int NODE_TYPE_PARENT = 0;
     public static final int NODE_TYPE_CHILD = 1;
@@ -21,6 +22,11 @@ public class FeaturesNodeAdapter extends BaseNodeAdapter {
     private final FeaturesChildProvider childProvider;
     private final FeaturesFootProvider footProvider;
     private NodeClickItem listener;
+
+
+    public enum ClickType {
+        FEATURE, DIRECTORY, FOOT_FEATURE;
+    }
 
     public FeaturesNodeAdapter(@Nullable List<BaseNode> nodeList) {
         super(nodeList);
@@ -49,6 +55,11 @@ public class FeaturesNodeAdapter extends BaseNodeAdapter {
         parentProvider.setDefaultSelected(id);
     }
 
+    public void clearFootSelectedStatus() {
+        footProvider.clearSelected();
+        notifyDataSetChanged();
+    }
+
     public void clearParentSelectedStatus() {
         parentProvider.clearSelectedStatus();
         notifyDataSetChanged();
@@ -64,22 +75,28 @@ public class FeaturesNodeAdapter extends BaseNodeAdapter {
         notifyDataSetChanged();
     }
 
+    public void setCurrentChildId(int id){
+        childProvider.setCurrentChildId(id);
+        notifyDataSetChanged();
+    }
+
     public int getCurrentChildId() {
         return childProvider.getCurrentChildId();
     }
 
-    public void clickFeature(Object... obj) {
+    public void clickFeature(ClickType clickType, Object... obj) {
         if (listener != null) {
-            listener.onClickItem(obj);
+            listener.onClickItem(clickType, obj);
         }
     }
+
 
     public void setNodeClickItemListener(NodeClickItem listener) {
         this.listener = listener;
     }
 
     public interface NodeClickItem {
-        void onClickItem(Object... obj);
+        void onClickItem(ClickType clickType, Object... obj);
     }
 
     @Override

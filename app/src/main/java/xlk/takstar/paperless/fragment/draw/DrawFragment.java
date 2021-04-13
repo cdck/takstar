@@ -1,6 +1,7 @@
 package xlk.takstar.paperless.fragment.draw;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +10,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -21,10 +25,14 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.UriUtils;
 import com.google.protobuf.ByteString;
 import com.mogujie.tt.protobuf.InterfaceMacro;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -39,11 +47,14 @@ import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.adapter.DevMemberAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
 import xlk.takstar.paperless.model.Constant;
+import xlk.takstar.paperless.model.EventMessage;
+import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.model.bean.DevMember;
 import xlk.takstar.paperless.service.fab.FabService;
 import xlk.takstar.paperless.ui.ArtBoard;
 import xlk.takstar.paperless.ui.ColorPickerDialog;
+import xlk.takstar.paperless.util.DialogUtil;
 import xlk.takstar.paperless.util.FileUtil;
 import xlk.takstar.paperless.util.LogUtil;
 import xlk.takstar.paperless.util.PopUtil;
@@ -75,9 +86,8 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
     private RelativeLayout draw_root;
     private LinearLayout tool_ll;
     private ArtBoard artBoard;
-    private PopupWindow memberPop;
+    private PopupWindow memberPop, sizePop;
     private DevMemberAdapter devMemberAdapter;
-    private PopupWindow sizePop;
     private List<ImageView> ivs = new ArrayList<>();
     private final int REQUEST_CODE_PICTURE = 1;
     private boolean isAddScreenShot;//是否在发起共享时,添加截图图片
@@ -159,7 +169,7 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
 
     @Override
     protected void onShow() {
-        isDrawing = true;
+//        isDrawing = true;
         presenter.queryMember();
         if (FabService.screenShotBitmap != null) {
             isAddScreenShot = true;//设置发起同屏时是否发送图片
@@ -170,8 +180,8 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
 
     @Override
     protected void onHide() {
-        isDrawing = false;
-        clear();
+//        isDrawing = false;
+//        clear();
         dismissPop(memberPop);
         dismissPop(sizePop);
     }
@@ -221,18 +231,27 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
         artBoard = new ArtBoard(getContext(), width, height);
         draw_root.addView(artBoard);
         onShow();
-        artBoard.setDrawTextListener((x, y) -> {
-            LogUtil.d(TAG, "showEdtPop -->" + x + "," + y);
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            EditText editText = new EditText(getContext());
-            builder.setView(editText);
-            builder.setOnDismissListener(dialog -> {
-                String text = editText.getText().toString().trim();
-                if (!text.isEmpty()) {
-                    artBoard.drawText(x, y, text);
+        artBoard.setDrawTextListener((x, y, screenX, screenY) -> {
+            LogUtils.d(TAG, "showEdtPop -->" + x + "," + y);
+            View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_edittext, null, false);
+            int w = ConvertUtils.dp2px(150);
+            int h = ConvertUtils.dp2px(50);
+            PopupWindow pop = new PopupWindow(inflate, w, h);
+            pop.setBackgroundDrawable(new BitmapDrawable());
+            // 设置popWindow弹出窗体可点击，这句话必须添加，并且是true
+            pop.setTouchable(true);
+            // true:设置触摸外面时消失
+            pop.setOutsideTouchable(true);
+            pop.setFocusable(true);
+            pop.setAnimationStyle(R.style.pop_animation_t_b);
+            pop.showAtLocation(artBoard, Gravity.START | Gravity.TOP, screenX, screenY - h / 2);
+            EditText edt = inflate.findViewById(R.id.edt);
+            pop.setOnDismissListener(() -> {
+                String content = edt.getText().toString().trim();
+                if (!TextUtils.isEmpty(content)) {
+                    artBoard.drawText(x, y, content);
                 }
             });
-            builder.create().show();
         });
     }
 
@@ -254,6 +273,7 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
             case R.id.iv_exit:
                 presenter.stopShare();
                 clear();
+                EventBus.getDefault().post(new EventMessage.Builder().type(EventType.BUS_EXIT_DRAW).build());
                 break;
             case R.id.iv_save:
                 saveDrawPicture();
@@ -312,7 +332,26 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
                 showSizePop();
                 break;
             case R.id.iv_annotation:
-                showMemberPop();
+                if (isSharing) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle(R.string.are_you_sure_to_exit_shared_comments);
+                    builder.setPositiveButton(R.string.ensure, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            presenter.stopShare();
+                        }
+                    });
+                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.create().show();
+                } else {
+                    showMemberPop();
+                }
                 break;
             default:
                 break;
@@ -359,9 +398,10 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
     private void showSizePop() {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_seekbar, null, false);
         int width = ConvertUtils.dp2px(200);
+        int height = ConvertUtils.dp2px(50);
         int xoff = tool_ll.getWidth();
         int yoff = iv_size.getHeight();
-        sizePop = PopUtil.createAs(inflate, width, LinearLayout.LayoutParams.WRAP_CONTENT, iv_size, xoff, -yoff);
+        sizePop = PopUtil.createAs(inflate, width, height, iv_size, xoff, -yoff);
         SeekBar pop_seekbar = inflate.findViewById(R.id.pop_seekbar);
         TextView tv_size = inflate.findViewById(R.id.tv_size);
         tv_size.setText(String.valueOf(artBoard.getPaintWidth()));
@@ -399,6 +439,7 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
 
     @Override
     public void updateShareStatus() {
+        //如果在共享中则启用停止功能,反之启用发起功能
         iv_annotation.setSelected(isSharing);
     }
 
@@ -439,7 +480,14 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
 
     private void showMemberPop() {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_dev_member, null, false);
-        memberPop = PopUtil.createHalfPop(inflate, iv_annotation);
+        View meet_fl = getActivity().findViewById(R.id.meet_fl);
+        View meet_left_ll = getActivity().findViewById(R.id.meet_left_ll);
+        int width = meet_fl.getWidth();
+        int height = meet_fl.getHeight();
+        int width1 = meet_left_ll.getWidth();
+        int height1 = meet_left_ll.getHeight();
+        LogUtils.i(TAG, "showDetailsPop 宽高=" + width + "," + height + ",功能菜单宽高=" + width1 + "," + height1);
+        memberPop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, iv_annotation, Gravity.CENTER, width1 / 2, 0);
         CheckBox cb_all = inflate.findViewById(R.id.cb_all);
         RecyclerView rv_member = inflate.findViewById(R.id.rv_member);
         devMemberAdapter = new DevMemberAdapter(R.layout.item_dev_member, presenter.devMembers);
@@ -454,7 +502,7 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
             cb_all.setChecked(checked);
             devMemberAdapter.setCheckAll(checked);
         });
-        inflate.findViewById(R.id.btn_definite).setOnClickListener(v -> {
+        inflate.findViewById(R.id.btn_launch).setOnClickListener(v -> {
             List<Integer> memberIds = devMemberAdapter.getCheckMemberIds();
             if (memberIds.isEmpty()) {
                 ToastUtils.showShort(R.string.please_choose_member);

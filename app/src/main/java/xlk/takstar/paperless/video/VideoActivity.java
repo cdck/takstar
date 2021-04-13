@@ -432,15 +432,15 @@ public class VideoActivity extends BaseActivity<VideoPresenter> implements Video
         LogUtil.i(TAG, "onCutVideoImg -->" + "截图成功");
         if (bitmap != null) {
             FabService.screenShotBitmap = bitmap;
-            if (isDrawing) {
-                EventBus.getDefault().post(new EventMessage.Builder().type(EventType.BUS_SCREEN_SHOT).build());
-            } else {
+//            if (isDrawing) {
+//                EventBus.getDefault().post(new EventMessage.Builder().type(EventType.BUS_SCREEN_SHOT).build());
+//            } else {
                 finish();
                 LogUtil.i(TAG, "onCutVideoImg 跳转到画板界面");
                 Intent intent = new Intent(VideoActivity.this, MeetingActivity.class);
                 intent.putExtra("draw", "draw");
                 startActivity(intent);
-            }
+//            }
         }
     }
 }

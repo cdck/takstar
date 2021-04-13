@@ -18,6 +18,11 @@ import xlk.takstar.paperless.model.Constant;
  */
 public class FeaturesFootNode extends BaseExpandNode {
     List<BaseNode> otherFeatures;
+    private int featureId = Constant.FUN_CODE;
+
+    public int getFeatureId() {
+        return featureId;
+    }
 
     public FeaturesFootNode(boolean expand) {
         setExpanded(expand);

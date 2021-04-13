@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.AbsoluteLayout;
 
-import xlk.takstar.paperless.util.LogUtil;
+import com.blankj.utilcode.util.LogUtils;
 
 /**
  * @author by xlk
@@ -13,9 +13,10 @@ import xlk.takstar.paperless.util.LogUtil;
  * @desc 可以上下左右自由拖拽的AbsoluteLayout
  */
 public class CustomAbsoluteLayout extends AbsoluteLayout {
+    private final String TAG = "CustomAbsoluteLayout-->";
     private int width = 1300, height = 760;//底图宽高
     private int viewWidth, viewHeight;//显示区域的宽高
-    private boolean logenable = false;
+    private boolean logenable = true;
 
     /**
      * 设置显示区域的宽高
@@ -52,7 +53,7 @@ public class CustomAbsoluteLayout extends AbsoluteLayout {
         setMeasuredDimension(width, height);
         this.width = width;
         this.height = height;
-        if (logenable) LogUtil.i("mylog", "onMeasure：width=" + width + ",height=" + height);
+        if (logenable) LogUtils.i(TAG, "onMeasure：width=" + width + ",height=" + height);
     }
 
     @Override
@@ -62,11 +63,11 @@ public class CustomAbsoluteLayout extends AbsoluteLayout {
         this.t = t;
         this.r = r;
         this.b = b;
-        if (logenable) LogUtil.e("mylog", "当前layout：l=" + l + ",t=" + t + ",r=" + r + ",b=" + b);
+        if (logenable) LogUtils.e(TAG, "当前layout：l=" + l + ",t=" + t + ",r=" + r + ",b=" + b);
     }
 
     private float downX, downY;//拖动时按下
-    private int l = 0, t = 0, r, b;//拖动时
+    private int l , t , r, b;//拖动时
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -86,7 +87,7 @@ public class CustomAbsoluteLayout extends AbsoluteLayout {
             case MotionEvent.ACTION_MOVE:
                 float moveX = event.getRawX();
                 float moveY = event.getRawY();
-//                LogUtil.d(TAG, "触摸点 -->" + moveX+","+moveY+", 按压点: "+downX+","+downY);
+                LogUtils.d(TAG, "触摸点 -->" + moveX+","+moveY+", 按压点: "+downX+","+downY);
                 float dx = moveX - downX;//负数,说明是向左滑动
                 float dy = moveY - downY;//负数,说明是向上滑动
                 int left = getLeft();
@@ -114,9 +115,6 @@ public class CustomAbsoluteLayout extends AbsoluteLayout {
                         r = viewWidth;
                         l += i1;
                     }
-                } else {//不可以拖动X轴
-//                    l = 0;
-//                    r = width;
                 }
                 if (canMoveY) {
                     //上
@@ -137,12 +135,9 @@ public class CustomAbsoluteLayout extends AbsoluteLayout {
                         b = viewHeight;
                         t += i;
                     }
-                } else {//不可以拖动Y轴
-//                    t = 0;
-//                    b = height;
                 }
                 if (logenable)
-                    LogUtil.d("mylog", "当前layout：l=" + l + ",t=" + t + ",r=" + r + ",b=" + b);
+                    LogUtils.d(TAG, "当前layout：l=" + l + ",t=" + t + ",r=" + r + ",b=" + b);
                 this.layout(l, t, r, b);
                 break;
         }

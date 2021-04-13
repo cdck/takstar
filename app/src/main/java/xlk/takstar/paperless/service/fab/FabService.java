@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -28,7 +29,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Chronometer;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -84,7 +84,6 @@ import xlk.takstar.paperless.util.RangeControlFilter;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static xlk.takstar.paperless.App.mMediaProjection;
-import static xlk.takstar.paperless.App.read2file;
 import static xlk.takstar.paperless.chatonline.ChatVideoActivity.isChatingOpened;
 import static xlk.takstar.paperless.fragment.draw.DrawFragment.isDrawing;
 import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_0;
@@ -117,7 +116,7 @@ public class FabService extends Service implements FabContract.View {
     private WmCanJoinMemberAdapter joinMemberAdapter;
     private WmCanJoinProAdapter joinProAdapter;
 
-    private WindowManager.LayoutParams mParams, defaultParams, fullParams, wrapParams;
+    private WindowManager.LayoutParams mParams, noteParams, defaultParams, fullParams, wrapParams;
     private ImageView hoverButton;
     private boolean hoverButtonIsShowing;
     private View menuView, serviceView, screenView, joinView, proView, voteView, voteEnsureView, noteView;
@@ -147,7 +146,7 @@ public class FabService extends Service implements FabContract.View {
         presenter = new FabPresenter(this, this);
         presenter.queryMember();
         memberAdapter = new WmScreenMemberAdapter(R.layout.item_wm_screen, presenter.onLineMember);
-        wmScreenProjectorAdapter = new WmScreenProjectorAdapter(R.layout.item_wm_screen, presenter.onLineProjectors);
+        wmScreenProjectorAdapter = new WmScreenProjectorAdapter(presenter.onLineProjectors);
         projectorAdapter = new WmProjectorAdapter(R.layout.item_wm_pro, presenter.onLineProjectors);
         joinMemberAdapter = new WmCanJoinMemberAdapter(R.layout.item_single_button, presenter.canJoinMembers);
         joinProAdapter = new WmCanJoinProAdapter(R.layout.item_single_button, presenter.canJoinPros);
@@ -211,18 +210,26 @@ public class FabService extends Service implements FabContract.View {
         mParams.gravity = Gravity.START | Gravity.TOP;
         mParams.width = FrameLayout.LayoutParams.WRAP_CONTENT;
         mParams.height = FrameLayout.LayoutParams.WRAP_CONTENT;
-        LogUtil.i(TAG, "initParams 屏幕宽高=" + windowWidth + "," + windowHeight
-                + ",悬浮按钮宽高=" + hoverButton.getWidth() + "," + hoverButton.getHeight());
+        LogUtil.i(TAG, "initParams 屏幕宽高=" + windowWidth + "," + windowHeight);
         mParams.x = 0;
         mParams.y = windowHeight - 100;//使用windowHeight在首次拖动的时候才会有效
         mParams.windowAnimations = R.style.pop_animation_t_b;
+        /* **** **  会议笔记  ** **** */
+        noteParams = new WindowManager.LayoutParams();
+        setParamsType(noteParams);
+        noteParams.format = PixelFormat.RGBA_8888;
+        noteParams.gravity = Gravity.CENTER;
+        noteParams.width = GlobalValue.screen_width / 3;
+        noteParams.height = GlobalValue.screen_width / 3 + 50;
+        noteParams.windowAnimations = R.style.pop_animation_t_b;
         /** **** **  弹框  ** **** **/
         defaultParams = new WindowManager.LayoutParams();
         setParamsType(defaultParams);
         defaultParams.format = PixelFormat.RGBA_8888;
         defaultParams.gravity = Gravity.CENTER;
-        defaultParams.width = GlobalValue.half_width;
-        defaultParams.height = GlobalValue.half_height;
+        defaultParams.width = GlobalValue.screen_width / 2;
+        defaultParams.height = GlobalValue.screen_width / 3 + 50;
+        defaultParams.x = 100;
         defaultParams.windowAnimations = R.style.pop_animation_t_b;
         /** **** **  充满屏幕  ** **** **/
         fullParams = new WindowManager.LayoutParams();
@@ -344,10 +351,113 @@ public class FabService extends Service implements FabContract.View {
         noteView.setTag("noteView");
         CustomBaseViewHolder.NoteViewHolder holder = new CustomBaseViewHolder.NoteViewHolder(noteView);
         noteViewHolderEvent(holder);
-        showPop(removeView, noteView);
+        showPop(removeView, noteView, noteParams);
     }
 
+    /**
+     * 按下的位置
+     */
+    private int sX, sY;
+    /**
+     * 笔记视图可拖动的距离
+     */
+    private int shiftLeft, shiftTop, shiftRight, shiftBottom;
+    /**
+     * 可向上移东和可向下移动的最大值
+     */
+    private int maxTop, maxBottom;
+
+    @SuppressLint("ClickableViewAccessibility")
     private void noteViewHolderEvent(CustomBaseViewHolder.NoteViewHolder holder) {
+        holder.top_layout.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    sX = (int) event.getRawX();
+                    sY = (int) event.getRawY();
+                    int x = (int) event.getX();
+                    int y = (int) event.getY();
+                    /* **** **  视图左上角的坐标  ** **** */
+                    int topX = sX - x;
+                    int topY = sY - y;
+                    if (maxTop == 0) {
+                        maxTop = -topY;
+                    }
+                    if (maxBottom == 0) {
+                        maxBottom = GlobalValue.screen_height - topY - noteParams.height;
+                    }
+                    /* **** **  计算剩余可拖动的距离  ** **** */
+                    shiftLeft = -topX;
+                    shiftTop = -topY;
+                    shiftRight = GlobalValue.screen_width - topX - noteParams.width;
+                    shiftBottom = GlobalValue.screen_height - topY - noteParams.height;
+//                    LogUtils.d("noteViewHolderEvent 点击的全屏坐标=" + sX + "," + sY
+//                            + "\n点击的视图坐标=" + x + "," + y
+//                            + "\n视图左上角的坐标=" + topX + "," + topY
+//                            + "\n视图宽高=" + noteParams.width + "," + noteParams.height
+//                            + "\n可拖动的距离=" + shiftLeft + "," + shiftTop + "," + shiftRight + "," + shiftBottom
+//                    );
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    int rawX = (int) event.getRawX();
+                    int rawY = (int) event.getRawY();
+                    int mx = rawX - sX;
+                    int my = rawY - sY;
+//                    LogUtils.e("noteViewHolderEvent noteParams=" + noteParams.x + "," + noteParams.y);
+                    if (mx > 0) {
+                        //右移
+                        if (shiftRight > 0) {
+                            //可以右移
+                            noteParams.x += mx;
+                            shiftLeft -= mx;
+                            if (noteParams.x > noteParams.width) {
+                                noteParams.x = noteParams.width;
+                            }
+                        }
+                    } else if (mx < 0) {
+                        //左移
+                        if (shiftLeft < 0) {
+                            //可以左移
+                            noteParams.x += mx;
+                            shiftRight -= mx;
+                            if (noteParams.x < -noteParams.width) {
+                                noteParams.x = -noteParams.width;
+                            }
+                        }
+                    }
+                    if (my > 0) {
+                        //下移
+                        if (shiftBottom > 0) {
+                            //可以下移
+                            noteParams.y += my;
+                            shiftTop -= my;
+                            if (noteParams.y > maxBottom) {
+                                noteParams.y = maxBottom;
+                            }
+                        }
+                    } else if (my < 0) {
+                        //上移
+                        if (shiftTop < 0) {
+                            //可以上移
+                            noteParams.y += my;
+                            shiftBottom -= my;
+                            if (noteParams.y < maxTop) {
+                                noteParams.y = maxTop;
+                            }
+                        }
+                    }
+//                    LogUtils.i("noteViewHolderEvent 移动的距离=" + mx + "," + my
+//                            + "\nnoteParams=" + noteParams.x + "," + noteParams.y);
+                    wm.updateViewLayout(noteView, noteParams);
+                    sX = rawX;
+                    sY = rawY;
+                    break;
+                case MotionEvent.ACTION_UP: {
+//                    LogUtils.d("noteViewHolderEvent 位置坐标=" + noteParams.x + "," + noteParams.y);
+                    break;
+                }
+            }
+            return true;
+        });
         holder.btn_back.setOnClickListener(v -> {
             saveNoteContent = holder.edt_note.getText().toString();
             showPop(noteView, hoverButton, mParams);
@@ -373,7 +483,8 @@ public class FabService extends Service implements FabContract.View {
             File file = new File(filePath);
             FileUtils.createOrExistsFile(file);
             if (FileUtil.writeFileFromString(file, content)) {
-                ToastUtils.showShort(R.string.save_successful);
+                Toast.makeText(cxt, getString(R.string.save_meet_note_, filePath), Toast.LENGTH_LONG).show();
+//                ToastUtils.showLong(getString(R.string.save_meet_note_, filePath));
             }
         });
     }
@@ -455,12 +566,150 @@ public class FabService extends Service implements FabContract.View {
     //服务视图事件
     private void serviceViewHolderEvent(CustomBaseViewHolder.ServiceViewHolder holder) {
         holder.wm_service_close.setOnClickListener(v -> showPop(serviceView, hoverButton, mParams));
-        holder.wm_service_pager.setOnClickListener(v -> holder.wm_service_edt.setText(cxt.getResources().getString(R.string.service_pager)));
-        holder.wm_service_pen.setOnClickListener(v -> holder.wm_service_edt.setText(cxt.getResources().getString(R.string.service_pen)));
-        holder.wm_service_tea.setOnClickListener(v -> holder.wm_service_edt.setText(cxt.getResources().getString(R.string.service_tea)));
-        holder.wm_service_calculate.setOnClickListener(v -> holder.wm_service_edt.setText(cxt.getResources().getString(R.string.service_calculate)));
-        holder.wm_service_waiter.setOnClickListener(v -> holder.wm_service_edt.setText(cxt.getResources().getString(R.string.service_waiter)));
-        holder.wm_service_clean.setOnClickListener(v -> holder.wm_service_edt.setText(cxt.getResources().getString(R.string.service_clean)));
+        holder.wm_service_pager.setOnClickListener(v -> {
+            v.setSelected(!v.isSelected());
+            String currentStr = holder.wm_service_edt.getText().toString().trim();
+            String pagerStr = cxt.getResources().getString(R.string.service_pager);
+            if (v.isSelected()) {
+                //添加文本
+                if (!currentStr.isEmpty()) {
+                    currentStr += "、";
+                }
+                holder.wm_service_edt.setText(currentStr + pagerStr);
+            } else {
+                //删除文本
+                if (currentStr.contains("、" + pagerStr)) {
+                    holder.wm_service_edt.setText(currentStr.replace("、" + pagerStr, ""));
+                } else if (currentStr.contains(pagerStr)) {
+                    holder.wm_service_edt.setText(currentStr.replace(pagerStr, ""));
+                    String trim = holder.wm_service_edt.getText().toString().trim();
+                    if (trim.startsWith("、")) {
+                        holder.wm_service_edt.setText(trim.substring(1));
+                    }
+                }
+            }
+            holder.wm_service_edt.setSelection(holder.wm_service_edt.getText().toString().length());
+        });
+        holder.wm_service_pen.setOnClickListener(v -> {
+            v.setSelected(!v.isSelected());
+            String currentStr = holder.wm_service_edt.getText().toString().trim();
+            String pagerStr = cxt.getResources().getString(R.string.service_pen);
+            if (v.isSelected()) {
+                //添加文本
+                if (!currentStr.isEmpty()) {
+                    currentStr += "、";
+                }
+                holder.wm_service_edt.setText(currentStr + pagerStr);
+            } else {
+                //删除文本
+                if (currentStr.contains("、" + pagerStr)) {
+                    holder.wm_service_edt.setText(currentStr.replace("、" + pagerStr, ""));
+                } else if (currentStr.contains(pagerStr)) {
+                    holder.wm_service_edt.setText(currentStr.replace(pagerStr, ""));
+                    String trim = holder.wm_service_edt.getText().toString().trim();
+                    if (trim.startsWith("、")) {
+                        holder.wm_service_edt.setText(trim.substring(1));
+                    }
+                }
+            }
+            holder.wm_service_edt.setSelection(holder.wm_service_edt.getText().toString().length());
+        });
+        holder.wm_service_tea.setOnClickListener(v -> {
+            v.setSelected(!v.isSelected());
+            String currentStr = holder.wm_service_edt.getText().toString().trim();
+            String pagerStr = cxt.getResources().getString(R.string.service_tea);
+            if (v.isSelected()) {
+                //添加文本
+                if (!currentStr.isEmpty()) {
+                    currentStr += "、";
+                }
+                holder.wm_service_edt.setText(currentStr + pagerStr);
+            } else {
+                //删除文本
+                if (currentStr.contains("、" + pagerStr)) {
+                    holder.wm_service_edt.setText(currentStr.replace("、" + pagerStr, ""));
+                } else if (currentStr.contains(pagerStr)) {
+                    holder.wm_service_edt.setText(currentStr.replace(pagerStr, ""));
+                    String trim = holder.wm_service_edt.getText().toString().trim();
+                    if (trim.startsWith("、")) {
+                        holder.wm_service_edt.setText(trim.substring(1));
+                    }
+                }
+            }
+            holder.wm_service_edt.setSelection(holder.wm_service_edt.getText().toString().length());
+        });
+        holder.wm_service_calculate.setOnClickListener(v -> {
+            v.setSelected(!v.isSelected());
+            String currentStr = holder.wm_service_edt.getText().toString().trim();
+            String pagerStr = cxt.getResources().getString(R.string.service_calculate);
+            if (v.isSelected()) {
+                //添加文本
+                if (!currentStr.isEmpty()) {
+                    currentStr += "、";
+                }
+                holder.wm_service_edt.setText(currentStr + pagerStr);
+            } else {
+                //删除文本
+                if (currentStr.contains("、" + pagerStr)) {
+                    holder.wm_service_edt.setText(currentStr.replace("、" + pagerStr, ""));
+                } else if (currentStr.contains(pagerStr)) {
+                    holder.wm_service_edt.setText(currentStr.replace(pagerStr, ""));
+                    String trim = holder.wm_service_edt.getText().toString().trim();
+                    if (trim.startsWith("、")) {
+                        holder.wm_service_edt.setText(trim.substring(1));
+                    }
+                }
+            }
+            holder.wm_service_edt.setSelection(holder.wm_service_edt.getText().toString().length());
+        });
+        holder.wm_service_waiter.setOnClickListener(v -> {
+            v.setSelected(!v.isSelected());
+            String currentStr = holder.wm_service_edt.getText().toString().trim();
+            String pagerStr = cxt.getResources().getString(R.string.service_waiter);
+            if (v.isSelected()) {
+                //添加文本
+                if (!currentStr.isEmpty()) {
+                    currentStr += "、";
+                }
+                holder.wm_service_edt.setText(currentStr + pagerStr);
+            } else {
+                //删除文本
+                if (currentStr.contains("、" + pagerStr)) {
+                    holder.wm_service_edt.setText(currentStr.replace("、" + pagerStr, ""));
+                } else if (currentStr.contains(pagerStr)) {
+                    holder.wm_service_edt.setText(currentStr.replace(pagerStr, ""));
+                    String trim = holder.wm_service_edt.getText().toString().trim();
+                    if (trim.startsWith("、")) {
+                        holder.wm_service_edt.setText(trim.substring(1));
+                    }
+                }
+            }
+            holder.wm_service_edt.setSelection(holder.wm_service_edt.getText().toString().length());
+        });
+        holder.wm_service_clean.setOnClickListener(v -> {
+            v.setSelected(!v.isSelected());
+            String currentStr = holder.wm_service_edt.getText().toString().trim();
+            String pagerStr = cxt.getResources().getString(R.string.service_clean);
+            if (v.isSelected()) {
+                //添加文本
+                if (!currentStr.isEmpty()) {
+                    currentStr += "、";
+                }
+                holder.wm_service_edt.setText(currentStr + pagerStr);
+            } else {
+                //删除文本
+                if (currentStr.contains("、" + pagerStr)) {
+                    holder.wm_service_edt.setText(currentStr.replace("、" + pagerStr, ""));
+                } else if (currentStr.contains(pagerStr)) {
+                    holder.wm_service_edt.setText(currentStr.replace(pagerStr, ""));
+                    String trim = holder.wm_service_edt.getText().toString().trim();
+                    if (trim.startsWith("、")) {
+                        holder.wm_service_edt.setText(trim.substring(1));
+                    }
+                }
+            }
+            holder.wm_service_edt.setSelection(holder.wm_service_edt.getText().toString().length());
+        });
         holder.wm_service_send.setOnClickListener(v -> {
             String msg = holder.wm_service_edt.getText().toString().trim();
             if (!msg.isEmpty()) {
@@ -568,6 +817,7 @@ public class FabService extends Service implements FabContract.View {
     //加入同屏视图事件
     private void joinViewHolderEvent(CustomBaseViewHolder.ScreenViewHolder holder) {
         holder.mandatory_ll.setVisibility(View.GONE);
+        holder.online_ll.setVisibility(View.GONE);
         holder.iv_dividing_line.setVisibility(View.GONE);
         holder.dividing_line.setVisibility(View.VISIBLE);
         holder.wm_screen_title.setText(cxt.getString(R.string.choose_join_screen));
@@ -628,11 +878,13 @@ public class FabService extends Service implements FabContract.View {
     private void screenViewHolderEvent(CustomBaseViewHolder.ScreenViewHolder holder, int type) {
         if (type == 1) {
             holder.mandatory_ll.setVisibility(View.VISIBLE);
+            holder.online_ll.setVisibility(View.VISIBLE);
             holder.iv_dividing_line.setVisibility(View.VISIBLE);
             holder.dividing_line.setVisibility(View.GONE);
             holder.wm_screen_title.setText(cxt.getString(R.string.launch_screen));
         } else if (type == 2) {
             holder.mandatory_ll.setVisibility(View.GONE);
+            holder.online_ll.setVisibility(View.GONE);
             holder.iv_dividing_line.setVisibility(View.GONE);
             holder.dividing_line.setVisibility(View.VISIBLE);
             holder.wm_screen_title.setText(cxt.getString(R.string.stop_screen));
@@ -1256,7 +1508,7 @@ public class FabService extends Service implements FabContract.View {
 
     @Override
     public void closeScoreView() {
-        LogUtils.i(TAG,"closeScoreView");
+        LogUtils.i(TAG, "closeScoreView");
         if (scoreDialog != null && scoreDialog.isShowing()) {
             scoreDialog.dismiss();
         }

@@ -2,15 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="20dp"
+    android:id="@+id/item_root_view"
+    android:layout_height="30dp"
+    android:background="@color/table_bg_color"
     android:orientation="vertical">
+
 
     <CheckBox
         android:id="@+id/cb_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:background="@color/table_bg_color"
+        android:layout_marginStart="10dp"
         android:button="@drawable/check_box_style"
         android:clickable="false"
         android:gravity="center"

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dialog_full_holo_light"
+    android:background="@drawable/dialog_bg"
     android:orientation="vertical">
 
     <RelativeLayout

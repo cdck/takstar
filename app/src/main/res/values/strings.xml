@@ -390,6 +390,17 @@
     <string name="score_tip">该评分项已经结束，是否重新发起？</string>
     <string name="launch_bullet">发起公告</string>
     <string name="modify_bullet">修改公告</string>
+    <string name="already_sign_in">已签到</string>
+    <string name="un_signin">未签到</string>
+    <string name="is_online_">是否在线：</string>
+    <string name="online_member">在线人员</string>
+    <string name="agenda_time">议程时间</string>
+    <string name="agenda_content">议程内容</string>
+    <string name="agenda_data">议程资料</string>
+    <string name="launch_annotation">发起批注</string>
+    <string name="stop_annotation">停止批注</string>
+    <string name="are_you_sure_to_exit_shared_comments">是否确认退出共享批注？</string>
+    <string name="save_meet_note_">保存成功：%1$s</string>
 
     <array name="yes_or_no">
         <item>是</item>

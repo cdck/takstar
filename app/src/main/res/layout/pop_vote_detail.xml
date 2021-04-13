@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dialog_full_holo_light"
+    android:background="@drawable/dialog_bg"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -85,7 +85,7 @@
 
         <Button
             android:id="@+id/btn_export_result"
-            style="@style/file_open_btn_style"
+            style="@style/button_style_rect_blue_white_radius10"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_marginStart="10dp"

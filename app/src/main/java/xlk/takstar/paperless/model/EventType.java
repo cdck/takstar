@@ -82,4 +82,8 @@ public class EventType {
      * 新的未读消息
      */
     public static final int BUS_UNREAD_MESSAGE_TIP = BUS_BASE + 24;
+    /**
+     * 退出电子白板
+     */
+    public static final int BUS_EXIT_DRAW = BUS_BASE + 25;
 }

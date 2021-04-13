@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.chad.library.adapter.base.BaseNodeAdapter;
 import com.chad.library.adapter.base.entity.node.BaseNode;
 import com.chad.library.adapter.base.provider.BaseNodeProvider;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
@@ -24,6 +25,8 @@ import xlk.takstar.paperless.model.GlobalValue;
  * @desc 其它功能
  */
 class FeaturesFootProvider extends BaseNodeProvider {
+    private boolean isSelected = false;
+
     @Override
     public int getItemViewType() {
         return FeaturesNodeAdapter.NODE_TYPE_FOOT;
@@ -34,8 +37,18 @@ class FeaturesFootProvider extends BaseNodeProvider {
         return R.layout.item_feature_foot_layout;
     }
 
+    public void clearSelected() {
+        isSelected = false;
+    }
+
     @Override
     public void convert(@NotNull BaseViewHolder baseViewHolder, BaseNode baseNode) {
+        LinearLayout item_feature_root = baseViewHolder.getView(R.id.item_feature_root);
+        ImageView item_feature_iv = baseViewHolder.getView(R.id.item_feature_iv);
+        TextView item_feature_tv = baseViewHolder.getView(R.id.item_feature_tv);
+        item_feature_root.setSelected(isSelected);
+        item_feature_iv.setSelected(isSelected);
+        item_feature_tv.setSelected(isSelected);
     }
 
     @Override
@@ -49,9 +62,16 @@ class FeaturesFootProvider extends BaseNodeProvider {
             ToastUtils.showShort(R.string.you_have_no_permission);
             return;
         }
+        isSelected = true;
         // 这里使用payload进行增量刷新（避免整个item刷新导致的闪烁，不自然）
-        if (getAdapter() != null) {
-            getAdapter().expandOrCollapse(position);
+        FeaturesNodeAdapter adapter = (FeaturesNodeAdapter) getAdapter();
+        FeaturesFootNode node = (FeaturesFootNode) data;
+        boolean expanded = node.isExpanded();
+        if (adapter != null) {
+            adapter.expandOrCollapse(position);
+            adapter.clearParentSelectedStatus();
+            adapter.clearChildSelectedStatus();
+            adapter.clickFeature(FeaturesNodeAdapter.ClickType.FOOT_FEATURE, !expanded);
         }
     }
 }

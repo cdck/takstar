@@ -3,6 +3,7 @@
     android:id="@+id/agenda_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/dialog_bg"
     android:orientation="vertical">
 
     <ProgressBar
@@ -16,7 +17,8 @@
         android:id="@+id/agenda_sv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/agenda_tv"
@@ -26,4 +28,92 @@
             android:textColor="@color/black"
             android:textSize="18sp" />
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/ll_time_agenda"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/agenda_time"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="#515151" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:gravity="center"
+                    android:text="@string/agenda_content"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/agenda_data"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="visible">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_agenda"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="3" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_file"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

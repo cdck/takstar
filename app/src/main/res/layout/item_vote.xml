@@ -21,9 +21,11 @@
             android:id="@+id/item_tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:singleLine="true"
             android:ellipsize="middle"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_medium"
+            android:textStyle="bold"
             tools:text="投票表决谁做老大（单选、匿名）" />
 
         <LinearLayout
@@ -46,14 +48,20 @@
                     android:id="@+id/tv_a_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
                     android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
                     tools:text="赞成：" />
 
                 <TextView
                     android:id="@+id/tv_a_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
                     tools:text="0票" />
             </LinearLayout>
 
@@ -70,14 +78,20 @@
                     android:id="@+id/tv_b_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
                     android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
                     tools:text="反对：" />
 
                 <TextView
                     android:id="@+id/tv_b_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
                     tools:text="0票" />
             </LinearLayout>
 
@@ -94,14 +108,20 @@
                     android:id="@+id/tv_c_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
                     android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
                     tools:text="赞成：" />
 
                 <TextView
                     android:id="@+id/tv_c_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
                     tools:text="0票" />
             </LinearLayout>
 
@@ -118,14 +138,20 @@
                     android:id="@+id/tv_d_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
                     android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
                     tools:text="赞成：" />
 
                 <TextView
                     android:id="@+id/tv_d_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
                     tools:text="0票" />
             </LinearLayout>
 
@@ -143,14 +169,20 @@
                     android:id="@+id/tv_e_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
                     android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
                     tools:text="赞成：" />
 
                 <TextView
                     android:id="@+id/tv_e_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_small"
+                    android:textStyle="bold"
                     tools:text="0票" />
             </LinearLayout>
         </LinearLayout>
@@ -162,5 +194,7 @@
         android:layout_gravity="center"
         android:layout_margin="10dp"
         android:gravity="center"
+        android:textSize="@dimen/text_size_medium"
+        android:textStyle="bold"
         tools:text="未发起" />
 </LinearLayout>

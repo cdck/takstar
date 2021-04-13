@@ -48,26 +48,26 @@ public class CustomBaseViewHolder {
     public static class ServiceViewHolder {
         public View rootView;
         public ImageView wm_service_close;
-        public Button wm_service_pen;
-        public Button wm_service_pager;
-        public Button wm_service_tea;
-        public Button wm_service_calculate;
-        public Button wm_service_waiter;
-        public Button wm_service_clean;
+        public ImageView wm_service_pen;
+        public ImageView wm_service_pager;
+        public ImageView wm_service_tea;
+        public ImageView wm_service_calculate;
+        public ImageView wm_service_waiter;
+        public ImageView wm_service_clean;
         public EditText wm_service_edt;
         public Button wm_service_send;
 
         public ServiceViewHolder(View rootView) {
             this.rootView = rootView;
-            this.wm_service_close = (ImageView) rootView.findViewById(R.id.wm_service_close);
-            this.wm_service_pen = (Button) rootView.findViewById(R.id.wm_service_pen);
-            this.wm_service_pager = (Button) rootView.findViewById(R.id.wm_service_pager);
-            this.wm_service_tea = (Button) rootView.findViewById(R.id.wm_service_tea);
-            this.wm_service_calculate = (Button) rootView.findViewById(R.id.wm_service_calculate);
-            this.wm_service_waiter = (Button) rootView.findViewById(R.id.wm_service_waiter);
-            this.wm_service_clean = (Button) rootView.findViewById(R.id.wm_service_clean);
-            this.wm_service_edt = (EditText) rootView.findViewById(R.id.wm_service_edt);
-            this.wm_service_send = (Button) rootView.findViewById(R.id.wm_service_send);
+            this.wm_service_close = rootView.findViewById(R.id.wm_service_close);
+            this.wm_service_pen = rootView.findViewById(R.id.wm_service_pen);
+            this.wm_service_pager = rootView.findViewById(R.id.wm_service_pager);
+            this.wm_service_tea = rootView.findViewById(R.id.wm_service_tea);
+            this.wm_service_calculate = rootView.findViewById(R.id.wm_service_calculate);
+            this.wm_service_waiter = rootView.findViewById(R.id.wm_service_waiter);
+            this.wm_service_clean = rootView.findViewById(R.id.wm_service_clean);
+            this.wm_service_edt = rootView.findViewById(R.id.wm_service_edt);
+            this.wm_service_send = rootView.findViewById(R.id.wm_service_send);
         }
 
     }
@@ -78,6 +78,7 @@ public class CustomBaseViewHolder {
         public ImageView iv_close;
         public CheckBox wm_screen_mandatory;
         public LinearLayout mandatory_ll;
+        public LinearLayout online_ll;
         public ImageView iv_dividing_line;
         public ImageView dividing_line;
         public CheckBox wm_screen_cb_attendee;
@@ -93,6 +94,7 @@ public class CustomBaseViewHolder {
             this.iv_close = (ImageView) rootView.findViewById(R.id.iv_close);
             this.wm_screen_mandatory = (CheckBox) rootView.findViewById(R.id.wm_screen_mandatory);
             this.mandatory_ll = (LinearLayout) rootView.findViewById(R.id.mandatory_ll);
+            this.online_ll = (LinearLayout) rootView.findViewById(R.id.online_ll);
             this.iv_dividing_line = (ImageView) rootView.findViewById(R.id.iv_dividing_line);
             this.dividing_line = (ImageView) rootView.findViewById(R.id.dividing_line);
             this.wm_screen_cb_attendee = (CheckBox) rootView.findViewById(R.id.wm_screen_cb_attendee);

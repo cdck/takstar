@@ -37,7 +37,7 @@
 
     <Button
         android:id="@+id/item_btn_open"
-        style="@style/file_open_btn_style"
+        style="@style/button_style_rect_blue_white_radius10"
         android:layout_gravity="center"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
@@ -47,7 +47,7 @@
 
     <Button
         android:id="@+id/item_btn_download"
-        style="@style/file_open_btn_style"
+        style="@style/button_style_rect_blue_white_radius10"
         android:layout_gravity="center"
         android:layout_marginEnd="10dp"
         android:enabled="false"

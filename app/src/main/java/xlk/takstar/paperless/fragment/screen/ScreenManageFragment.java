@@ -105,7 +105,7 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
         }
 
         if (projectorAdapter == null) {
-            projectorAdapter = new WmScreenProjectorAdapter(R.layout.item_wm_screen, presenter.onLineProjectors);
+            projectorAdapter = new WmScreenProjectorAdapter( presenter.onLineProjectors);
             rv_projection.setLayoutManager(new LinearLayoutManager(getContext()));
             rv_projection.setAdapter(projectorAdapter);
             projectorAdapter.setOnItemClickListener(new OnItemClickListener() {
