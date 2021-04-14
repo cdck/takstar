@@ -16,9 +16,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/file_download"
+            android:text="@string/choose_file_export"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="@dimen/text_size_big"
             android:textStyle="bold" />
 
         <ImageView
@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_marginStart="10dp"
-                android:text="@string/download" />
+                android:text="@string/export" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

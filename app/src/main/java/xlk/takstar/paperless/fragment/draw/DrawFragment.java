@@ -1,7 +1,6 @@
 package xlk.takstar.paperless.fragment.draw;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,7 +25,6 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.UriUtils;
 import com.google.protobuf.ByteString;
@@ -54,7 +52,6 @@ import xlk.takstar.paperless.model.bean.DevMember;
 import xlk.takstar.paperless.service.fab.FabService;
 import xlk.takstar.paperless.ui.ArtBoard;
 import xlk.takstar.paperless.ui.ColorPickerDialog;
-import xlk.takstar.paperless.util.DialogUtil;
 import xlk.takstar.paperless.util.FileUtil;
 import xlk.takstar.paperless.util.LogUtil;
 import xlk.takstar.paperless.util.PopUtil;
@@ -401,7 +398,7 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
         int height = ConvertUtils.dp2px(50);
         int xoff = tool_ll.getWidth();
         int yoff = iv_size.getHeight();
-        sizePop = PopUtil.createAs(inflate, width, height, iv_size, xoff, -yoff);
+        sizePop = PopUtil.createPopupWindowAs(inflate, width, height, iv_size, xoff, -yoff);
         SeekBar pop_seekbar = inflate.findViewById(R.id.pop_seekbar);
         TextView tv_size = inflate.findViewById(R.id.tv_size);
         tv_size.setText(String.valueOf(artBoard.getPaintWidth()));
@@ -409,7 +406,9 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
         pop_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+                if (progress < 1) {
+                    seekBar.setProgress(1);
+                }
             }
 
             @Override
@@ -419,8 +418,9 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                artBoard.setPaintWidth(seekBar.getProgress());
-                tv_size.setText(String.valueOf(seekBar.getProgress()));
+                int progress = seekBar.getProgress();
+                artBoard.setPaintWidth(progress);
+                tv_size.setText(String.valueOf(progress));
             }
         });
     }

@@ -53,6 +53,7 @@ public class ScoreAdapter extends BaseQuickAdapter<InterfaceFilescorevote.pbui_T
             //默认保留两位会有错误，这里设置保留小数点后4位
             average = b1.divide(b2, 2, BigDecimal.ROUND_HALF_UP).doubleValue();
         }
+
         helper.setText(R.id.item_view_1, item.getContent().toStringUtf8())
                 .setText(R.id.item_view_2, JniHelper.getInstance().queryFileNameByMediaId(item.getFileid()))
                 .setText(R.id.item_view_3, Constant.getVoteState(getContext(), item.getVotestate()))

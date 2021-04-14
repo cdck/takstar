@@ -30,6 +30,7 @@ import jxl.write.WritableCellFormat;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
+import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.model.bean.SubmitMember;
@@ -54,12 +55,13 @@ import static xlk.takstar.paperless.util.ConvertUtil.s2b;
 public class JxlUtil {
     private static final String TAG = "JxlUtil-->";
 
-    private static File createXlsFile(String fileName) {
+    private static File createXlsFile(String fileName) throws IOException {
         File file = new File(fileName + ".xls");
         String s = DateUtil.nowDate();
         if (file.exists()) {
-            return createXlsFile(fileName + "-" + s);
+            return createXlsFile(fileName + "_" + s);
         } else {
+            file.createNewFile();
             return file;
         }
     }
@@ -147,10 +149,9 @@ public class JxlUtil {
      */
     public static void exportVoteInfo(List<InterfaceVote.pbui_Item_MeetVoteDetailInfo> votes, String fileName, String content) {
         FileUtils.createOrExistsDir(Constant.export_dir);
-        //1.创建Excel文件
-        File file = createXlsFile(Constant.export_dir + fileName);
         try {
-            file.createNewFile();
+            //1.创建Excel文件
+            File file = createXlsFile(Constant.export_dir + fileName);
             //2.创建工作簿
             WritableWorkbook workbook = Workbook.createWorkbook(file);
             //3.创建Sheet
@@ -228,7 +229,7 @@ public class JxlUtil {
             workbook.write();
             //7.最后一步，关闭工作簿
             workbook.close();
-            ToastUtils.showShort(R.string.export_successful);
+            ToastUtils.showLong(App.appContext.getString(R.string.export_successful_, file.getAbsolutePath()));
         } catch (IOException | WriteException e) {
             e.printStackTrace();
         }
@@ -342,6 +343,7 @@ public class JxlUtil {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (BiffException e) {
+            ToastUtils.showLong(R.string.import_err_content_format_is_incorrect);
             e.printStackTrace();
         }
         return temps;
@@ -354,10 +356,9 @@ public class JxlUtil {
      */
     public static void exportMember(List<InterfacePerson.pbui_Item_PersonDetailInfo> memberInfos) {
         FileUtils.createOrExistsDir(Constant.export_dir);
-        //1.创建Excel文件
-        File file = createXlsFile(Constant.export_dir + "常用参会人");
         try {
-            file.createNewFile();
+            //1.创建Excel文件
+            File file = createXlsFile(Constant.export_dir + "常用参会人");
             //2.创建工作簿
             WritableWorkbook workbook = Workbook.createWorkbook(file);
             //3.创建Sheet
@@ -425,7 +426,7 @@ public class JxlUtil {
             workbook.write();
             //7.最后一步，关闭工作簿
             workbook.close();
-            ToastUtils.showShort(R.string.export_successful);
+            ToastUtils.showLong(App.appContext.getString(R.string.export_successful_, file.getAbsolutePath()));
         } catch (IOException | WriteException e) {
             e.printStackTrace();
         }
@@ -566,15 +567,15 @@ public class JxlUtil {
     /**
      * 导出投票详情，投票提交人
      *
-     * @param voteContent
-     * @param submitMembers
+     * @param dirPath 导出目录区分：导出投票和导出选举
+     * @param voteContent 投票/选举内容
+     * @param submitMembers 投票/选举提交人
      */
-    public static void exportVoteSubmitMember(String voteContent, List<SubmitMember> submitMembers) {
-        FileUtils.createOrExistsDir(Constant.export_dir);
-        //1.创建Excel文件
-        File file = createXlsFile(Constant.export_dir + voteContent);
+    public static void exportVoteSubmitMember(String dirPath, String voteContent, List<SubmitMember> submitMembers) {
+        FileUtils.createOrExistsDir(dirPath);
         try {
-            file.createNewFile();
+            //1.创建Excel文件
+            File file = createXlsFile(dirPath + voteContent);
             //2.创建工作簿
             WritableWorkbook workbook = Workbook.createWorkbook(file);
             //3.创建Sheet
@@ -611,7 +612,7 @@ public class JxlUtil {
             workbook.write();
             //7.最后一步，关闭工作簿
             workbook.close();
-            ToastUtils.showShort(R.string.export_successful);
+            ToastUtils.showLong(App.appContext.getString(R.string.export_successful_, file.getAbsolutePath()));
         } catch (IOException | WriteException e) {
             e.printStackTrace();
         }

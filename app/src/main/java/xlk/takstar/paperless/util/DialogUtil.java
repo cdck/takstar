@@ -87,7 +87,7 @@ public class DialogUtil {
      * @return AlertDialog对象
      */
     public static AlertDialog createDialog(Context context, int layoutId, boolean outside) {
-        return createDialog(context, layoutId, outside, GlobalValue.half_width, GlobalValue.half_height);
+        return createDialog(context, layoutId, outside, GlobalValue.half_width, GlobalValue.half_height, false);
     }
 
     /**
@@ -98,7 +98,7 @@ public class DialogUtil {
      * @param height   高
      * @return AlertDialog，用于查找控件
      */
-    public static AlertDialog createDialog(Context context, int layoutId, boolean outside, int width, int height) {
+    public static AlertDialog createDialog(Context context, int layoutId, boolean outside, int width, int height, boolean transparent) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View inflate = LayoutInflater.from(context).inflate(layoutId, null);
         builder.setView(inflate);
@@ -113,6 +113,10 @@ public class DialogUtil {
         WindowManager.LayoutParams attributes = dialog.getWindow().getAttributes();
         attributes.width = width;
         attributes.height = height;
+        if (transparent) {
+            //设置背景不变暗
+            attributes.dimAmount = 0f;
+        }
         dialog.getWindow().setAttributes(attributes);
         return dialog;
     }

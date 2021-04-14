@@ -79,7 +79,7 @@ public class App extends Application {
 
     public static final boolean read2file = false;
     private final String TAG = "App-->";
-    public static boolean isDebug = false;
+    public static boolean isDebug = true;
     public static Context appContext;
     public static ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
             1,

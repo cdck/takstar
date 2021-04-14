@@ -613,7 +613,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     private void showConfigPop() {
         View inflate = LayoutInflater.from(this).inflate(R.layout.pop_config, null, false);
-        PopupWindow configPop = PopUtil.createHalfPop(inflate, main_btn_enter_meeting);
+        PopupWindow configPop = PopUtil.createBigPop(inflate, main_btn_enter_meeting);
         EditText edt_ip = inflate.findViewById(R.id.edt_ip);
         EditText edt_port = inflate.findViewById(R.id.edt_port);
         EditText edt_bitrate = inflate.findViewById(R.id.edt_bitrate);

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/dialog_bg"
     android:orientation="vertical"
     android:padding="5dp">
 
@@ -11,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="5dp"
+        android:textColor="@color/red"
         android:text="@string/score_info_submit" />
 
     <LinearLayout
@@ -229,7 +231,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:layout_marginTop="15dp"
             android:orientation="horizontal">
 
@@ -246,7 +249,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="top|start"
-                android:lines="5"
+                android:lines="3"
                 android:padding="2dp"
                 android:textSize="12sp"
                 tools:text="速度快放假了快速点击" />
@@ -263,13 +266,15 @@
 
         <Button
             android:id="@+id/btn_submit"
-            style="@style/btn_style"
+            android:layout_width="wrap_content"
+            style="@style/button_blue_rect_style"
             android:layout_marginEnd="20dp"
             android:text="@string/submit" />
 
         <Button
             android:id="@+id/btn_cancel"
-            style="@style/btn_style"
+            style="@style/button_blue_rect_style"
+            android:layout_width="wrap_content"
             android:layout_marginStart="20dp"
             android:text="@string/giveup" />
     </LinearLayout>

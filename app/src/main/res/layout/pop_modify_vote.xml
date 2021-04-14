@@ -55,6 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:textSize="@dimen/text_size_medium"
                     android:text="@string/vote_title_" />
 
                 <EditText
@@ -62,6 +63,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textSize="@dimen/text_size_small"
                     android:background="@drawable/editbox_background_normal"
                     android:lines="1"
                     android:singleLine="true" />
@@ -91,8 +93,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,6 +108,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_size_medium"
                         android:text="@string/option_a" />
 
                     <EditText
@@ -115,6 +116,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textSize="@dimen/text_size_small"
                         android:background="@drawable/editbox_background_normal"
                         android:lines="1"
                         android:singleLine="true" />
@@ -130,6 +132,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_size_medium"
                         android:text="@string/option_b" />
 
                     <EditText
@@ -137,6 +140,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textSize="@dimen/text_size_small"
                         android:background="@drawable/editbox_background_normal"
                         android:lines="1"
                         android:singleLine="true" />
@@ -152,6 +156,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_size_medium"
                         android:text="@string/option_c" />
 
                     <EditText
@@ -159,6 +164,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textSize="@dimen/text_size_small"
                         android:background="@drawable/editbox_background_normal"
                         android:lines="1"
                         android:singleLine="true" />

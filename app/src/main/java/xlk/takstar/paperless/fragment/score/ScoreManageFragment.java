@@ -1,6 +1,7 @@
 package xlk.takstar.paperless.fragment.score;
 
 import android.content.DialogInterface;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -39,23 +41,8 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
 
     private RecyclerView rvScore;
     private ScoreAdapter scoreAdapter;
-//    private TextView tvStatus;
-//    private EditText edtDesc;
-//    private EditText edtFile;
-//    private TextView tvRegister;
-//    private TextView tvShouldAttend;
-//    private TextView tvReviewedAttend;
-//    private EditText tvA;
-//    private TextView tvTotalScore;
-//    private EditText tvB;
-//    private TextView tvAverageScore;
-//    private EditText tvC;
-//    private EditText tvD;
-//    private EditText edtMemberScore;
     private ScoreMemberAdapter scoreMemberAdapter;
     private int currentSelectedVoteId;
-//    private LinearLayout ll_manage_score;
-//    private Button btn_launch_score, btn_stop_score;
     private Button btnLaunch;
 
     @Override
@@ -67,23 +54,20 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
     protected void initView(View inflate) {
         rvScore = inflate.findViewById(R.id.rv_score);
         btnLaunch = inflate.findViewById(R.id.btn_launch);
-//        tvStatus = (TextView) inflate.findViewById(R.id.tv_status);
-//        edtDesc = (EditText) inflate.findViewById(R.id.edt_desc);
-//        edtFile = (EditText) inflate.findViewById(R.id.edt_file);
-//        tvRegister = (TextView) inflate.findViewById(R.id.tv_register);
-//        tvShouldAttend = (TextView) inflate.findViewById(R.id.tv_should_attend);
-//        tvReviewedAttend = (TextView) inflate.findViewById(R.id.tv_reviewed_attend);
-//        tvA = (EditText) inflate.findViewById(R.id.tv_a);
-//        tvTotalScore = (TextView) inflate.findViewById(R.id.tv_total_score);
-//        tvB = (EditText) inflate.findViewById(R.id.tv_b);
-//        tvAverageScore = (TextView) inflate.findViewById(R.id.tv_average_score);
-//        tvC = (EditText) inflate.findViewById(R.id.tv_c);
-//        tvD = (EditText) inflate.findViewById(R.id.tv_d);
-//        rvMemberScore = inflate.findViewById(R.id.rv_member_score);
-//        edtMemberScore = inflate.findViewById(R.id.edt_member_score);
-//        btn_launch_score = inflate.findViewById(R.id.btn_launch_score);
-//        btn_stop_score = inflate.findViewById(R.id.btn_stop_score);
-//        ll_manage_score = inflate.findViewById(R.id.ll_manage_score);
+        inflate.findViewById(R.id.btn_stop).setOnClickListener(v -> {
+            if (scoreAdapter != null) {
+                InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore selectedScore = scoreAdapter.getSelectedScore();
+                if (selectedScore != null) {
+                    if (selectedScore.getVotestate() == InterfaceMacro.Pb_MeetVoteStatus.Pb_vote_voteing_VALUE) {
+                        jni.stopScore(selectedScore.getVoteid());
+                    } else {
+                        ToastUtils.showShort(R.string.stop_score_tip);
+                    }
+                } else {
+                    ToastUtils.showShort(R.string.please_choose_score);
+                }
+            }
+        });
         btnLaunch.setOnClickListener(v -> {
             if (scoreAdapter != null) {
                 InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore selectedScore = scoreAdapter.getSelectedScore();
@@ -227,7 +211,9 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
 //            scoreMemberAdapter.setSelectedId(-1);
 //            edtMemberScore.setText(getString(R.string.opinion_, ""));
 //        }
-        presenter.querySubmittedVoters(item.getVoteid());
+        if (item != null) {
+            presenter.querySubmittedVoters(item.getVoteid());
+        }
     }
 
     private String getScore(InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore item, int index) {
@@ -249,7 +235,13 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
 
     private void showChooseOnLineMemberDialog(InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore item, int voteflag) {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_online_member, null, false);
-        PopupWindow memberPop = PopUtil.createHalfPop(inflate, rvScore);
+        View meet_fl = getActivity().findViewById(R.id.meet_fl);
+        View meet_left_ll = getActivity().findViewById(R.id.meet_left_ll);
+        int width = meet_fl.getWidth();
+        int height = meet_fl.getHeight();
+        int width1 = meet_left_ll.getWidth();
+        int height1 = meet_left_ll.getHeight();
+        PopupWindow memberPop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rvScore, Gravity.CENTER, width1 / 2, 0);
         CheckBox cb_all = inflate.findViewById(R.id.cb_all);
         RecyclerView rv_member = inflate.findViewById(R.id.rv_member);
         WmScreenMemberAdapter memberAdapter = new WmScreenMemberAdapter(R.layout.item_wm_screen, presenter.onlineMembers);

@@ -23,6 +23,21 @@
             android:text="@string/launch" />
 
         <Button
+            android:id="@+id/btn_stop"
+            style="@style/button_blue_rect_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/stop" />
+
+        <Button
+            android:id="@+id/btn_create"
+            style="@style/button_blue_rect_style"
+            android:layout_width="0dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:text="@string/create" />
+        <Button
             android:id="@+id/btn_modify"
             style="@style/button_blue_rect_style"
             android:layout_width="0dp"

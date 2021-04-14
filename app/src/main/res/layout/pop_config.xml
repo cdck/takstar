@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dialog_full_holo_light"
+    android:background="@drawable/dialog_bg"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -156,16 +156,16 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="@drawable/editbox_background_normal"
                     android:lines="1"
-                    android:singleLine="true"
-                    android:background="@drawable/editbox_background_normal"/>
+                    android:singleLine="true" />
 
                 <ImageView
                     android:id="@+id/iv_more"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
                     android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
                     android:src="@drawable/icon_more" />
             </LinearLayout>
 

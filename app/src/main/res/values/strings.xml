@@ -182,7 +182,6 @@
     <string name="vote_state_ongoing">已发起</string>
     <string name="vote_state_has_ended">已完成</string>
     <string name="please_choose_vote">请选择投票</string>
-    <string name="please_choose_notvote">请选择未发起的投票</string>
     <string name="vote_content">投票内容</string>
     <string name="vote_time">投票时间</string>
     <string name="ten_minutes">10分钟</string>
@@ -199,9 +198,14 @@
     <string name="attendees_are_unable_to_vote">参会人无法参与投票</string>
     <string name="tip_vote_status_changed">当前投票状态已改变，请重新发起投票</string>
     <string name="launch_successful">发起成功</string>
-    <string name="please_choose_voteing">请选择已发起的投票</string>
+    <string name="start_vote_tip">请选择未发起的投票</string>
+    <string name="start_election_tip">请选择未发起的选举</string>
+    <string name="stop_vote_tip">请选择已发起的投票</string>
+    <string name="stop_election_tip">请选择已发起的选举</string>
+    <string name="view_vote_tip">请选择已发起或已完成的投票</string>
+    <string name="view_election_tip">请选择已发起或已完成的选举</string>
     <string name="please_choose_snotation_vote">请选择记名投票</string>
-    <string name="please_choose_initiated_vote">请选择已发起的投票</string>
+    <string name="please_choose_snotation_election">请选择记名选举</string>
     <string name="export_result">导出结果</string>
     <string name="vote_memebr">投票人</string>
     <string name="current_vote_no_data">当前投票无数据</string>
@@ -313,7 +317,10 @@
     <string name="choose_cache_dir">选择缓存目录</string>
     <string name="current_dir_root">当前已经是根目录</string>
     <string name="modify_vote">修改投票</string>
-    <string name="vote_type">选举类型</string>
+    <string name="election_type">选举类型</string>
+    <string name="vote_type">投票类型</string>
+    <string name="create_vote">新建投票</string>
+    <string name="create_election">新建选举</string>
     <string name="vote">投票</string>
     <string name="end_countdown">结束倒计时：</string>
     <string name="meeting_note">会议笔记</string>
@@ -401,6 +408,16 @@
     <string name="stop_annotation">停止批注</string>
     <string name="are_you_sure_to_exit_shared_comments">是否确认退出共享批注？</string>
     <string name="save_meet_note_">保存成功：%1$s</string>
+    <string name="choose_file_export">选择文件导出</string>
+    <string name="import_err_content_format_is_incorrect">导入失败：内容格式不正确</string>
+    <string name="voting_method">投票方式</string>
+    <string name="export_successful_">导出成功：%1$s</string>
+    <string name="import_successful">导入成功</string>
+    <string name="please_enter_option_content">请输入选项内容</string>
+    <string name="favour">赞成</string>
+    <string name="against">反对</string>
+    <string name="abstain">弃权</string>
+    <string name="stop_score_tip">请选择已发起的评分</string>
 
     <array name="yes_or_no">
         <item>是</item>

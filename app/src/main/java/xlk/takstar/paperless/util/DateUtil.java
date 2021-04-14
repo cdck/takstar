@@ -16,7 +16,7 @@ public class DateUtil {
      */
     public static String nowDate() {
         Date tTime = new Date(System.currentTimeMillis());
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日HH时mm分ss秒");
         return format.format(tTime);
     }
 

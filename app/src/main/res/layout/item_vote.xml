@@ -188,13 +188,42 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/item_btn_status"
-        style="@style/vote_state_btn"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:gravity="center"
-        android:textSize="@dimen/text_size_medium"
-        android:textStyle="bold"
-        tools:text="未发起" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_btn_status"
+            style="@style/vote_state_btn"
+            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="2.5dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="@dimen/text_size_small"
+            android:textStyle="bold"
+            tools:text="未发起" />
+
+        <TextView
+            android:id="@+id/item_tv_countdown"
+            style="@style/vote_state_btn"
+            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="2.5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="@dimen/text_size_small"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            tools:text="未发起" />
+
+    </LinearLayout>
 </LinearLayout>

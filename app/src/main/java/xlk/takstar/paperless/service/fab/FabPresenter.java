@@ -155,23 +155,26 @@ public class FabPresenter extends BasePresenter<FabContract.View> implements Fab
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTE_VALUE: {
                 if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_START_VALUE) {
                     //收到发起文件评分
-                    LogUtils.i(TAG, "收到发起文件评分通知 Pb_METHOD_MEET_INTERFACE_START_VALUE");
+                    LogUtils.i(TAG, "评分通知 发起文件评分 Pb_METHOD_MEET_INTERFACE_START_VALUE");
                     byte[] object = (byte[]) msg.getObjects()[0];
                     InterfaceFilescorevote.pbui_Type_StartUserDefineFileScoreNotify info
                             = InterfaceFilescorevote.pbui_Type_StartUserDefineFileScoreNotify.parseFrom(object);
                     if (info != null) {
                         mView.showScoreView(info);
                     }
-                } else if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_STOP_VALUE) {
+                }
+                /*else if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_STOP_VALUE) {
                     //收到停止文件评分
-                    LogUtils.i(TAG, "收到停止文件评分通知 Pb_METHOD_MEET_INTERFACE_START_VALUE");
+                    LogUtils.i(TAG, "评分通知 停止文件评分 Pb_METHOD_MEET_INTERFACE_START_VALUE");
                     mView.closeScoreView();
-                } else if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_NOTIFY_VALUE) {
+                }
+                */else if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_NOTIFY_VALUE) {
+
                     byte[] data = (byte[]) msg.getObjects()[0];
                     InterfaceBase.pbui_MeetNotifyMsg pbui_meetNotifyMsg = InterfaceBase.pbui_MeetNotifyMsg.parseFrom(data);
                     int id = pbui_meetNotifyMsg.getId();
                     int opermethod = pbui_meetNotifyMsg.getOpermethod();
-                    LogUtils.d(TAG, "BusEvent -->" + "会议评分变更通知 id= " + id + ", opermethod= " + opermethod);
+                    LogUtils.d(TAG, "评分通知 评分变更 id= " + id + ", opermethod= " + opermethod);
                     if (opermethod == 30) {
                         mView.closeScoreView();
                     }

@@ -23,8 +23,8 @@ import xlk.takstar.paperless.model.Constant;
 public class VoteAdapter extends BaseQuickAdapter<InterfaceVote.pbui_Item_MeetVoteDetailInfo, BaseViewHolder> {
     int selectedId;
 
-    public VoteAdapter(int layoutResId, @Nullable List<InterfaceVote.pbui_Item_MeetVoteDetailInfo> data) {
-        super(layoutResId, data);
+    public VoteAdapter(@Nullable List<InterfaceVote.pbui_Item_MeetVoteDetailInfo> data) {
+        super(R.layout.item_vote, data);
     }
 
     public void setSelectedId(int id) {

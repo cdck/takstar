@@ -1501,7 +1501,7 @@ public class FabService extends Service implements FabContract.View {
     @Override
     public void showScoreView(InterfaceFilescorevote.pbui_Type_StartUserDefineFileScoreNotify info) {
         LogUtils.i(TAG, "showScoreView");
-        scoreDialog = DialogUtil.createDialog(cxt, R.layout.dialog_score_view, false, GlobalValue.screen_width, GlobalValue.screen_height);
+        scoreDialog = DialogUtil.createDialog(cxt, R.layout.dialog_score_view, false, GlobalValue.screen_width, GlobalValue.screen_height, true);
         CustomBaseViewHolder.ScoreViewHolder scoreViewHolder = new CustomBaseViewHolder.ScoreViewHolder(scoreDialog);
         scoreViewHolderEvent(scoreViewHolder, info);
     }

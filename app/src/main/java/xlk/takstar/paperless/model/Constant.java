@@ -21,6 +21,8 @@ public class Constant {
     public static final String file_dir = root_dir + "文件/";
     public static final String download_dir = file_dir + "下载文件/";
     public static final String export_dir = file_dir + "导出文件/";
+    public static final String export_vote_dir = export_dir + "导出投票/";
+    public static final String export_election_dir = export_dir + "导出选举/";
 
     /**
      * 各个界面的背景图和logo图标
@@ -450,6 +452,29 @@ public class Constant {
         }
     }
 
+    /**
+     * 更新Spinner选中的索引 返回相应投票类型
+     *
+     * @param index 索引
+     * @return type
+     */
+    public static int getSpinnerVoteType(int index) {
+        switch (index) {
+            case 0:
+                return InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_MANY_VALUE;
+            case 2:
+                return InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_4_5_VALUE;
+            case 3:
+                return InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_3_5_VALUE;
+            case 4:
+                return InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_2_5_VALUE;
+            case 5:
+                return InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_2_3_VALUE;
+            default:
+                return InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_SINGLE_VALUE;
+        }
+    }
+
     public static String getVoteType(Context context, int type) {
         switch (type) {
             case InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_4_5_VALUE:
@@ -486,7 +511,7 @@ public class Constant {
      */
     public static final String MIME_VIDEO_VP9 = "video/x-vnd.on2.vp9";
     /**
-     *  H.263 video
+     * H.263 video
      */
     public static final String MIME_VIDEO_3GPP = "video/3gpp";
     /**

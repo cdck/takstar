@@ -45,6 +45,7 @@ public class BulletFragment extends BaseFragment<BulletPresenter> implements Bul
     protected void initView(View inflate) {
         rv_bullet = inflate.findViewById(R.id.rv_bullet);
         inflate.findViewById(R.id.btn_launch).setOnClickListener(this);
+        inflate.findViewById(R.id.btn_stop).setOnClickListener(this);
         inflate.findViewById(R.id.btn_modify).setOnClickListener(this);
         inflate.findViewById(R.id.btn_delete).setOnClickListener(this);
     }
@@ -88,6 +89,10 @@ public class BulletFragment extends BaseFragment<BulletPresenter> implements Bul
             case R.id.btn_launch:
                 showBulletPop(null, true);
                 break;
+            case R.id.btn_stop:{
+
+                break;
+            }
             case R.id.btn_modify: {
                 InterfaceBullet.pbui_Item_BulletDetailInfo bullet = bulletAdapter.getSelectedBullet();
                 if (bullet == null) {

@@ -3,13 +3,13 @@ package xlk.takstar.paperless.fragment.vote;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -24,8 +24,6 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.UriUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -40,7 +38,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,7 +47,6 @@ import xlk.takstar.paperless.adapter.SubmitMemberAdapter;
 import xlk.takstar.paperless.adapter.VoteAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
 import xlk.takstar.paperless.model.Constant;
-import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.ui.MyPercentFormatter;
 import xlk.takstar.paperless.ui.RvItemDecoration;
 import xlk.takstar.paperless.util.JxlUtil;
@@ -71,14 +67,9 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
     public static boolean IS_VOTE_PAGE = true;
     private RecyclerView rv_vote;
     private VoteAdapter voteAdapter;
-    private PopupWindow voteConfigPop;
-    private PopupWindow memberPop;
     private MemberDetailAdapter memberDetailAdapter;
-    private PopupWindow detailPop;
-    private PopupWindow chartPop;
     private int REQUEST_CODE_VOTE = 1;
-    private PopupWindow modifyElectionsPop;
-    private PopupWindow modifyVotePop;
+    private PopupWindow voteConfigPop, memberPop, detailPop, chartPop, modifyElectionsPop, modifyVotePop, createVotePop;
 
     @Override
     protected int getLayoutId() {
@@ -89,6 +80,8 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
     protected void initView(View inflate) {
         rv_vote = inflate.findViewById(R.id.rv_vote);
         inflate.findViewById(R.id.btn_launch).setOnClickListener(this);
+        inflate.findViewById(R.id.btn_stop).setOnClickListener(this);
+        inflate.findViewById(R.id.btn_create).setOnClickListener(this);
         inflate.findViewById(R.id.btn_modify).setOnClickListener(this);
         inflate.findViewById(R.id.btn_delete).setOnClickListener(this);
         inflate.findViewById(R.id.btn_view_details).setOnClickListener(this);
@@ -123,11 +116,28 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                     return;
                 }
                 if (vote.getVotestate() != InterfaceMacro.Pb_MeetVoteStatus.Pb_vote_notvote_VALUE) {
-                    ToastUtils.showShort(R.string.please_choose_notvote);
+                    ToastUtils.showShort(IS_VOTE_PAGE ? R.string.start_vote_tip : R.string.start_election_tip);
                     return;
                 }
                 presenter.queryMember();
                 launchVote(vote);
+                break;
+            }
+            case R.id.btn_stop: {
+                InterfaceVote.pbui_Item_MeetVoteDetailInfo vote = voteAdapter.getSelect();
+                if (vote == null) {
+                    ToastUtils.showShort(R.string.please_choose_vote);
+                    return;
+                }
+                if (vote.getVotestate() != InterfaceMacro.Pb_MeetVoteStatus.Pb_vote_voteing_VALUE) {
+                    ToastUtils.showShort(IS_VOTE_PAGE ? R.string.stop_vote_tip : R.string.stop_election_tip);
+                    return;
+                }
+                jni.stopVote(vote.getVoteid());
+                break;
+            }
+            case R.id.btn_create: {
+                createVote();
                 break;
             }
             case R.id.btn_modify: {
@@ -137,7 +147,7 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                     return;
                 }
                 if (vote.getVotestate() != InterfaceMacro.Pb_MeetVoteStatus.Pb_vote_notvote_VALUE) {
-                    ToastUtils.showShort(R.string.please_choose_notvote);
+                    ToastUtils.showShort(IS_VOTE_PAGE ? R.string.start_vote_tip : R.string.start_election_tip);
                     return;
                 }
                 if (IS_VOTE_PAGE) {
@@ -166,10 +176,10 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                     if (vote.getVotestate() != InterfaceMacro.Pb_MeetVoteStatus.Pb_vote_notvote_VALUE) {
                         presenter.querySubmittedVoters(vote, true);
                     } else {
-                        ToastUtils.showShort(R.string.please_choose_initiated_vote);
+                        ToastUtils.showShort(IS_VOTE_PAGE ? R.string.view_vote_tip : R.string.view_election_tip);
                     }
                 } else {
-                    ToastUtils.showShort(R.string.please_choose_snotation_vote);
+                    ToastUtils.showShort(IS_VOTE_PAGE ? R.string.please_choose_snotation_vote : R.string.please_choose_snotation_election);
                 }
                 break;
             }
@@ -182,7 +192,7 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                 if (vote.getVotestate() != InterfaceMacro.Pb_MeetVoteStatus.Pb_vote_notvote_VALUE) {
                     presenter.querySubmittedVoters(vote, false);
                 } else {
-                    ToastUtils.showShort(R.string.please_choose_initiated_vote);
+                    ToastUtils.showShort(IS_VOTE_PAGE ? R.string.view_vote_tip : R.string.view_election_tip);
                 }
                 break;
             }
@@ -191,7 +201,8 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                     ToastUtils.showShort(R.string.no_vote_data);
                     break;
                 }
-                JxlUtil.exportVoteInfo(presenter.votes,
+                JxlUtil.exportVoteInfo(
+                        presenter.votes,
                         IS_VOTE_PAGE ? getString(R.string.vote_fileName) : getString(R.string.elections_filename),
                         IS_VOTE_PAGE ? getString(R.string.vote_content) : getString(R.string.elections_content)
                 );
@@ -206,6 +217,109 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
         }
     }
 
+    private void createVote() {
+        View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_create_vote, null, false);
+        View meet_fl = getActivity().findViewById(R.id.meet_fl);
+        View meet_left_ll = getActivity().findViewById(R.id.meet_left_ll);
+        int width = meet_fl.getWidth();
+        int height = meet_fl.getHeight();
+        int width1 = meet_left_ll.getWidth();
+        int height1 = meet_left_ll.getHeight();
+        LogUtils.i(TAG, "createVote 宽高=" + width + "," + height + ",功能菜单宽高=" + width1 + "," + height1);
+        createVotePop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_vote, Gravity.CENTER, width1 / 2, 0);
+        createVotePop.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        CreateVoteViewHolder holder = new CreateVoteViewHolder(inflate);
+        createHolderEvent(holder);
+    }
+
+    private void createHolderEvent(CreateVoteViewHolder holder) {
+        holder.tvOperationTitle.setText(IS_VOTE_PAGE ? getString(R.string.create_vote) : getString(R.string.create_election));
+        holder.tvTitle.setText(IS_VOTE_PAGE ? getString(R.string.vote_title_) : getString(R.string.elections_title_));
+        holder.tvType.setText(IS_VOTE_PAGE ? getString(R.string.vote_type) : getString(R.string.election_type));
+        if (IS_VOTE_PAGE) {
+            holder.optionAEdt.setText(getString(R.string.favour));
+            holder.optionBEdt.setText(getString(R.string.against));
+            holder.optionCEdt.setText(getString(R.string.abstain));
+        }
+//        holder.optionAEdt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
+//        holder.optionBEdt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
+//        holder.optionCEdt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
+//        holder.optionDEdt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
+//        holder.optionEEdt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
+        if (!IS_VOTE_PAGE) {
+            holder.optionDLl.setVisibility(View.VISIBLE);
+            holder.optionELl.setVisibility(View.VISIBLE);
+            //当前是创建选举
+            holder.spVoteType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    holder.optionALl.setVisibility(View.VISIBLE);
+                    holder.optionBLl.setVisibility(View.VISIBLE);
+                    holder.optionCLl.setVisibility(View.VISIBLE);
+                    holder.optionDLl.setVisibility(View.VISIBLE);
+                    holder.optionELl.setVisibility(View.VISIBLE);
+                    if (position == 5) {
+                        //3选2
+                        holder.optionDLl.setVisibility(View.GONE);
+                        holder.optionELl.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        } else {
+            holder.tvType.setVisibility(View.GONE);
+            holder.spVoteType.setVisibility(View.GONE);
+        }
+        holder.btnEnsure.setOnClickListener(v -> {
+            String title = holder.edtTitle.getText().toString().trim();
+            String aStr = holder.optionAEdt.getText().toString().trim();
+            String bStr = holder.optionBEdt.getText().toString().trim();
+            String cStr = holder.optionCEdt.getText().toString().trim();
+            String dStr = holder.optionDEdt.getText().toString().trim();
+            String eStr = holder.optionEEdt.getText().toString().trim();
+            if (title.isEmpty()) {
+                ToastUtils.showShort(R.string.please_enter_title);
+                return;
+            }
+            if (aStr.isEmpty() || bStr.isEmpty() || cStr.isEmpty()) {
+                ToastUtils.showShort(R.string.please_enter_option_content);
+                return;
+            }
+            int voteType = Constant.getSpinnerVoteType(holder.spVoteType.getSelectedItemPosition());
+            if (voteType == InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_4_5_VALUE || voteType == InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_3_5_VALUE
+                    || voteType == InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_2_5_VALUE) {
+                if (dStr.isEmpty() || eStr.isEmpty()) {
+                    ToastUtils.showShort(R.string.please_enter_option_content);
+                    return;
+                }
+            }
+            List<ByteString> all = new ArrayList<>();
+            all.add(s2b(aStr));
+            all.add(s2b(bStr));
+            all.add(s2b(cStr));
+            if (!IS_VOTE_PAGE) {
+                if (!dStr.isEmpty()) all.add(s2b(dStr));
+                if (!eStr.isEmpty()) all.add(s2b(eStr));
+            }
+            InterfaceVote.pbui_Item_MeetOnVotingDetailInfo.Builder builder = InterfaceVote.pbui_Item_MeetOnVotingDetailInfo.newBuilder();
+            builder.setContent(s2b(title));
+            builder.setMaintype(IS_VOTE_PAGE ? InterfaceMacro.Pb_MeetVoteType.Pb_VOTE_MAINTYPE_vote_VALUE : InterfaceMacro.Pb_MeetVoteType.Pb_VOTE_MAINTYPE_election_VALUE);
+            builder.setMode(InterfaceMacro.Pb_MeetVoteMode.Pb_VOTEMODE_signed_VALUE);
+            builder.setType(IS_VOTE_PAGE ? InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_SINGLE_VALUE : voteType);
+            builder.setSelectcount(all.size());
+            builder.setTimeouts(0);
+            builder.addAllText(all);
+            jni.createVote(builder.build());
+            createVotePop.dismiss();
+        });
+        holder.ivClose.setOnClickListener(v -> createVotePop.dismiss());
+        holder.btnCancel.setOnClickListener(v -> createVotePop.dismiss());
+    }
+
     private void modifyVote(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote) {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_modify_vote, null, false);
         View meet_fl = getActivity().findViewById(R.id.meet_fl);
@@ -214,7 +328,7 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
         int height = meet_fl.getHeight();
         int width1 = meet_left_ll.getWidth();
         int height1 = meet_left_ll.getHeight();
-        LogUtils.i(TAG, "showDetailsPop 宽高=" + width + "," + height + ",功能菜单宽高=" + width1 + "," + height1);
+        LogUtils.i(TAG, "modifyVote 宽高=" + width + "," + height + ",功能菜单宽高=" + width1 + "," + height1);
         modifyVotePop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_vote, Gravity.CENTER, width1 / 2, 0);
         VoteViewHolder viewHolder = new VoteViewHolder(inflate);
         voteHolderEvent(viewHolder, vote);
@@ -439,8 +553,11 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                     List<InterfaceVote.pbui_Item_MeetOnVotingDetailInfo> info = JxlUtil.readVoteXls(file.getAbsolutePath(),
                             IS_VOTE_PAGE ? InterfaceMacro.Pb_MeetVoteType.Pb_VOTE_MAINTYPE_vote_VALUE
                                     : InterfaceMacro.Pb_MeetVoteType.Pb_VOTE_MAINTYPE_election_VALUE);
-                    for (int i = 0; i < info.size(); i++) {
-                        jni.createVote(info.get(i));
+                    if (!info.isEmpty()) {
+                        for (int i = 0; i < info.size(); i++) {
+                            jni.createVote(info.get(i));
+                        }
+                        ToastUtils.showShort(R.string.import_successful);
                     }
                 } else {
                     ToastUtils.showShort(R.string.please_choose_xls_file);
@@ -458,7 +575,7 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
         int height = meet_fl.getHeight();
         int width1 = meet_left_ll.getWidth();
         int height1 = meet_left_ll.getHeight();
-        LogUtils.i(TAG, "showDetailsPop 宽高=" + width + "," + height + ",功能菜单宽高=" + width1 + "," + height1);
+        LogUtils.i(TAG, "showDetailsPop 倒计时=" + vote.getTimeouts());
         detailPop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_vote, Gravity.CENTER, width1 / 2, 0);
 
         TextView tv_title = inflate.findViewById(R.id.tv_title);
@@ -478,7 +595,8 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
         rv_member.setAdapter(submitMemberAdapter);
 
         inflate.findViewById(R.id.btn_export_result).setOnClickListener(v -> {
-            JxlUtil.exportVoteSubmitMember(vote.getContent().toStringUtf8(), presenter.submitMembers);
+            String dirPath = IS_VOTE_PAGE ? Constant.export_vote_dir : Constant.export_election_dir;
+            JxlUtil.exportVoteSubmitMember(dirPath, vote.getContent().toStringUtf8(), presenter.submitMembers);
         });
         inflate.findViewById(R.id.btn_cancel).setOnClickListener(v -> {
             detailPop.dismiss();
@@ -752,16 +870,11 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
     @Override
     public void updateVote(List<InterfaceVote.pbui_Item_MeetVoteDetailInfo> votes) {
         if (voteAdapter == null) {
-            voteAdapter = new VoteAdapter(R.layout.item_vote, votes);
+            voteAdapter = new VoteAdapter(votes);
             rv_vote.setLayoutManager(new LinearLayoutManager(getContext()));
             rv_vote.addItemDecoration(new RvItemDecoration(getContext()));
             rv_vote.setAdapter(voteAdapter);
-            voteAdapter.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
-                    voteAdapter.setSelectedId(votes.get(position).getVoteid());
-                }
-            });
+            voteAdapter.setOnItemClickListener((adapter, view, position) -> voteAdapter.setSelectedId(votes.get(position).getVoteid()));
         } else {
             voteAdapter.notifyDataSetChanged();
         }
@@ -810,6 +923,50 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
             this.btn_ensure = (Button) rootView.findViewById(R.id.btn_ensure);
         }
 
+    }
+
+    public static class CreateVoteViewHolder {
+        public View rootView;
+        public TextView tvOperationTitle;
+        public ImageView ivClose;
+        public TextView tvTitle;
+        public EditText edtTitle;
+        public TextView tvType;
+        public Spinner spVoteType;
+        public LinearLayout optionALl;
+        public EditText optionAEdt;
+        public LinearLayout optionBLl;
+        public EditText optionBEdt;
+        public LinearLayout optionCLl;
+        public EditText optionCEdt;
+        public LinearLayout optionDLl;
+        public EditText optionDEdt;
+        public LinearLayout optionELl;
+        public EditText optionEEdt;
+        public Button btnCancel;
+        public Button btnEnsure;
+
+        public CreateVoteViewHolder(View rootView) {
+            this.rootView = rootView;
+            tvOperationTitle = (TextView) rootView.findViewById(R.id.tv_operation_title);
+            ivClose = (ImageView) rootView.findViewById(R.id.iv_close);
+            tvTitle = (TextView) rootView.findViewById(R.id.tv_title);
+            edtTitle = (EditText) rootView.findViewById(R.id.edt_title);
+            tvType = (TextView) rootView.findViewById(R.id.tv_type);
+            spVoteType = (Spinner) rootView.findViewById(R.id.sp_vote_type);
+            optionALl = (LinearLayout) rootView.findViewById(R.id.option_a_ll);
+            optionAEdt = (EditText) rootView.findViewById(R.id.option_a_edt);
+            optionBLl = (LinearLayout) rootView.findViewById(R.id.option_b_ll);
+            optionBEdt = (EditText) rootView.findViewById(R.id.option_b_edt);
+            optionCLl = (LinearLayout) rootView.findViewById(R.id.option_c_ll);
+            optionCEdt = (EditText) rootView.findViewById(R.id.option_c_edt);
+            optionDLl = (LinearLayout) rootView.findViewById(R.id.option_d_ll);
+            optionDEdt = (EditText) rootView.findViewById(R.id.option_d_edt);
+            optionELl = (LinearLayout) rootView.findViewById(R.id.option_e_ll);
+            optionEEdt = (EditText) rootView.findViewById(R.id.option_e_edt);
+            btnCancel = (Button) rootView.findViewById(R.id.btn_cancel);
+            btnEnsure = (Button) rootView.findViewById(R.id.btn_ensure);
+        }
     }
 
     public static class VoteViewHolder {
