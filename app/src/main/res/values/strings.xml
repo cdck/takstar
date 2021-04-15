@@ -418,6 +418,7 @@
     <string name="against">反对</string>
     <string name="abstain">弃权</string>
     <string name="stop_score_tip">请选择已发起的评分</string>
+    <string name="bind">绑定</string>
 
     <array name="yes_or_no">
         <item>是</item>

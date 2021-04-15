@@ -55,7 +55,7 @@
 
             <Button
                 android:id="@+id/btn_definite"
-                style="@style/btn_style"
+                style="@style/button_default_style"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="10dp"
@@ -90,7 +90,7 @@
 
             <Button
                 android:id="@+id/btn_cancel"
-                style="@style/btn_style"
+                style="@style/button_default_style"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="10dp"

@@ -21,7 +21,6 @@ import java.util.TimerTask;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.adapter.MeetLiveVideoAdapter;
 import xlk.takstar.paperless.adapter.WmProjectorAdapter;
@@ -347,7 +346,7 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
         holder.iv_close.setOnClickListener(v -> screenPop.dismiss());
         //发起/结束同屏
         holder.btn_ensure.setOnClickListener(v -> {
-            List<Integer> ids = memberAdapter.getChooseIds();
+            List<Integer> ids = memberAdapter.getSelectedDeviceIds();
             ids.addAll(wmScreenProjectorAdapter.getChooseIds());
             if (ids.isEmpty()) {
                 ToastUtils.showShort(R.string.err_target_NotNull);

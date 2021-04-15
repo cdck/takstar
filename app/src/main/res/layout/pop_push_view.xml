@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dialog_full_holo_light"
+    android:background="@drawable/dialog_bg"
     android:orientation="vertical">
 
     <TextView
@@ -12,7 +12,7 @@
         android:layout_margin="5dp"
         android:gravity="center"
         android:text="@string/select_push_target"
-        android:textSize="12sp"
+        android:textSize="@dimen/text_size_medium"
         android:textStyle="bold" />
 
     <LinearLayout
@@ -101,7 +101,7 @@
 
         <Button
             android:id="@+id/pop_push_determine"
-            style="@style/btn_style"
+            style="@style/button_default_style"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_marginEnd="@dimen/dp_10"
@@ -109,7 +109,7 @@
 
         <Button
             android:id="@+id/pop_push_stop"
-            style="@style/btn_style"
+            style="@style/button_default_style"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_marginEnd="@dimen/dp_10"
@@ -117,7 +117,7 @@
 
         <Button
             android:id="@+id/pop_push_cancel"
-            style="@style/btn_style"
+            style="@style/button_default_style"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:text="@string/cancel" />

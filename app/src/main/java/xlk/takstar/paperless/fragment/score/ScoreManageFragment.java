@@ -6,12 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -28,8 +24,6 @@ import xlk.takstar.paperless.adapter.ScoreAdapter;
 import xlk.takstar.paperless.adapter.ScoreMemberAdapter;
 import xlk.takstar.paperless.adapter.WmScreenMemberAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
-import xlk.takstar.paperless.model.Constant;
-import xlk.takstar.paperless.util.ArithUtil;
 import xlk.takstar.paperless.util.DialogUtil;
 import xlk.takstar.paperless.util.PopUtil;
 
@@ -117,7 +111,7 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
 
     @Override
     protected void initial() {
-        boolean isScoreManage = getArguments().getBoolean("isScoreManage");
+//        boolean isScoreManage = getArguments().getBoolean("isScoreManage");
 //        ll_manage_score.setVisibility(isScoreManage ? View.VISIBLE : View.INVISIBLE);
         presenter.queryMember();
         presenter.queryScore();
@@ -260,11 +254,11 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
             memberAdapter.setChooseAll(checked);
         });
         inflate.findViewById(R.id.btn_start_score).setOnClickListener(v -> {
-            List<Integer> chooseIds = memberAdapter.getChooseIds();
-            if (chooseIds.isEmpty()) {
+            List<Integer> memberIds = memberAdapter.getSelectedMemberIds();
+            if (memberIds.isEmpty()) {
                 ToastUtils.showShort(R.string.please_choose_member);
             } else {
-                jni.startScore(item.getVoteid(), voteflag, 0, chooseIds);
+                jni.startScore(item.getVoteid(), voteflag, 0, memberIds);
                 memberPop.dismiss();
             }
         });

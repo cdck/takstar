@@ -89,8 +89,13 @@ public class BulletFragment extends BaseFragment<BulletPresenter> implements Bul
             case R.id.btn_launch:
                 showBulletPop(null, true);
                 break;
-            case R.id.btn_stop:{
-
+            case R.id.btn_stop: {
+                InterfaceBullet.pbui_Item_BulletDetailInfo bullet = bulletAdapter.getSelectedBullet();
+                if (bullet == null) {
+                    ToastUtils.showShort(R.string.please_choose_bullet);
+                    return;
+                }
+                jni.stopBullet(bullet.getBulletid());
                 break;
             }
             case R.id.btn_modify: {

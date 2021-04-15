@@ -2,8 +2,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dialog_full_holo_light"
+    android:background="@drawable/dialog_bg"
     android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_top_corner_blue"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/set_role"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_big"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/pop_iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_close"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <include layout="@layout/horizontal_line" />
 
     <include layout="@layout/item_member_role" />
 
@@ -26,22 +55,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:gravity="center"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_definite"
-            style="@style/btn_style"
+            android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
+            android:layout_height="30dp"
             android:layout_marginEnd="10dp"
-            android:text="@string/ensure" />
+            android:background="@color/transparent"
+            android:text="@string/cancel"
+            android:textColor="@color/black" />
 
         <Button
-            android:id="@+id/btn_cancel"
-            style="@style/btn_style"
+            android:id="@+id/btn_definite"
+            style="@style/button_style_rect_blue_white_radius10"
             android:layout_width="wrap_content"
+            android:layout_height="30dp"
             android:layout_marginStart="10dp"
-            android:text="@string/cancel" />
+            android:text="@string/ensure" />
     </LinearLayout>
 </LinearLayout>

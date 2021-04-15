@@ -29,6 +29,7 @@ import com.mogujie.tt.protobuf.InterfaceVideo;
 import com.mogujie.tt.protobuf.InterfaceVote;
 import com.mogujie.tt.protobuf.InterfaceWhiteboard;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import xlk.takstar.paperless.R;
@@ -1289,6 +1290,21 @@ public class JniHelper {
         jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEETBULLET_VALUE,
                 InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_PUBLIST_VALUE, build.toByteArray());
         LogUtil.e(TAG, "launchBullet:  发布公告 --->>> ");
+    }
+
+    /**
+     * 停止公告
+     * @param id 公告id
+     */
+    public void stopBullet(int id) {
+        InterfaceBullet.pbui_Type_StopBullet build = InterfaceBullet.pbui_Type_StopBullet.newBuilder()
+                .setBulletid(id)
+                .addAllPdevid(new ArrayList<>())
+                .build();
+        jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEETBULLET_VALUE,
+                InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_STOP_VALUE, build.toByteArray());
+        LogUtil.e(TAG, "stopBullet id=" + id);
+
     }
 
     /**

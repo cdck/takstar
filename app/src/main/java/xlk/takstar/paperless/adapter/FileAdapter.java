@@ -21,7 +21,7 @@ import xlk.takstar.paperless.util.FileUtil;
  * @desc
  */
 public class FileAdapter extends BaseQuickAdapter<InterfaceFile.pbui_Item_MeetDirFileDetailInfo, BaseViewHolder> {
-    public int selectedId;
+    public int selectedId = -1;
 
     public FileAdapter(int layoutResId, @Nullable List<InterfaceFile.pbui_Item_MeetDirFileDetailInfo> data) {
         super(layoutResId, data);
@@ -38,7 +38,7 @@ public class FileAdapter extends BaseQuickAdapter<InterfaceFile.pbui_Item_MeetDi
                 return selectedId;
             }
         }
-        return 0;
+        return -1;
     }
 
     @Override

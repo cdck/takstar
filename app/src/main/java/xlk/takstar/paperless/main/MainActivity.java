@@ -116,12 +116,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     protected void init(Bundle savedInstanceState) {
         initView();
         setVersion();
-        try {
+        /*try {
             initCameraSize();
         } catch (Exception e) {
             LogUtils.e(TAG, "查找摄像机像素失败=" + e);
             e.printStackTrace();
-        }
+        }*/
         applyReadFrameBufferPermission();
     }
 
@@ -148,7 +148,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         }
     }
 
-    private void initCameraSize() throws Exception {
+    /*private void initCameraSize() throws Exception {
         int type = 1;
         LogUtil.d(TAG, "initCameraSize :   --> ");
         //获取摄像机的个数 一般是前/后置两个
@@ -203,7 +203,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             camera_height = 720;
         }
         LogUtil.d(TAG, "initCameraSize -->" + "前置像素：" + camera_width + " X " + camera_height);
-    }
+    }*/
 
     /**
      * 平台初始化
@@ -469,7 +469,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     private void showUnBindMembers() {
         View inflate = LayoutInflater.from(this).inflate(R.layout.pop_unbind_member, null, false);
-        memberPop = PopUtil.createHalfPop(inflate, main_btn_enter_meeting);
+        memberPop = PopUtil.createBigPop(inflate, main_btn_enter_meeting);
         rv_member = inflate.findViewById(R.id.rv_member);
         memberAdapter = new MemberAdapter(R.layout.item_single_button, presenter.unbindMembers);
         rv_member.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
@@ -501,7 +501,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     private void showCreateMember() {
         View inflate = LayoutInflater.from(this).inflate(R.layout.pop_create_member, null, false);
-        createPop = PopUtil.createHalfPop(inflate, main_btn_enter_meeting);
+        createPop = PopUtil.createBigPop(inflate, main_btn_enter_meeting);
         EditText edt_company = inflate.findViewById(R.id.edt_company);
         EditText edt_name = inflate.findViewById(R.id.edt_name);
         EditText edt_position = inflate.findViewById(R.id.edt_position);
@@ -693,7 +693,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     private LocalFileAdapter localFileAdapter;
 
     private void showDirPop(EditText edt) {
-        String rootDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+        String rootDir = edt.getText().toString();
         currentFiles.clear();
         currentFiles.addAll(FileUtils.listFilesInDirWithFilter(rootDir, dirFilter));
         View inflate = LayoutInflater.from(this).inflate(R.layout.pop_local_file, null);
@@ -718,7 +718,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         });
         inflate.findViewById(R.id.iv_back).setOnClickListener(v -> {
             String dirPath = edt_current_dir.getText().toString().trim();
-            if (dirPath.equals(rootDir)) {
+            if (dirPath.equals(Environment.getExternalStorageDirectory().getAbsolutePath())) {
                 ToastUtils.showShort(R.string.current_dir_root);
                 return;
             }

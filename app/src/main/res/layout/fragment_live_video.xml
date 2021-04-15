@@ -42,7 +42,7 @@
 
             <Button
                 android:id="@+id/f_l_v_watch"
-                style="@style/btn_style"
+                style="@style/button_default_style"
                 android:layout_width="0dp"
                 android:layout_marginEnd="2dp"
                 android:layout_weight="1"
@@ -50,7 +50,7 @@
 
             <Button
                 android:id="@+id/f_l_v_stop"
-                style="@style/btn_style"
+                style="@style/button_default_style"
                 android:layout_width="0dp"
                 android:layout_marginStart="2dp"
                 android:layout_weight="1"
@@ -70,7 +70,7 @@
 
             <Button
                 android:id="@+id/f_l_v_start_pro"
-                style="@style/btn_style"
+                style="@style/button_default_style"
                 android:layout_width="0dp"
                 android:layout_marginEnd="2dp"
                 android:layout_weight="1"
@@ -79,7 +79,7 @@
 
             <Button
                 android:id="@+id/f_l_v_stop_pro"
-                style="@style/btn_style"
+                style="@style/button_default_style"
                 android:layout_width="0dp"
                 android:layout_marginStart="2dp"
                 android:layout_weight="1"
@@ -99,7 +99,7 @@
 
             <Button
                 android:id="@+id/f_l_v_start_screen"
-                style="@style/btn_style"
+                style="@style/button_default_style"
                 android:layout_width="0dp"
                 android:layout_marginEnd="2dp"
                 android:layout_weight="1"
@@ -108,7 +108,7 @@
 
             <Button
                 android:id="@+id/f_l_v_stop_screen"
-                style="@style/btn_style"
+                style="@style/button_default_style"
                 android:layout_width="0dp"
                 android:layout_marginStart="2dp"
                 android:layout_weight="1"

@@ -12,15 +12,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="5dp"
-        android:textColor="@color/red"
-        android:text="@string/score_info_submit" />
+        android:text="@string/score_info_submit"
+        android:textColor="@color/red" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <LinearLayout
@@ -158,9 +158,9 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <TextView
@@ -194,9 +194,9 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <TextView
@@ -232,8 +232,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:layout_marginTop="15dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <TextView
@@ -242,17 +242,20 @@
                 android:layout_height="wrap_content"
                 android:text="@string/rating_comments_" />
 
-            <EditText
-                android:id="@+id/edt_rating_comment"
-                style="@style/EditTextStyle"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="top|start"
-                android:lines="3"
-                android:padding="2dp"
-                android:textSize="12sp"
-                tools:text="速度快放假了快速点击" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/edt_rating_comment"
+                    style="@style/EditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="top|start"
+                    android:padding="2dp"
+                    android:textSize="@dimen/text_size_small"
+                    tools:text="速度快放假了快速点击" />
+            </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -266,8 +269,8 @@
 
         <Button
             android:id="@+id/btn_submit"
-            android:layout_width="wrap_content"
             style="@style/button_blue_rect_style"
+            android:layout_width="wrap_content"
             android:layout_marginEnd="20dp"
             android:text="@string/submit" />
 

@@ -172,7 +172,7 @@
 
         <Button
             android:id="@+id/wm_vote_submit"
-            style="@style/btn_style"
+            style="@style/button_default_style"
             android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"

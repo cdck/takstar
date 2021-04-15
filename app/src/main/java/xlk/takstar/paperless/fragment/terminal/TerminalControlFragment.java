@@ -1,11 +1,13 @@
 package xlk.takstar.paperless.fragment.terminal;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -196,7 +198,14 @@ public class TerminalControlFragment extends BaseFragment<TerminalControlPresent
 
     private void showRolePop() {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_member_role, null, false);
-        rolePop = PopUtil.createHalfPop(inflate, btn_set_role);
+        View meet_fl = getActivity().findViewById(R.id.meet_fl);
+        View meet_left_ll = getActivity().findViewById(R.id.meet_left_ll);
+        int width = meet_fl.getWidth();
+        int height = meet_fl.getHeight();
+        int width1 = meet_left_ll.getWidth();
+        int height1 = meet_left_ll.getHeight();
+        rolePop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, btn_set_role, Gravity.CENTER, width1 / 2, 0);
+//        rolePop = PopUtil.createHalfPop(inflate, btn_set_role);
         RecyclerView rv_member_role = inflate.findViewById(R.id.rv_member_role);
         Spinner sp_role = inflate.findViewById(R.id.sp_role);
         roleAdapter = new MemberRoleAdapter(R.layout.item_member_role, presenter.memberRoleBeans);

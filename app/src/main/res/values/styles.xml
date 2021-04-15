@@ -40,8 +40,7 @@
 <!--        <item name="android:colorButtonNormal">#1C71A9</item>-->
     </style>
 
-
-    <!-- 摄像头CameraActivity使用 -->
+    <!-- 主题：摄像头CameraActivity使用 -->
     <style name="Transparent" parent="AppTheme">
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowDisablePreview">true</item>
@@ -56,16 +55,25 @@
         <item name="android:textColor">@drawable/join_meet_btn_text_color</item>
     </style>
 
+    <!--  默认按钮样式 矩形：黑框->蓝底->绿底  -->
+    <style name="button_default_style">
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:layout_width">@dimen/button_width</item>
+        <item name="android:layout_height">@dimen/button_height</item>
+        <item name="android:background">@drawable/shape_btn_status1_bg</item>
+        <item name="android:textColor">@drawable/btn_status_textcolor</item>
+    </style>
+
+    <!-- 矩形 蓝框->蓝底->绿底  -->
     <style name="button_blue_rect_style">
         <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:layout_width">@dimen/button_width</item>
         <item name="android:layout_height">@dimen/button_height</item>
         <item name="android:background">@drawable/shape_btn_status2_bg</item>
         <item name="android:textColor">@drawable/btn_status_textcolor</item>
-
     </style>
 
-    <!-- 矩形正常状态下蓝底白字 radius=2  -->
+    <!-- 圆角 蓝底->白底 radius=2  -->
     <style name="button_style_rect_blue_white_radius2">
         <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:layout_width">@dimen/button_width</item>
@@ -74,7 +82,7 @@
         <item name="android:textColor">@drawable/text_color_white_blue_pressed</item>
     </style>
 
-    <!--矩形正常状态下蓝底白字 radius=10-->
+    <!--圆角 蓝底->白底 radius=10-->
     <style name="button_style_rect_blue_white_radius10">
         <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:layout_width">@dimen/button_width</item>
@@ -83,15 +91,7 @@
         <item name="android:textColor">@drawable/text_color_white_blue_pressed</item>
     </style>
 
-    <style name="btn_style">
-        <item name="android:textSize">@dimen/text_size_small</item>
-        <item name="android:layout_width">@dimen/button_width</item>
-        <item name="android:layout_height">@dimen/button_height</item>
-        <item name="android:background">@drawable/shape_btn_status1_bg</item>
-        <item name="android:textColor">@drawable/btn_status_textcolor</item>
-    </style>
-
-
+    <!--  投票状态：已发起，已完成...  -->
     <style name="vote_state_btn">
         <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:layout_width">@dimen/button_width</item>

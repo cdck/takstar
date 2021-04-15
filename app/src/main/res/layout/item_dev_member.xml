@@ -7,7 +7,7 @@
 
     <Button
         android:id="@+id/item_single_btn"
-        style="@style/btn_style"
+        style="@style/button_default_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"

@@ -202,10 +202,19 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
             for (int i = 0; i < itemList.size(); i++) {
                 InterfaceMeetfunction.pbui_Item_MeetFunConfigDetailInfo item = itemList.get(i);
                 int funcode = item.getFuncode();
-                LogUtil.i(TAG, "queryMeetingFunction 功能码=" + funcode);
-                if (funcode != InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_SHAREDFILE_VALUE
+                LogUtils.i(TAG, "queryMeetingFunction 功能码=" + funcode);
+                /*if (funcode != InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_SHAREDFILE_VALUE
                         && funcode != InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_VOTERESULT_VALUE
                         && funcode != InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_DOCUMENT_VALUE
+                )*/
+                if (funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_AGENDA_BULLETIN_VALUE
+                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE
+                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_POSTIL_VALUE
+                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MESSAGE_VALUE
+                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_VIDEOSTREAM_VALUE
+                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE
+                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WEBBROWSER_VALUE
+                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_SIGNINRESULT_VALUE
                 ) {
                     FeaturesParentNode parentNode = new FeaturesParentNode(funcode);
                     features.add(parentNode);
@@ -351,7 +360,7 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_WHITEBOARD_VALUE: {
                 if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_ASK_VALUE) {
 //                    if (!isDrawing) {
-                        openArtBoardInform(msg);
+                    openArtBoardInform(msg);
 //                    }
                 }
                 break;
@@ -380,7 +389,7 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                 break;
             }
             //退出电子白板
-            case EventType.BUS_EXIT_DRAW:{
+            case EventType.BUS_EXIT_DRAW: {
                 mView.exitDraw();
                 break;
             }

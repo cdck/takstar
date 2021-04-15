@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -915,7 +914,7 @@ public class FabService extends Service implements FabContract.View {
         });
         //发起/结束同屏
         holder.btn_ensure.setOnClickListener(v -> {
-            List<Integer> ids = memberAdapter.getChooseIds();
+            List<Integer> ids = memberAdapter.getSelectedDeviceIds();
             ids.addAll(wmScreenProjectorAdapter.getChooseIds());
             if (ids.isEmpty()) {
                 ToastUtils.showShort(R.string.err_target_NotNull);

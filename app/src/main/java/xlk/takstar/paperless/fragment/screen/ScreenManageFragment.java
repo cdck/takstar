@@ -15,10 +15,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import xlk.takstar.paperless.R;
-import xlk.takstar.paperless.adapter.DevMemberAdapter;
-import xlk.takstar.paperless.adapter.ProjectionAdapter;
 import xlk.takstar.paperless.adapter.WmScreenMemberAdapter;
 import xlk.takstar.paperless.adapter.WmScreenProjectorAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
@@ -139,7 +136,7 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_preview: {
-                List<Integer> checks = sourceMemberAdapter.getChooseIds();
+                List<Integer> checks = sourceMemberAdapter.getSelectedDeviceIds();
                 if (checks.isEmpty()) {
                     ToastUtils.showShort(R.string.please_choose_member);
                     return;
@@ -166,12 +163,12 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
                 break;
             }
             case R.id.btn_launch: {
-                List<Integer> checks = sourceMemberAdapter.getChooseIds();
+                List<Integer> checks = sourceMemberAdapter.getSelectedDeviceIds();
                 if (checks.isEmpty()) {
                     ToastUtils.showShort(R.string.please_choose_screen_source);
                     return;
                 }
-                List<Integer> targets = targetAdapter.getChooseIds();
+                List<Integer> targets = targetAdapter.getSelectedDeviceIds();
                 List<Integer> projects = projectorAdapter.getChooseIds();
                 targets.addAll(projects);
                 if (targets.isEmpty()) {
@@ -187,7 +184,7 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
                 break;
             }
             case R.id.btn_stop: {
-                List<Integer> targetIds = targetAdapter.getChooseIds();
+                List<Integer> targetIds = targetAdapter.getSelectedDeviceIds();
                 targetIds.addAll(projectorAdapter.getChooseIds());
                 if (targetIds.isEmpty()) {
                     ToastUtils.showShort(R.string.please_choose_target);

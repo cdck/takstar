@@ -70,7 +70,7 @@
 
             <Button
                 android:id="@+id/btn_export_note"
-                style="@style/btn_style"
+                style="@style/button_default_style"
                 android:layout_width="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="10dp"
@@ -78,14 +78,14 @@
 
             <Button
                 android:id="@+id/btn_save_local"
-                style="@style/btn_style"
+                style="@style/button_default_style"
                 android:layout_width="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:text="@string/save_local" />
 
             <Button
                 android:id="@+id/btn_back"
-                style="@style/btn_style"
+                style="@style/button_default_style"
                 android:layout_width="wrap_content"
                 android:text="@string/back" />
         </LinearLayout>
