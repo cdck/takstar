@@ -5,7 +5,6 @@ import android.content.Intent;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.mogujie.tt.protobuf.InterfaceBase;
 import com.mogujie.tt.protobuf.InterfaceBullet;
@@ -42,7 +41,7 @@ public class FabPresenter extends BasePresenter<FabContract.View> implements Fab
     private List<InterfaceMember.pbui_Item_MemberDetailInfo> memberDetailInfos = new ArrayList<>();
     public List<InterfaceDevice.pbui_Item_DeviceDetailInfo> deviceDetailInfos = new ArrayList<>();
     public List<InterfaceDevice.pbui_Item_DeviceDetailInfo> onLineProjectors = new ArrayList<>();
-    public List<DevMember> onLineMember = new ArrayList<>();
+    public List<DevMember> devMembers = new ArrayList<>();
     public List<InterfaceDevice.pbui_Item_DeviceResPlay> canJoinMembers = new ArrayList<>();
     public List<JoinPro> canJoinPros = new ArrayList<>();
 
@@ -168,7 +167,8 @@ public class FabPresenter extends BasePresenter<FabContract.View> implements Fab
                     LogUtils.i(TAG, "评分通知 停止文件评分 Pb_METHOD_MEET_INTERFACE_START_VALUE");
                     mView.closeScoreView();
                 }
-                */else if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_NOTIFY_VALUE) {
+                */
+                else if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_NOTIFY_VALUE) {
 
                     byte[] data = (byte[]) msg.getObjects()[0];
                     InterfaceBase.pbui_MeetNotifyMsg pbui_meetNotifyMsg = InterfaceBase.pbui_MeetNotifyMsg.parseFrom(data);
@@ -176,7 +176,7 @@ public class FabPresenter extends BasePresenter<FabContract.View> implements Fab
                     int opermethod = pbui_meetNotifyMsg.getOpermethod();
                     LogUtils.d(TAG, "评分通知 评分变更 id= " + id + ", opermethod= " + opermethod);
                     if (opermethod == 30) {
-                        mView.closeScoreView();
+                        mView.closeScoreView(id);
                     }
                 }
                 break;
@@ -206,35 +206,35 @@ public class FabPresenter extends BasePresenter<FabContract.View> implements Fab
 
     private void queryDevice() {
         InterfaceDevice.pbui_Type_DeviceDetailInfo deviceDetailInfo = jni.queryDeviceInfo();
-        if (deviceDetailInfo == null) {
-            return;
-        }
         deviceDetailInfos.clear();
-        deviceDetailInfos.addAll(deviceDetailInfo.getPdevList());
         onLineProjectors.clear();
-        onLineMember.clear();
-        for (int i = 0; i < deviceDetailInfos.size(); i++) {
-            InterfaceDevice.pbui_Item_DeviceDetailInfo detailInfo = deviceDetailInfos.get(i);
-            int devcieid = detailInfo.getDevcieid();
-            int memberid = detailInfo.getMemberid();
-            int netstate = detailInfo.getNetstate();
-            int facestate = detailInfo.getFacestate();
-            if (devcieid == GlobalValue.localDeviceId) {
-                continue;
-            }
-            if (netstate == 1) {//在线
-                if (Constant.isThisDevType(InterfaceMacro.Pb_DeviceIDType.Pb_DeviceIDType_MeetProjective_VALUE, devcieid)) {//在线的投影机
-                    onLineProjectors.add(detailInfo);
-                } else {//查找在线参会人
-                    if (facestate == 1) {//确保在会议界面
-                        for (int j = 0; j < memberDetailInfos.size(); j++) {
-                            InterfaceMember.pbui_Item_MemberDetailInfo info = memberDetailInfos.get(j);
-                            if (info.getPersonid() == memberid) {
-                                onLineMember.add(new DevMember(detailInfo, info));
-                                break;
-                            }
+        devMembers.clear();
+        if (deviceDetailInfo != null) {
+            deviceDetailInfos.addAll(deviceDetailInfo.getPdevList());
+            for (int i = 0; i < deviceDetailInfos.size(); i++) {
+                InterfaceDevice.pbui_Item_DeviceDetailInfo detailInfo = deviceDetailInfos.get(i);
+                int devcieid = detailInfo.getDevcieid();
+                int memberid = detailInfo.getMemberid();
+                int netstate = detailInfo.getNetstate();
+                int facestate = detailInfo.getFacestate();
+                if (devcieid == GlobalValue.localDeviceId) {
+                    continue;
+                }
+                //投影机
+                if (Constant.isThisDevType(InterfaceMacro.Pb_DeviceIDType.Pb_DeviceIDType_MeetProjective_VALUE, devcieid)) {
+                    if (netstate == 1) {//在线投影机
+                        onLineProjectors.add(detailInfo);
+                    }
+                } else {//查找参会人
+//                if (facestate == 1) {//确保在会议界面
+                    for (int j = 0; j < memberDetailInfos.size(); j++) {
+                        InterfaceMember.pbui_Item_MemberDetailInfo info = memberDetailInfos.get(j);
+                        if (info.getPersonid() == memberid) {
+                            devMembers.add(new DevMember(detailInfo, info));
+                            break;
                         }
                     }
+//                }
                 }
             }
         }
@@ -268,8 +268,8 @@ public class FabPresenter extends BasePresenter<FabContract.View> implements Fab
     }
 
     public String getMemberNameByDevid(int devid) {
-        for (int i = 0; i < onLineMember.size(); i++) {
-            DevMember devMember = onLineMember.get(i);
+        for (int i = 0; i < devMembers.size(); i++) {
+            DevMember devMember = devMembers.get(i);
             if (devMember.getDeviceDetailInfo().getDevcieid() == devid) {
                 return devMember.getMemberDetailInfo().getName().toStringUtf8();
             }

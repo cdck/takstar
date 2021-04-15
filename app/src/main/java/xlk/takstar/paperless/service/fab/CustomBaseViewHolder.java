@@ -77,6 +77,7 @@ public class CustomBaseViewHolder {
         public TextView wm_screen_title;
         public ImageView iv_close;
         public CheckBox wm_screen_mandatory;
+        public CheckBox wm_screen_is_online;
         public LinearLayout mandatory_ll;
         public LinearLayout online_ll;
         public ImageView iv_dividing_line;
@@ -93,6 +94,7 @@ public class CustomBaseViewHolder {
             this.wm_screen_title = (TextView) rootView.findViewById(R.id.wm_screen_title);
             this.iv_close = (ImageView) rootView.findViewById(R.id.iv_close);
             this.wm_screen_mandatory = (CheckBox) rootView.findViewById(R.id.wm_screen_mandatory);
+            this.wm_screen_is_online = (CheckBox) rootView.findViewById(R.id.wm_screen_is_online);
             this.mandatory_ll = (LinearLayout) rootView.findViewById(R.id.mandatory_ll);
             this.online_ll = (LinearLayout) rootView.findViewById(R.id.online_ll);
             this.iv_dividing_line = (ImageView) rootView.findViewById(R.id.iv_dividing_line);

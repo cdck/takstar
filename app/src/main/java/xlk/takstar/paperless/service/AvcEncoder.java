@@ -70,7 +70,6 @@ class AvcEncoder {
                 // 四个参数，第一个是media格式，第二个是解码器播放的surfaceview，第三个是MediaCrypto，第四个是编码解码的标识
                 MediaCodec.CONFIGURE_FLAG_ENCODE);
         mediaCodec.start();
-//        createfile();
     }
 
     private void showSupportedColorFormat(MediaCodecInfo.CodecCapabilities caps) {
@@ -79,23 +78,6 @@ class AvcEncoder {
             LogUtil.d(TAG, c + "");
         }
     }
-
-//    private  String path = Environment.getExternalStorageDirectory()
-//            .getAbsolutePath() + "/test1.h264";
-//    private BufferedOutputStream outputStream;
-//    FileOutputStream outStream;
-
-//    private void createfile() {
-//        File file = new File(path);
-//        if (file.exists()) {
-//            file.delete();
-//        }
-//        try {
-//            outputStream = new BufferedOutputStream(new FileOutputStream(file));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     @SuppressLint("NewApi")
     private void StopEncoder() {

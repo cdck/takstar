@@ -15,6 +15,8 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -74,26 +76,28 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback,
         } catch (IOException e) {
             e.printStackTrace();
         }
-        LogUtil.d(TAG, "surfaceCreated -->");
+        LogUtils.d(TAG, "surfaceCreated -->");
         avcCodec.startEncoderThread();
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        LogUtil.d(TAG, "CameraActivity.surfaceChanged :   --> ");
+        LogUtils.d(TAG, "CameraActivity.surfaceChanged :   --> ");
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        LogUtil.d(TAG, "CameraActivity.surfaceDestroyed :   --> ");
+        LogUtils.d(TAG, "CameraActivity.surfaceDestroyed :   --> ");
         //如果不添加下面这句则会报错:java.lang.RuntimeException: Camera is being used after Camera.release() was called
         holder.removeCallback(this);
     }
 
     private void exitCamera() {
-        LogUtil.d(TAG, "CameraActivity.exitCamera :   --> ");
+        LogUtils.d(TAG, "CameraActivity.exitCamera :   --> ");
         if (null != camera) {
-            avcCodec.stopThread();
+            if (avcCodec != null) {
+                avcCodec.stopThread();
+            }
             camera.setPreviewCallback(null);
             camera.stopPreview();
             camera.release();
@@ -106,7 +110,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback,
     public void getEventMessage(EventMessage message) {
         switch (message.getType()) {
             case EventType.BUS_COLLECT_CAMERA_STOP:
-                LogUtil.i(TAG, "CameraActivity.getEventMessage :  停止摄像通知 --> ");
+                LogUtils.i(TAG, "CameraActivity.getEventMessage :  停止摄像通知 --> ");
                 exitCamera();
                 finish();
                 break;
@@ -115,7 +119,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback,
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        LogUtil.v(TAG, "rawDataLen=" + data.length);
+        LogUtils.v(TAG, "rawDataLen=" + data.length);
         putYUVData(data, data.length);
     }
 
@@ -132,7 +136,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback,
         for (MediaCodecInfo info : codecInfos) {
             String[] types = info.getSupportedTypes();
             for (String type : types) {
-                LogUtil.d(TAG, "SupportAvcCodec:" + type);
+                LogUtils.d(TAG, "SupportAvcCodec:" + type);
                 if (type.equalsIgnoreCase("video/avc")) {
                     return true;
                 }
@@ -151,24 +155,26 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback,
                 if (camera_type == 0)
                     parameters.setFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
                 checkSupportColorFormat();
-                LogUtil.d(TAG, "startcamera Camera PreviewFormat=" + (imageFormat == ImageFormat.NV21 ? "NV21" : imageFormat == ImageFormat.YV12 ? "YV12" : imageFormat));
+                LogUtils.d(TAG, "startcamera Camera PreviewFormat=" + (imageFormat == ImageFormat.NV21 ? "NV21" : imageFormat == ImageFormat.YV12 ? "YV12" : imageFormat));
                 parameters.setPreviewFrameRate(framerate);
                 parameters.setPreviewFormat(imageFormat);//NV21 YV12
                 parameters.setPreviewSize(camera_width, camera_height);
-                boolean supported = parameters.isVideoStabilizationSupported();
-                if (supported) {
-                    //这个方法可以帮助提高录制视频的稳定性。使用的时候通过 #isVideoStabilizationSupported 来判断是否可以使用。
-                    // 如果妄自使用的话，会造成页面黑屏，PreviewCallback 没有任何回调
-                    parameters.setVideoStabilization(true);
-                }
+//                boolean supported = parameters.isVideoStabilizationSupported();
+//                if (supported) {
+//                    //这个方法可以帮助提高录制视频的稳定性。使用的时候通过 #isVideoStabilizationSupported 来判断是否可以使用。
+//                    // 如果妄自使用的话，会造成页面黑屏，PreviewCallback 没有任何回调
+//                    parameters.setVideoStabilization(true);
+//                }
                 mCamera.setParameters(parameters);
                 //mCamera.setPreviewDisplay(surfaceHolder);
                 mCamera.setPreviewTexture(texture);
                 mCamera.startPreview();
                 //开启预览后就移动Activity到后台
                 moveTaskToBack(true);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
+                //开启预览后就移动Activity到后台
+                moveTaskToBack(true);
             }
         }
     }
@@ -186,7 +192,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback,
 
     private Camera getBackCamera(int type) {
         int cameras = Camera.getNumberOfCameras();
-        LogUtil.d(TAG, "camera num:" + cameras + ", type= " + type);
+        LogUtils.d(TAG, "camera num:" + cameras + ", type= " + type);
         Camera c = null;
         try {
             c = Camera.open(type);
@@ -203,7 +209,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback,
         Camera.getCameraInfo(0, info);
         int rotation = this.getWindowManager().getDefaultDisplay()
                 .getRotation();
-        LogUtil.d(TAG, "rotation : " + rotation);
+        LogUtils.d(TAG, "rotation : " + rotation);
         int degrees = 0;
         switch (rotation) {
             case Surface.ROTATION_0:
@@ -219,7 +225,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback,
                 degrees = 270;
                 break;
         }
-        LogUtil.d(TAG, "degrees : " + degrees);
+        LogUtils.d(TAG, "degrees : " + degrees);
         int result;
         if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
             result = (info.orientation + degrees) % 360;
@@ -232,43 +238,43 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback,
 
     @Override
     protected void onNewIntent(Intent intent) {
-        LogUtil.i("BA_life", this.getClass().getSimpleName() + ".onNewIntent :   --->>> ");
+        LogUtils.i("BA_life", this.getClass().getSimpleName() + ".onNewIntent :   --->>> ");
         super.onNewIntent(intent);
     }
 
     @Override
     protected void onStart() {
-        LogUtil.i("A_life", this.getClass().getSimpleName() + ".onStart :   --->>> ");
+        LogUtils.i("A_life", this.getClass().getSimpleName() + ".onStart :   --->>> ");
         super.onStart();
     }
 
     @Override
     protected void onResume() {
-        LogUtil.i("A_life", this.getClass().getSimpleName() + ".onResume :   --->>> ");
+        LogUtils.i("A_life", this.getClass().getSimpleName() + ".onResume :   --->>> ");
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        LogUtil.i("A_life", this.getClass().getSimpleName() + ".onPause :   --->>> ");
+        LogUtils.i("A_life", this.getClass().getSimpleName() + ".onPause :   --->>> ");
         super.onPause();
     }
 
     @Override
     protected void onStop() {
-        LogUtil.i("A_life", this.getClass().getSimpleName() + ".onStop :   --->>> ");
+        LogUtils.i("A_life", this.getClass().getSimpleName() + ".onStop :   --->>> ");
         super.onStop();
     }
 
     @Override
     protected void onRestart() {
-        LogUtil.i("A_life", this.getClass().getSimpleName() + ".onRestart :   --->>> ");
+        LogUtils.i("A_life", this.getClass().getSimpleName() + ".onRestart :   --->>> ");
         super.onRestart();
     }
 
     @Override
     protected void onDestroy() {
-        LogUtil.i("A_life", this.getClass().getSimpleName() + ".onDestroy :   --->>> ");
+        LogUtils.i("A_life", this.getClass().getSimpleName() + ".onDestroy :   --->>> ");
         exitCamera();
         super.onDestroy();
     }

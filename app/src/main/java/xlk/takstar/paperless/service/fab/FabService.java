@@ -52,6 +52,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -71,6 +72,7 @@ import xlk.takstar.paperless.model.EventMessage;
 import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.model.JniHelper;
+import xlk.takstar.paperless.model.bean.DevMember;
 import xlk.takstar.paperless.service.CameraActivity;
 import xlk.takstar.paperless.ui.CircularMenu;
 import xlk.takstar.paperless.util.AppUtil;
@@ -129,6 +131,7 @@ public class FabService extends Service implements FabContract.View {
     private int voteTimeouts;
     private int maxChooseCount = 1;//当前投票最多可以选择答案的个数
     private AlertDialog scoreDialog;
+    private boolean currentCheckedOnline = false;
 
     @Nullable
     @Override
@@ -144,7 +147,7 @@ public class FabService extends Service implements FabContract.View {
         cxt = getApplicationContext();
         presenter = new FabPresenter(this, this);
         presenter.queryMember();
-        memberAdapter = new WmScreenMemberAdapter(R.layout.item_wm_screen, presenter.onLineMember);
+        memberAdapter = new WmScreenMemberAdapter(R.layout.item_wm_screen, showMembers);
         wmScreenProjectorAdapter = new WmScreenProjectorAdapter(presenter.onLineProjectors);
         projectorAdapter = new WmProjectorAdapter(R.layout.item_wm_pro, presenter.onLineProjectors);
         joinMemberAdapter = new WmCanJoinMemberAdapter(R.layout.item_single_button, presenter.canJoinMembers);
@@ -874,6 +877,8 @@ public class FabService extends Service implements FabContract.View {
         showPop(menuView, screenView);
     }
 
+    public List<DevMember> showMembers = new ArrayList<>();
+
     private void screenViewHolderEvent(CustomBaseViewHolder.ScreenViewHolder holder, int type) {
         if (type == 1) {
             holder.mandatory_ll.setVisibility(View.VISIBLE);
@@ -891,10 +896,42 @@ public class FabService extends Service implements FabContract.View {
         holder.btn_cancel.setOnClickListener(v -> showPop(screenView, hoverButton, mParams));
         holder.iv_close.setOnClickListener(v -> showPop(screenView, hoverButton, mParams));
         holder.wm_screen_rv_attendee.setLayoutManager(new LinearLayoutManager(cxt));
+        showMembers.clear();
+        if (holder.wm_screen_is_online.isChecked()) {
+            for (int i = 0; i < presenter.devMembers.size(); i++) {
+                DevMember devMember = presenter.devMembers.get(i);
+                InterfaceDevice.pbui_Item_DeviceDetailInfo dev = devMember.getDeviceDetailInfo();
+                if (dev.getNetstate() == 1 && dev.getFacestate() == 1) {
+                    showMembers.add(devMember);
+                }
+            }
+        } else {
+            showMembers.addAll(presenter.devMembers);
+        }
+        memberAdapter.notifyDataSetChanged();
         holder.wm_screen_rv_attendee.setAdapter(memberAdapter);
         memberAdapter.setOnItemClickListener((adapter, view, position) -> {
-            memberAdapter.choose(presenter.onLineMember.get(position).getDeviceDetailInfo().getDevcieid());
+            memberAdapter.choose(presenter.devMembers.get(position).getDeviceDetailInfo().getDevcieid());
             holder.wm_screen_cb_attendee.setChecked(memberAdapter.isChooseAll());
+        });
+        holder.wm_screen_is_online.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                currentCheckedOnline = isChecked;
+                showMembers.clear();
+                if (isChecked) {
+                    for (int i = 0; i < presenter.devMembers.size(); i++) {
+                        DevMember devMember = presenter.devMembers.get(i);
+                        InterfaceDevice.pbui_Item_DeviceDetailInfo dev = devMember.getDeviceDetailInfo();
+                        if (dev.getNetstate() == 1 && dev.getFacestate() == 1) {
+                            showMembers.add(devMember);
+                        }
+                    }
+                } else {
+                    showMembers.addAll(presenter.devMembers);
+                }
+                memberAdapter.notifyDataSetChanged();
+            }
         });
         holder.wm_screen_cb_attendee.setOnClickListener(v -> {
             boolean checked = holder.wm_screen_cb_attendee.isChecked();
@@ -1047,6 +1084,18 @@ public class FabService extends Service implements FabContract.View {
     @Override
     public void notifyOnLineAdapter() {
         if (memberAdapter != null) {
+            showMembers.clear();
+            if (currentCheckedOnline) {
+                for (int i = 0; i < presenter.devMembers.size(); i++) {
+                    DevMember devMember = presenter.devMembers.get(i);
+                    InterfaceDevice.pbui_Item_DeviceDetailInfo dev = devMember.getDeviceDetailInfo();
+                    if (dev.getNetstate() == 1 && dev.getFacestate() == 1) {
+                        showMembers.add(devMember);
+                    }
+                }
+            } else {
+                showMembers.addAll(presenter.devMembers);
+            }
             memberAdapter.notifyDataSetChanged();
             memberAdapter.notifyChecks();
         }
@@ -1496,20 +1545,42 @@ public class FabService extends Service implements FabContract.View {
         });
     }
 
+    List<InterfaceFilescorevote.pbui_Type_StartUserDefineFileScoreNotify> scoreNotifies = new ArrayList<>();
+
     //展示评分视图
     @Override
     public void showScoreView(InterfaceFilescorevote.pbui_Type_StartUserDefineFileScoreNotify info) {
         LogUtils.i(TAG, "showScoreView");
+        if (scoreDialog != null && scoreDialog.isShowing()) {
+            scoreNotifies.add(info);
+            return;
+        }
         scoreDialog = DialogUtil.createDialog(cxt, R.layout.dialog_score_view, false, GlobalValue.screen_width, GlobalValue.screen_height, true);
         CustomBaseViewHolder.ScoreViewHolder scoreViewHolder = new CustomBaseViewHolder.ScoreViewHolder(scoreDialog);
         scoreViewHolderEvent(scoreViewHolder, info);
     }
 
+    private boolean removeScoreById(int id) {
+        boolean ret = false;
+        Iterator<InterfaceFilescorevote.pbui_Type_StartUserDefineFileScoreNotify> iterator = scoreNotifies.iterator();
+        while (iterator.hasNext()) {
+            InterfaceFilescorevote.pbui_Type_StartUserDefineFileScoreNotify next = iterator.next();
+            if (next.getVoteid() == id) {
+                iterator.remove();
+                ret = true;
+            }
+        }
+        LogUtils.e("removeScoreById ret=" + ret + ",id=" + id);
+        return ret;
+    }
+
     @Override
-    public void closeScoreView() {
-        LogUtils.i(TAG, "closeScoreView");
-        if (scoreDialog != null && scoreDialog.isShowing()) {
-            scoreDialog.dismiss();
+    public void closeScoreView(int id) {
+        LogUtils.i(TAG, "closeScoreView id=" + id);
+        if (!removeScoreById(id)) {
+            if (scoreDialog != null && scoreDialog.isShowing()) {
+                scoreDialog.dismiss();
+            }
         }
     }
 
@@ -1551,9 +1622,11 @@ public class FabService extends Service implements FabContract.View {
         holder.edt_rating_comment.setFilters(new InputFilter[]{
                 new MaxLengthFilter(InterfaceFilescorevote.Pb_FILESCOREVOTE_LenLimit.Pb_MEET_FILESCORE_MAXITEM_LEN_VALUE)
         });
+        //放弃
         holder.btn_cancel.setOnClickListener(v -> {
             scoreDialog.dismiss();
         });
+        //提交
         holder.btn_submit.setOnClickListener(v -> {
             List<Integer> fractions = new ArrayList<>();
             String sa = holder.edt_score_a.getText().toString();
@@ -1584,6 +1657,12 @@ public class FabService extends Service implements FabContract.View {
             String opinion = holder.edt_rating_comment.getText().toString();
             jni.submitScore(info.getVoteid(), GlobalValue.localMemberId, opinion, fractions);
             scoreDialog.dismiss();
+        });
+        scoreDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                removeScoreById(info.getVoteid());
+            }
         });
     }
 }

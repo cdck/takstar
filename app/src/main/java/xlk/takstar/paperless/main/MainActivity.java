@@ -116,12 +116,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     protected void init(Bundle savedInstanceState) {
         initView();
         setVersion();
-        /*try {
-            initCameraSize();
-        } catch (Exception e) {
-            LogUtils.e(TAG, "查找摄像机像素失败=" + e);
-            e.printStackTrace();
-        }*/
+//        try {
+//            initCameraSize();
+//        } catch (Exception e) {
+//            LogUtils.e(TAG, "查找摄像机像素失败=" + e);
+//            e.printStackTrace();
+//        }
         applyReadFrameBufferPermission();
     }
 
@@ -148,7 +148,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         }
     }
 
-    /*private void initCameraSize() throws Exception {
+    private void initCameraSize() throws Exception {
         int type = 1;
         LogUtil.d(TAG, "initCameraSize :   --> ");
         //获取摄像机的个数 一般是前/后置两个
@@ -171,7 +171,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         }
         for (int i = 0; i < param.getSupportedPreviewSizes().size(); i++) {
             int w = param.getSupportedPreviewSizes().get(i).width, h = param.getSupportedPreviewSizes().get(i).height;
-//            LogUtil.d(TAG, "initCameraSize: w=" + w + " h=" + h);
+            LogUtil.d(TAG, "initCameraSize: w=" + w + " h=" + h);
             supportW.add(w);
             supportH.add(h);
         }
@@ -182,7 +182,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 //                LogUtil.d(TAG, "initCameraSize :   --> largestW= " + largestW + " , largestH=" + largestH);
                 MediaFormat mediaFormat = MediaFormat.createVideoFormat("video/avc", largestW, largestH);
                 if (MediaCodec.createEncoderByType("video/avc").getCodecInfo().getCapabilitiesForType("video/avc").isFormatSupported(mediaFormat)) {
-                    if (largestW * largestH > camera_width * camera_height) {
+                    if (camera_width * camera_height <= 640 * 480) {
                         camera_width = largestW;
                         camera_height = largestH;
                     }
@@ -198,12 +198,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 }
             }
         }
-        if (camera_width * camera_height > 1280 * 720) {
-            camera_width = 1280;
-            camera_height = 720;
-        }
-        LogUtil.d(TAG, "initCameraSize -->" + "前置像素：" + camera_width + " X " + camera_height);
-    }*/
+        LogUtil.d(TAG, "initCameraSize  摄像机像素：" + camera_width + " X " + camera_height);
+    }
 
     /**
      * 平台初始化

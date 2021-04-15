@@ -176,7 +176,7 @@ public class MyWlGlRender implements GLSurfaceView.Renderer, SurfaceTexture.OnFr
         this.wlOnGlSurfaceViewOncreateListener = wlOnGlSurfaceViewOncreateListener;
     }
 
-    void setWlOnRenderRefreshListener(WlOnRenderRefreshListener wlOnRenderRefreshListener) {
+    public void setWlOnRenderRefreshListener(WlOnRenderRefreshListener wlOnRenderRefreshListener) {
         this.wlOnRenderRefreshListener = wlOnRenderRefreshListener;
     }
 

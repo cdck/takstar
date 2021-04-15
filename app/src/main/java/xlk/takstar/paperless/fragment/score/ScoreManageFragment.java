@@ -74,6 +74,7 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
                                     getString(R.string.ensure), getString(R.string.cancel), new DialogUtil.onDialogClickListener() {
                                         @Override
                                         public void positive(DialogInterface dialog) {
+                                            dialog.dismiss();
                                             showChooseOnLineMemberDialog(selectedScore, InterfaceMacro.Pb_VoteStartFlag.Pb_MEET_VOTING_FLAG_REVOTE_VALUE);
                                         }
 
@@ -87,7 +88,6 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
 
                                         }
                                     });
-//                                ToastUtils.showShort(R.string.please_choose_notlaunch_score);
                         }
                     } else {
                         ToastUtils.showShort(R.string.please_stop_voteing_first);

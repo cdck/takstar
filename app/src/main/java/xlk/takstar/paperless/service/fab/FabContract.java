@@ -46,7 +46,7 @@ public interface FabContract {
          */
         void showScoreView(InterfaceFilescorevote.pbui_Type_StartUserDefineFileScoreNotify info);
 
-        void closeScoreView();
+        void closeScoreView(int id);
     }
     interface Presenter extends IBasePresenter{}
 }
