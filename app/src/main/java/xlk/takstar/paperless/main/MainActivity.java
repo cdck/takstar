@@ -56,6 +56,7 @@ import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.adapter.LocalFileAdapter;
 import xlk.takstar.paperless.adapter.MemberAdapter;
+import xlk.takstar.paperless.admin.activity.AdminActivity;
 import xlk.takstar.paperless.base.BaseActivity;
 import xlk.takstar.paperless.meet.MeetingActivity;
 import xlk.takstar.paperless.model.Constant;
@@ -587,6 +588,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 break;
             }
             case R.id.tv_custom_set: {
+//                startActivity(new Intent(MainActivity.this, AdminActivity.class));
                 if (ini.loadFile()) {
                     showConfigPop();
                 }

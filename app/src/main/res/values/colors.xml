@@ -212,6 +212,10 @@
     <color name="circular_menu_region_color">#E61E5888</color>
 
     <color name="score_tv_bg">#c6efee</color>
+    <color name="admin_top_view_bg">#1A1A26</color>
+    <color name="admin_navigation_bg">#262A37</color>
+    <color name="admin_parent_bg">#3D4051</color>
+    <color name="admin_child_bg">#262A37</color>
 
 
 </resources>

@@ -181,6 +181,22 @@ public class Constant {
     public static final int FUN_CODE_SCREEN = FUN_CODE + 5;
     public static final int FUN_CODE_BULLETIN = FUN_CODE + 6;
     public static final int FUN_CODE_SCORE = FUN_CODE + 7;
+    /**
+     * 后台控制端
+     */
+    //系统设置
+    public static final int admin_system_settings = FUN_CODE + 8;
+    public static final int equipment_management = FUN_CODE + 9;
+    public static final int meeting_room_management = FUN_CODE + 10;
+    public static final int seat_arrangement = FUN_CODE + 11;
+    public static final int secretary_management = FUN_CODE + 12;
+    public static final int commonly_participant = FUN_CODE + 13;
+    public static final int other_setting = FUN_CODE + 14;
+    //会议预约
+    public static final int admin_meeting_reservation = FUN_CODE + 15;
+    public static final int admin_before_meeting = FUN_CODE + 10;
+    public static final int admin_current_meeting = FUN_CODE + 11;
+    public static final int admin_after_meeting = FUN_CODE + 12;
 
     /**
      * 发起播放的类型

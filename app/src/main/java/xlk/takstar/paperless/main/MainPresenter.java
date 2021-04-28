@@ -110,7 +110,7 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
             InterfaceFaceconfig.pbui_Item_FacePictureItemInfo pic = pictureList.get(i);
             int faceid = pic.getFaceid();
             int mediaid = pic.getMediaid();
-            String userStr="";
+            String userStr = "";
             //主界面背景
             if (faceid == InterfaceMacro.Pb_MeetFaceID.Pb_MEET_FACEID_MAINBG_VALUE) {
                 userStr = Constant.MAIN_BG_PNG_TAG;
@@ -118,7 +118,7 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
             } else if (faceid == InterfaceMacro.Pb_MeetFaceID.Pb_MEET_FACEID_LOGO_VALUE) {
                 userStr = Constant.MAIN_LOGO_PNG_TAG;
             }
-            if(!TextUtils.isEmpty(userStr)){
+            if (!TextUtils.isEmpty(userStr)) {
                 // TODO: 2021年3月1日19:00:53
             }
         }
@@ -186,6 +186,24 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
     @Override
     protected void busEvent(EventMessage msg) throws InvalidProtocolBufferException {
         switch (msg.getType()) {
+            //平台初始化结果
+            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_READY_VALUE: {
+                int method = msg.getMethod();
+                byte[] bytes = (byte[]) msg.getObjects()[0];
+                if (method == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_NOTIFY_VALUE) {
+                    InterfaceBase.pbui_Ready error = InterfaceBase.pbui_Ready.parseFrom(bytes);
+                    int areaid = error.getAreaid();
+                    LogUtils.i(TAG, "平台初始化结果 连接上的区域服务器ID=" + areaid);
+                    GlobalValue.initializationIsOver = true;
+                    initial();
+                } else if (method == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_LOGON_VALUE) {
+                    InterfaceBase.pbui_Type_LogonError error = InterfaceBase.pbui_Type_LogonError.parseFrom(bytes);
+                    //Pb_WalletSystem_ErrorCode
+                    int errcode = error.getErrcode();
+                    LogUtils.i(TAG, "平台初始化结果 errcode=" + errcode);
+                }
+                break;
+            }
             //平台登陆验证返回
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_DEVICEVALIDATE_VALUE: {
                 byte[] s = (byte[]) msg.getObjects()[0];
@@ -435,11 +453,13 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
         if (!msg.isEmpty()) {
             ToastUtils.showShort(msg);
         }
+        /*
         //平台初始化成功
         if (code == InterfaceMacro.Pb_ValidateErrorCode.Pb_PARSER_ERROR_NONE_VALUE) {
             GlobalValue.initializationIsOver = true;
             initial();
         }
+        */
     }
 
     private void initial() {

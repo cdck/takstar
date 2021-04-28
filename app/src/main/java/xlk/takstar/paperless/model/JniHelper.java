@@ -558,6 +558,18 @@ public class JniHelper {
                 .build();
         jni.call_method(type, InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_CACHE_VALUE, build.toByteArray());
     }
+    /**
+     * 普通缓存会议数据
+     *
+     * @param type 要缓存的数据
+     */
+    public void cacheData(int type,int id,int flag) {
+        InterfaceBase.pbui_MeetCacheOper build = InterfaceBase.pbui_MeetCacheOper.newBuilder()
+                .setCacheflag(flag)
+                .setId(id)
+                .build();
+        jni.call_method(type, InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_CACHE_VALUE, build.toByteArray());
+    }
 
 
     /**
@@ -1721,5 +1733,26 @@ public class JniHelper {
                 .setVoteid(voteid).build();
         LogUtil.d(TAG, "submitScore -->" + "提交文件评分");
         jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTESIGN_VALUE, InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_SUBMIT_VALUE, build.toByteArray());
+    }
+
+    /**
+     * 判断是否连接服务器（在线）
+     * @return 是否在线
+     */
+    public boolean isOnline() {
+        boolean isonline = false;
+        byte[] bytes = queryDevicePropertiesById(InterfaceMacro.Pb_MeetDevicePropertyID.Pb_MEETDEVICE_PROPERTY_NETSTATUS_VALUE,
+                GlobalValue.localDeviceId);
+        if (bytes != null) {
+            InterfaceDevice.pbui_DeviceInt32uProperty pbui_deviceInt32uProperty = null;
+            try {
+                pbui_deviceInt32uProperty = InterfaceDevice.pbui_DeviceInt32uProperty.parseFrom(bytes);
+                int propertyval = pbui_deviceInt32uProperty.getPropertyval();
+                isonline = propertyval == 1;
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
+        }
+        return isonline;
     }
 }

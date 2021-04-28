@@ -38,6 +38,24 @@ public class DateUtil {
 
         return new String[]{timt,dayt};
     }
+    /**
+     * @param millisecond 单位 毫秒
+     *             时区设置：SimpleDateFormat对象.setTimeZone(TimeZone.getTimeZone("GTM"));
+     */
+    public static String[] convertAdminTime(long millisecond) {
+        Date tTime = new Date(millisecond);
+
+        SimpleDateFormat tim = new SimpleDateFormat("HH:mm");
+        tim.setTimeZone(TimeZone.getTimeZone("GTM"));
+        String time = tim.format(tTime);
+
+        //只有一个E 则解析出来是 周几，4个E则是星期几
+        SimpleDateFormat day = new SimpleDateFormat("yyyy/MM/dd");
+        day.setTimeZone(TimeZone.getTimeZone("GTM"));
+        String date = day.format(tTime);
+
+        return new String[]{time,date};
+    }
 
     /**
      * 转成时分秒 00:00:00

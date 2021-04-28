@@ -419,6 +419,12 @@
     <string name="abstain">弃权</string>
     <string name="stop_score_tip">请选择已发起的评分</string>
     <string name="bind">绑定</string>
+    <string name="conference_management_system">会议管理系统</string>
+    <string name="system_settings">系统设置</string>
+    <string name="meeting_reservation">会议预约</string>
+    <string name="before_meeting">会前设置</string>
+    <string name="current_meeting">会中管理</string>
+    <string name="after_meeting">会后查看</string>
 
     <array name="yes_or_no">
         <item>是</item>
