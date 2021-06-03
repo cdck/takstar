@@ -20,6 +20,8 @@ public interface VoteManageContract {
         void showDetailsPop(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote);
 
         void showChartPop(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote);
+
+        void updateExportDirPath(String dirPath);
     }
     interface Presenter extends IBasePresenter{
 

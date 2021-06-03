@@ -12,18 +12,16 @@ interface ScoreManageContract {
 
         void updateScoreRv();
 
-        void updateOnlineMemberRv();
+        void updateScoreSubmitMemberList();
 
-        void updateScoreMemberRv();
+        void addFile2List(String filePath, int mediaId);
     }
 
     interface Presenter extends IBasePresenter {
         void queryScore();
 
-        void queryMember();
+        void queryMemberDetailed();
 
-        void queryDevice();
-
-        void querySubmittedVoters(int voteId);
+        void queryScoreSubmittedScore(int voteId);
     }
 }

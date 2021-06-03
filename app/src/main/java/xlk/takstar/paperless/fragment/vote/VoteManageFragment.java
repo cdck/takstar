@@ -34,6 +34,8 @@ import com.google.protobuf.ByteString;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceVote;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,12 +49,15 @@ import xlk.takstar.paperless.adapter.SubmitMemberAdapter;
 import xlk.takstar.paperless.adapter.VoteAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
 import xlk.takstar.paperless.model.Constant;
+import xlk.takstar.paperless.model.EventMessage;
+import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.ui.MyPercentFormatter;
 import xlk.takstar.paperless.ui.RvItemDecoration;
 import xlk.takstar.paperless.util.JxlUtil;
 import xlk.takstar.paperless.util.LogUtil;
 import xlk.takstar.paperless.util.MaxLengthFilter;
 import xlk.takstar.paperless.util.PopUtil;
+import xlk.takstar.paperless.util.ToastUtil;
 
 import static xlk.takstar.paperless.util.ConvertUtil.s2b;
 
@@ -70,6 +75,8 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
     private MemberDetailAdapter memberDetailAdapter;
     private int REQUEST_CODE_VOTE = 1;
     private PopupWindow voteConfigPop, memberPop, detailPop, chartPop, modifyElectionsPop, modifyVotePop, createVotePop;
+    private EditText edt_save_address;
+    private String currentExportVoteContent;
 
     @Override
     protected int getLayoutId() {
@@ -201,11 +208,12 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                     ToastUtils.showShort(R.string.no_vote_data);
                     break;
                 }
-                JxlUtil.exportVoteInfo(
-                        presenter.votes,
-                        IS_VOTE_PAGE ? getString(R.string.vote_fileName) : getString(R.string.elections_filename),
-                        IS_VOTE_PAGE ? getString(R.string.vote_content) : getString(R.string.elections_content)
-                );
+                showExportPop(Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE);
+//                JxlUtil.exportVoteInfo(
+//                        presenter.votes,
+//                        IS_VOTE_PAGE ? getString(R.string.vote_fileName) : getString(R.string.elections_filename),
+//                        IS_VOTE_PAGE ? getString(R.string.vote_content) : getString(R.string.elections_content)
+//                );
                 break;
             }
             case R.id.btn_import_data: {
@@ -215,6 +223,57 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
             default:
                 break;
         }
+    }
+
+    @Override
+    public void updateExportDirPath(String dirPath) {
+        if (edt_save_address != null) {
+            edt_save_address.setText(dirPath);
+        }
+    }
+
+    private void showExportPop(int dirType) {
+        View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_export_config, null);
+        View meet_fl = getActivity().findViewById(R.id.meet_fl);
+        View meet_left_ll = getActivity().findViewById(R.id.meet_left_ll);
+        int width = meet_fl.getWidth();
+        int height = meet_fl.getHeight();
+        int width1 = meet_left_ll.getWidth();
+        PopupWindow pop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_vote, Gravity.CENTER, width1 / 2, 0);
+        EditText edt_file_name = inflate.findViewById(R.id.edt_file_name);
+//        EditText edt_description = inflate.findViewById(R.id.edt_description);
+//        edt_description.setText(IS_VOTE_PAGE ? getString(R.string.vote_content) : getString(R.string.elections_content));
+        if (dirType == Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE_SUBMIT) {
+            edt_file_name.setText(currentExportVoteContent);
+        } else {
+            edt_file_name.setText(IS_VOTE_PAGE ? getString(R.string.vote_fileName) : getString(R.string.elections_filename));
+        }
+        edt_save_address = inflate.findViewById(R.id.edt_save_address);
+        edt_save_address.setKeyListener(null);
+        inflate.findViewById(R.id.btn_choose_dir).setOnClickListener(v -> {
+            String currentDirPath = edt_save_address.getText().toString().trim();
+            if (currentDirPath.isEmpty()) {
+                currentDirPath = Constant.root_dir;
+            }
+            EventBus.getDefault().post(new EventMessage.Builder().type(EventType.CHOOSE_DIR_PATH).objects(dirType, currentDirPath).build());
+        });
+        inflate.findViewById(R.id.iv_close).setOnClickListener(v -> pop.dismiss());
+        inflate.findViewById(R.id.btn_cancel).setOnClickListener(v -> pop.dismiss());
+        inflate.findViewById(R.id.btn_define).setOnClickListener(v -> {
+            String fileName = edt_file_name.getText().toString().trim();
+            String description = IS_VOTE_PAGE ? getString(R.string.vote_fileName) : getString(R.string.elections_filename);
+            String addr = edt_save_address.getText().toString().trim();
+            if (fileName.isEmpty() || addr.isEmpty()) {
+                ToastUtil.showShort(R.string.please_enter_file_name_and_addr);
+                return;
+            }
+            if (dirType == Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE) {
+                JxlUtil.exportVoteInfo(addr, fileName, description, presenter.votes);
+            } else if (dirType == Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE_SUBMIT) {
+                JxlUtil.exportVoteSubmitMember(addr, fileName, presenter.submitMembers);
+            }
+            pop.dismiss();
+        });
     }
 
     private void createVote() {
@@ -574,7 +633,6 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
         int width = meet_fl.getWidth();
         int height = meet_fl.getHeight();
         int width1 = meet_left_ll.getWidth();
-        int height1 = meet_left_ll.getHeight();
         LogUtils.i(TAG, "showDetailsPop 倒计时=" + vote.getTimeouts());
         detailPop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_vote, Gravity.CENTER, width1 / 2, 0);
 
@@ -595,8 +653,11 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
         rv_member.setAdapter(submitMemberAdapter);
 
         inflate.findViewById(R.id.btn_export_result).setOnClickListener(v -> {
-            String dirPath = IS_VOTE_PAGE ? Constant.export_vote_dir : Constant.export_election_dir;
-            JxlUtil.exportVoteSubmitMember(dirPath, vote.getContent().toStringUtf8(), presenter.submitMembers);
+            currentExportVoteContent = vote.getContent().toStringUtf8();
+            showExportPop(Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE_SUBMIT);
+//            String dirPath = IS_VOTE_PAGE ? Constant.export_vote_dir : Constant.export_election_dir;
+//            EventBus.getDefault().post(new EventMessage.Builder().type(EventType.CHOOSE_DIR_PATH).objects(Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE_SUBMIT,).build());
+//            JxlUtil.exportVoteSubmitMember(dirPath, vote.getContent().toStringUtf8(), presenter.submitMembers);
         });
         inflate.findViewById(R.id.btn_cancel).setOnClickListener(v -> {
             detailPop.dismiss();
@@ -626,7 +687,7 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
 
 //        chartPop = PopUtil.createBigPop(inflate, rv_vote);
 
-        PieChart chart = inflate.findViewById(R.id.pic_chart);
+        PieChart chart = inflate.findViewById(R.id.pie_chart);
         TextView tv_title = inflate.findViewById(R.id.tv_title);
         String content = vote.getContent().toStringUtf8();
         int type = vote.getType();

@@ -86,4 +86,18 @@ public class EventType {
      * 退出电子白板
      */
     public static final int BUS_EXIT_DRAW = BUS_BASE + 25;
+    /**
+     * 更新未读消息的数量显示
+     */
+    public static final int BUS_UPDATE_BADGE_NUMBER = BUS_BASE + 26;
+
+    public static final int BUS_UPLOAD_SCORE_FILE_FINISH = BUS_BASE + 27;
+    /**
+     * 通知打开选择目录PopupWindow
+     */
+    public static final int CHOOSE_DIR_PATH = BUS_BASE + 28;
+    /**
+     * 返回选择的目录
+     */
+    public static final int RESULT_DIR_PATH = BUS_BASE + 29;
 }

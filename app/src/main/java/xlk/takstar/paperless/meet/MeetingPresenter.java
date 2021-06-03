@@ -330,6 +330,11 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                 previewImage(index);
                 break;
             }
+            case EventType.BUS_UPDATE_BADGE_NUMBER: {
+                int count = (int) msg.getObjects()[0];
+                mView.updateMeetingBadgeNumber(count);
+                break;
+            }
             //会议交流信息
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEETIM_VALUE: {
                 if (!chatIsShowing) {
@@ -339,7 +344,8 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                     //文本类消息
                     if (meetIM.getMsgtype() == InterfaceMacro.Pb_MeetIMMSG_TYPE.Pb_MEETIM_CHAT_Message_VALUE) {
                         int badgeNumber = MeetingActivity.mBadge.getBadgeNumber();
-                        MeetingActivity.mBadge.setBadgeNumber(++badgeNumber);
+                        LogUtils.i("当前未读消息数量 badgeNumber=" + badgeNumber);
+                        mView.updateMeetingBadgeNumber(++badgeNumber);
                         int memberid = meetIM.getMemberid();
                         MyChatMessage newImMsg = new MyChatMessage(0, meetIM.getMembername().toStringUtf8(), memberid, meetIM.getUtcsecond(), meetIM.getMsg().toStringUtf8());
                         List<MyChatMessage> myChatMessages;

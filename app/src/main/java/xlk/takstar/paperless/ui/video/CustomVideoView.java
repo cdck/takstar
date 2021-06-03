@@ -14,6 +14,11 @@ import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.util.LogUtil;
 
+import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_1;
+import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_2;
+import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_3;
+import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_4;
+
 
 /**
  * @author xlk
@@ -29,6 +34,7 @@ public class CustomVideoView extends ViewGroup {
     private boolean isEnlarge;//当前是否是最大的界面
     private List<MyGLSurfaceView> shrinkSfvs = new ArrayList<>();
     List<Integer> resids = new ArrayList<>();
+    private int largeResId = -1;
 
     public CustomVideoView(Context context) {
         this(context, null);
@@ -61,15 +67,42 @@ public class CustomVideoView extends ViewGroup {
         View videoView4 = getChildAt(3);
         LayoutParams params = new LayoutParams(parentWidth, parentHeight);
         LayoutParams params2_1 = new LayoutParams(parentWidth / 2, parentHeight / 2);
+        LayoutParams params1_1 = new LayoutParams(1, 1);
         switch (getChildCount()) {
             case 1:
                 videoView1.setLayoutParams(params);
                 break;
             case 4:
-                videoView1.setLayoutParams(params2_1);
-                videoView2.setLayoutParams(params2_1);
-                videoView3.setLayoutParams(params2_1);
-                videoView4.setLayoutParams(params2_1);
+                if (largeResId == -1) {
+                    videoView1.setLayoutParams(params2_1);
+                    videoView2.setLayoutParams(params2_1);
+                    videoView3.setLayoutParams(params2_1);
+                    videoView4.setLayoutParams(params2_1);
+                } else if (largeResId == 1) {
+                    videoView1.setLayoutParams(params);
+                    videoView2.setLayoutParams(params1_1);
+                    videoView3.setLayoutParams(params1_1);
+                    videoView4.setLayoutParams(params1_1);
+                } else if (largeResId == 2) {
+                    videoView1.setLayoutParams(params1_1);
+                    videoView2.setLayoutParams(params);
+                    videoView3.setLayoutParams(params1_1);
+                    videoView4.setLayoutParams(params1_1);
+                } else if (largeResId == 3) {
+                    videoView1.setLayoutParams(params1_1);
+                    videoView2.setLayoutParams(params1_1);
+                    videoView3.setLayoutParams(params);
+                    videoView4.setLayoutParams(params1_1);
+                } else if (largeResId == 4) {
+                    videoView1.setLayoutParams(params1_1);
+                    videoView2.setLayoutParams(params1_1);
+                    videoView3.setLayoutParams(params1_1);
+                    videoView4.setLayoutParams(params);
+                }
+//                videoView1.setLayoutParams(params2_1);
+//                videoView2.setLayoutParams(params2_1);
+//                videoView3.setLayoutParams(params2_1);
+//                videoView4.setLayoutParams(params2_1);
                 break;
             default:
         }
@@ -172,11 +205,21 @@ public class CustomVideoView extends ViewGroup {
         requestLayout();
     }
 
+    public void createView() {
+        List<Integer> resIds = new ArrayList<>();
+        resIds.add(RESOURCE_ID_1);
+        resIds.add(RESOURCE_ID_2);
+        resIds.add(RESOURCE_ID_3);
+        resIds.add(RESOURCE_ID_4);
+        createView(resIds);
+    }
+
     public void createView(List<Integer> resIds) {
         resids.addAll(resIds);
         for (int i = 0; i < resIds.size(); i++) {
             final MyGLSurfaceView surfaceView = new MyGLSurfaceView(getContext(), null);
-            surfaceView.setResId(resIds.get(i));
+            Integer resid = resIds.get(i);
+            surfaceView.setResId(resid);
             surfaceView.setBackground(cxt.getDrawable(R.drawable.video_res_s));
             surfaceView.setClickable(true);
             surfaceView.setOnGlSurfaceViewOncreateListener(new WlOnGlSurfaceViewOncreateListener() {
@@ -291,52 +334,9 @@ public class CustomVideoView extends ViewGroup {
     //放大或缩小
     public void zoom(int resId) {
         LogUtil.d(TAG, "zoom -->" + "isEnlarge = " + isEnlarge + ", resId= " + resId);
-        if (isEnlarge) {
-            isEnlarge = false;
-            shrink(resId);
-        } else {
-            isEnlarge = true;
-            enlarge(resId);
-        }
-    }
-
-    //缩小
-    private void shrink(int resId) {
-        resids.clear();
-        long l = System.currentTimeMillis();
-        MyGLSurfaceView childAt = (MyGLSurfaceView) getChildAt(0);
-        shrinkSfvs.add(childAt);
-        removeView(childAt);
-        List<MyGLSurfaceView> temps = new ArrayList<>(shrinkSfvs);
-        for (int i = 0; i < shrinkSfvs.size(); i++) {
-            MyGLSurfaceView child = shrinkSfvs.get(i);
-            int resId1 = child.getResId();
-            resids.add(resId1);
-            temps.set(resId1 - 1, child);
-        }
-        for (MyGLSurfaceView view : temps) {
-            addView(view);
-        }
-        LogUtil.d(TAG, "shrink -->" + "用时：" + (System.currentTimeMillis() - l));
-        reDraw();
-    }
-
-    //放大
-    private void enlarge(int resId) {
-        resids.clear();
-        resids.add(resId);
-        shrinkSfvs.clear();
-        for (int i = 0; i < getChildCount(); i++) {
-            MyGLSurfaceView childAt = (MyGLSurfaceView) getChildAt(i);
-            if (childAt.getResId() != resId) {
-//                childAt.destroy();
-//                childAt.setCodecType(2);
-                shrinkSfvs.add(childAt);
-            }
-        }
-        for (int i = 0; i < shrinkSfvs.size(); i++) {
-            removeView(shrinkSfvs.get(i));
-        }
+        //由largeResId控制
+        largeResId = isEnlarge ? -1 : resId;
+        isEnlarge = !isEnlarge;
         reDraw();
     }
 

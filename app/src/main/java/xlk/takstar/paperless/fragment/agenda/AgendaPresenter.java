@@ -80,7 +80,7 @@ public class AgendaPresenter extends BasePresenter<AgendaContract.View> implemen
                         mView.displayFile(file.getAbsolutePath());
                     }
                 } else {
-                    jni.creationFileDownload(Constant.download_dir + fileName, mediaid, 1, 0, Constant.DOWNLOAD_AGENDA_FILE);
+                    jni.downloadFile(Constant.download_dir + fileName, mediaid, 1, 0, Constant.DOWNLOAD_AGENDA_FILE);
                 }
             } else if (agendatype == InterfaceMacro.Pb_AgendaType.Pb_MEET_AGENDA_TYPE_TIME_VALUE) {
                 agendaTimeInfos.clear();

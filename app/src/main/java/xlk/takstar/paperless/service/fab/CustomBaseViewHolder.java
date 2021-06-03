@@ -88,9 +88,13 @@ public class CustomBaseViewHolder {
         public RecyclerView wm_screen_rv_projector;
         public Button btn_cancel;
         public Button btn_ensure;
+        public LinearLayout ll_cb_member;
+        public LinearLayout ll_cb_pro;
 
         public ScreenViewHolder(View rootView) {
             this.rootView = rootView;
+            this.ll_cb_member = (LinearLayout) rootView.findViewById(R.id.ll_cb_member);
+            this.ll_cb_pro = (LinearLayout) rootView.findViewById(R.id.ll_cb_pro);
             this.wm_screen_title = (TextView) rootView.findViewById(R.id.wm_screen_title);
             this.iv_close = (ImageView) rootView.findViewById(R.id.iv_close);
             this.wm_screen_mandatory = (CheckBox) rootView.findViewById(R.id.wm_screen_mandatory);

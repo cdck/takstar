@@ -6,10 +6,12 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.mogujie.tt.protobuf.InterfaceBase;
+import com.mogujie.tt.protobuf.InterfaceDevice;
 import com.mogujie.tt.protobuf.InterfaceDownload;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfacePlaymedia;
@@ -41,6 +43,7 @@ import static xlk.takstar.paperless.fragment.draw.DrawFragment.disposePicSrcmemi
 import static xlk.takstar.paperless.fragment.draw.DrawFragment.disposePicSrcwbidd;
 import static xlk.takstar.paperless.fragment.draw.DrawFragment.isSharing;
 import static xlk.takstar.paperless.model.GlobalValue.isMandatoryPlaying;
+import static xlk.takstar.paperless.model.GlobalValue.localDeviceId;
 
 /**
  * @author Created by xlk on 2020/11/28.
@@ -80,9 +83,10 @@ public class BackService extends Service {
                 break;
             }
             //上传进度通知
-            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_UPLOAD_VALUE:
+            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_UPLOAD_VALUE: {
                 uploadInform(msg);
                 break;
+            }
             //处理WPS广播监听
             case EventType.BUS_WPS_RECEIVER: {
                 boolean isopen = (boolean) msg.getObjects()[0];
@@ -94,24 +98,53 @@ public class BackService extends Service {
                 break;
             }
             //媒体播放通知
-            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEDIAPLAY_VALUE:
+            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEDIAPLAY_VALUE: {
                 LogUtil.i(TAG, "onBusEvent 媒体播放通知");
                 mediaPlayInform(msg);
                 break;
+            }
             //流播放通知
-            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_STREAMPLAY_VALUE:
+            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_STREAMPLAY_VALUE: {
                 LogUtil.i(TAG, "onBusEvent 流播放通知");
                 streamPlayInform(msg);
                 break;
-            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_WHITEBOARD_VALUE:
+            }
+            //电子白板添加图片通知
+            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_WHITEBOARD_VALUE: {
                 //添加图片通知
                 if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_ADDPICTURE_VALUE) {
                     byte[] o1 = (byte[]) msg.getObjects()[0];
                     addPicInform(o1);
                 }
                 break;
+            }
+            //设备寄存器变更通知
+//            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_DEVICEINFO_VALUE: {
+//                byte[] bytes = (byte[]) msg.getObjects()[0];
+//                InterfaceDevice.pbui_Type_MeetDeviceBaseInfo info = InterfaceDevice.pbui_Type_MeetDeviceBaseInfo.parseFrom(bytes);
+//                int deviceid = info.getDeviceid();
+//                int attribid = info.getAttribid();
+//                LogUtil.i(TAG, "busEvent 设备寄存器变更通知 deviceid=" + deviceid + ",attribid=" + attribid);
+//                if (deviceid != 0 && deviceid == localDeviceId) {
+//                    queryDeviceFlag();
+//                }
+//                break;
+//            }
             default:
                 break;
+        }
+    }
+
+    private void queryDeviceFlag() {
+        byte[] bytes = jni.queryDevicePropertiesById(InterfaceMacro.Pb_MeetDevicePropertyID.Pb_MEETDEVICE_PROPERTY_DEVICEFLAG_VALUE, localDeviceId);
+        if (bytes != null) {
+            try {
+                InterfaceDevice.pbui_DeviceInt32uProperty devFlag = InterfaceDevice.pbui_DeviceInt32uProperty.parseFrom(bytes);
+                GlobalValue.localDeviceFlag = devFlag.getPropertyval();
+                LogUtils.e("本机的设备属性，localDeviceFlag=" + GlobalValue.localDeviceFlag);
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -154,6 +187,8 @@ public class BackService extends Service {
             if (userStr.equals(Constant.UPLOAD_DRAW_PIC)) {
                 //从画板上传的图片
                 FileUtils.delete(pathName);
+            } else if (userStr.equals(Constant.UPLOAD_SCORE_FILE)) {
+                EventBus.getDefault().post(new EventMessage.Builder().type(EventType.BUS_UPLOAD_SCORE_FILE_FINISH).objects(pathName, mediaId).build());
             }
             ToastUtils.showShort(getString(R.string.upload_completed, fileName));
             LogUtil.i(TAG, "uploadInform -->" + fileName + " 上传完毕");
@@ -161,6 +196,9 @@ public class BackService extends Service {
             LogUtil.i(TAG, "uploadInform -->" + " 没找到可用的服务器");
         } else if (status == InterfaceMacro.Pb_Upload_State.Pb_UPLOADMEDIA_FLAG_ISBEING_VALUE) {
             LogUtil.i(TAG, "uploadInform -->" + pathName + " 已经存在");
+            if (userStr.equals(Constant.UPLOAD_SCORE_FILE)) {
+                EventBus.getDefault().post(new EventMessage.Builder().type(EventType.BUS_UPLOAD_SCORE_FILE_FINISH).objects(pathName, mediaId).build());
+            }
         }
     }
 
@@ -181,6 +219,7 @@ public class BackService extends Service {
         int subid = meetStreamPlay.getSubid();
         int triggeruserval = meetStreamPlay.getTriggeruserval();
         boolean isMandatory = triggeruserval == InterfaceMacro.Pb_TriggerUsedef.Pb_EXCEC_USERDEF_FLAG_NOCREATEWINOPER_VALUE;
+        LogUtils.e("当前是否是强制性的 isMandatory=" + isMandatory);
         if (isMandatoryPlaying) {//当前正在被强制播放中
             if (isMandatory) {//收到新的强制性播放
                 LogUtil.i(TAG, "streamPlayInform -->" + "当前属于强制性播放中，收到新的强制流播放播放");
@@ -248,7 +287,7 @@ public class BackService extends Service {
                 }
                 return;
             }
-            JniHelper.getInstance().creationFileDownload(pathname, mediaid, 0, 0, Constant.DOWNLOAD_SHOULD_OPEN_FILE);
+            JniHelper.getInstance().downloadFile(pathname, mediaid, 0, 0, Constant.DOWNLOAD_SHOULD_OPEN_FILE);
         }
     }
 

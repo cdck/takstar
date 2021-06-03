@@ -166,6 +166,7 @@
     <string name="launch">发起</string>
     <string name="modify">修改</string>
     <string name="delete">删除</string>
+    <string name="add">添加</string>
     <string name="view_details">查看详情</string>
     <string name="view_chart">查看图表</string>
     <string name="export_data">数据导出</string>
@@ -425,6 +426,34 @@
     <string name="before_meeting">会前设置</string>
     <string name="current_meeting">会中管理</string>
     <string name="after_meeting">会后查看</string>
+    <string name="seat_total_count_">席位总数量：%1$d</string>
+    <string name="send_successful">发送成功</string>
+    <string name="view">查看</string>
+    <string name="define">确定</string>
+    <string name="rate_description_">评分描述：</string>
+    <string name="use_file_name">使用文件名称</string>
+    <string name="notation_">是否记名</string>
+    <string name="score_a_">&#12288;评分一：</string>
+    <string name="score_b_">&#12288;评分二：</string>
+    <string name="score_c_">&#12288;评分三：</string>
+    <string name="score_d_">&#12288;评分四：</string>
+    <string name="rate_file_">评分文件：</string>
+    <string name="add_score">添加评分</string>
+    <string name="please_enter_score_content_first">请先输入评分内容</string>
+    <string name="first_three_options_must_be_filled_in">前三个选项必须填写</string>
+    <string name="total_score">总分</string>
+    <string name="rate_detail">评分详情</string>
+    <string name="yprs_">应评人数：</string>
+    <string name="yiprs_">已评人数：</string>
+    <string name="average_score_">平均分：</string>
+    <string name="add_score_hint">当评分文件超过一个时，评分描述内容默认使用文件名称！</string>
+    <string name="please_add_score_file_first">请先添加评分文件</string>
+    <string name="export_config">导出文件配置</string>
+    <string name="file_name_">&#12288;文件名：</string>
+    <string name="save_address_">保存地址：</string>
+    <string name="choose_dir">选择目录</string>
+    <string name="please_enter_file_name_and_addr">选先输入文件名和选择保存目录</string>
+    <string name="description_">描述内容：</string>
 
     <array name="yes_or_no">
         <item>是</item>

@@ -2,6 +2,7 @@ package xlk.takstar.paperless.fragment.sign;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -9,8 +10,10 @@ import android.view.View;
 import android.widget.AbsoluteLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceRoom;
 
 import java.util.List;
@@ -31,6 +34,7 @@ public class SignFragment extends BaseFragment<SignPresenter> implements SignCon
     private TextView tv_yqd;
     private TextView tv_wqd;
     private int width, height;
+    private int mSeatTotalCount = 0;
 
     @Override
     protected int getLayoutId() {
@@ -65,7 +69,8 @@ public class SignFragment extends BaseFragment<SignPresenter> implements SignCon
     }
 
     @Override
-    public void updateView(List<InterfaceRoom.pbui_Item_MeetRoomDevSeatDetailInfo> itemList, boolean isShow,int allMemberCount, int checkedMemberCount) {
+    public void updateView(List<InterfaceRoom.pbui_Item_MeetRoomDevSeatDetailInfo> itemList, boolean isShow, int allMemberCount, int checkedMemberCount) {
+        mSeatTotalCount = allMemberCount;
         if (getActivity() == null) {
             return;
         }
@@ -88,11 +93,12 @@ public class SignFragment extends BaseFragment<SignPresenter> implements SignCon
 //                30, 30);
 ////                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 //        RelativeLayout.LayoutParams seatLinearParams = new RelativeLayout.LayoutParams(120, 40);
+        RelativeLayout item_root_seat = inflate.findViewById(R.id.item_root_seat);
         ImageView item_seat_iv = inflate.findViewById(R.id.item_seat_iv);
         ImageView item_seat_close = inflate.findViewById(R.id.item_seat_close);
         LinearLayout item_seat_ll = inflate.findViewById(R.id.item_seat_ll);
-        TextView item_seat_device = inflate.findViewById(R.id.item_seat_device);
         TextView item_seat_member = inflate.findViewById(R.id.item_seat_member);
+        TextView item_seat_device = inflate.findViewById(R.id.item_seat_device);
         boolean isChecked = item.getIssignin() == 1;
         item_seat_iv.setSelected(isChecked);
         item_seat_close.setSelected(isChecked);
@@ -135,24 +141,34 @@ public class SignFragment extends BaseFragment<SignPresenter> implements SignCon
 //        }
 //        item_seat_iv.setVisibility(isShow ? View.VISIBLE : View.GONE);
 
-        String devName = item.getDevname().toStringUtf8();
-        if (!TextUtils.isEmpty(devName)) {
-            item_seat_device.setText(devName);
+        boolean isHost = item.getRole() == InterfaceMacro.Pb_MeetMemberRole.Pb_role_member_compere_VALUE;
+        if (isHost) {
+            item_seat_iv.setImageResource(R.drawable.icon_seat_host);
+            item_seat_close.setVisibility(View.INVISIBLE);
+            item_root_seat.setSelected(true);
+            item_seat_member.setText(getString(R.string.member_role_host));
+            item_seat_device.setText(getString(R.string.seat_total_count_, mSeatTotalCount));
+            item_seat_member.setTextColor(Color.WHITE);
+            item_seat_device.setTextColor(Color.WHITE);
         } else {
-            item_seat_device.setVisibility(View.GONE);
-        }
+            String devName = item.getDevname().toStringUtf8();
+            if (!TextUtils.isEmpty(devName)) {
+                item_seat_device.setText(devName);
+            } else {
+                item_seat_device.setVisibility(View.GONE);
+            }
 
-        String memberName = item.getMembername().toStringUtf8();
-        if (!TextUtils.isEmpty(memberName)) {
-            item_seat_member.setText(memberName);
+            String memberName = item.getMembername().toStringUtf8();
+            if (!TextUtils.isEmpty(memberName)) {
+                item_seat_member.setText(memberName);
 //            item_seat_member.setTextColor(isChecked
 //                    ? App.appContext.getColor(R.color.signed_text_color)
 //                    : App.appContext.getColor(R.color.unsigned_text_color)
 //            );
-        } else {
-            item_seat_member.setVisibility(View.GONE);
+            } else {
+                item_seat_member.setVisibility(View.GONE);
+            }
         }
-
 //        item_seat_iv.setLayoutParams(ivParams);
 //        item_seat_ll.setLayoutParams(seatLinearParams);
         //左上角x坐标
@@ -174,22 +190,10 @@ public class SignFragment extends BaseFragment<SignPresenter> implements SignCon
 
         AbsoluteLayout.LayoutParams params = new AbsoluteLayout.LayoutParams(
 //                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,
-                120, 70,
+                120, 60,
                 x, y);
         inflate.setLayoutParams(params);
         seat_absolute.addView(inflate);
-    }
-
-    @Override
-    public void updateSignin(int yqd, int yd) {
-//        if (getActivity() == null) {
-//            return;
-//        }
-//        getActivity().runOnUiThread(() -> {
-//            tv_yqd.setText(getString(R.string.yqd_, String.valueOf(yqd)));
-//            tv_yd.setText(getString(R.string.yd_, String.valueOf(yd)));
-//            tv_wqd.setText(getString(R.string.wqd_, String.valueOf(yd - yqd)));
-//        });
     }
 
     @Override

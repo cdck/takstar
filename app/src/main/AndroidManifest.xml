@@ -43,10 +43,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape" />
-        <activity
-            android:name=".admin.activity.AdminActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="landscape" />
+
         <activity
             android:name=".video.VideoActivity"
             android:launchMode="singleTop"

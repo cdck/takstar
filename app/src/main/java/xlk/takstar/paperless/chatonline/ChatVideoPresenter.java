@@ -18,4 +18,5 @@ public class ChatVideoPresenter extends BasePresenter<ChatVideoContract.View> im
     protected void busEvent(EventMessage msg) throws InvalidProtocolBufferException {
 
     }
+
 }

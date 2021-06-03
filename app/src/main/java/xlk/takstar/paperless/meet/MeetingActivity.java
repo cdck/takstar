@@ -591,7 +591,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             /** ************ ******  设置未读消息展示  ****** ************ **/
             mBadge = new QBadgeView(this).bindTarget(meet_iv_message);
             mBadge.setBadgeGravity(Gravity.END | Gravity.TOP);
-            mBadge.setBadgeTextSize(8, true);
+            mBadge.setBadgeTextSize(6, true);
             mBadge.setShowShadow(true);
             mBadge.setOnDragStateChangedListener((dragState, badge, targetView) -> {
                 //只需要空实现，就可以拖拽消除未读消息
@@ -730,6 +730,14 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult(intent, REQUEST_CODE_EXPORT_NOTE);
     }
+
+    @Override
+    public void updateMeetingBadgeNumber(int count) {
+        runOnUiThread(() -> {
+            mBadge.setBadgeNumber(count);
+        });
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

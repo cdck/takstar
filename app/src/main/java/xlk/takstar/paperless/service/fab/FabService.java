@@ -59,6 +59,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import cc.shinichi.library.tool.ui.ToastUtil;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.adapter.WmCanJoinMemberAdapter;
 import xlk.takstar.paperless.adapter.WmCanJoinProAdapter;
@@ -718,6 +719,8 @@ public class FabService extends Service implements FabContract.View {
                 List<Integer> arr = new ArrayList<>();
                 arr.add(0);//会议服务类请求则为 0
                 jni.sendChatMessage(msg, InterfaceMacro.Pb_MeetIMMSG_TYPE.Pb_MEETIM_CHAT_Other_VALUE, arr);
+                showPop(serviceView, hoverButton, mParams);
+                ToastUtils.showLong(R.string.send_successful);
             }
         });
     }

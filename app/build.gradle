@@ -8,8 +8,8 @@ android {
         applicationId "xlk.takstar.paperless"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.1"
+        versionCode 2
+        versionName "1.2.0601"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {

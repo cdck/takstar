@@ -82,7 +82,7 @@ public class MaterialPresenter extends BasePresenter<MaterialContract.View> impl
                     ToastUtils.showShort(R.string.file_already_exists);
                 }
             } else {
-                jni.creationFileDownload(Constant.download_dir + fileName,
+                jni.downloadFile(Constant.download_dir + fileName,
                         itemFile.getMediaid(), 1, 0, Constant.DOWNLOAD_MATERIAL_FILE);
             }
         }

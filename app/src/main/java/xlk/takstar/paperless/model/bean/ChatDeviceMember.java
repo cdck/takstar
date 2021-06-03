@@ -2,15 +2,15 @@ package xlk.takstar.paperless.model.bean;
 
 import com.mogujie.tt.protobuf.InterfaceDevice;
 import com.mogujie.tt.protobuf.InterfaceMember;
+import com.mogujie.tt.protobuf.InterfaceRoom;
 
 /**
  * @author Created by xlk on 2020/12/3.
  * @desc
  */
 public class ChatDeviceMember {
-
-    InterfaceDevice.pbui_Item_DeviceDetailInfo deviceDetailInfo;
-    InterfaceMember.pbui_Item_MemberDetailInfo memberDetailInfo;
+    InterfaceMember.pbui_Item_MeetMemberDetailInfo memberDetail;
+    InterfaceRoom.pbui_Item_MeetSeatDetailInfo seat;
     /**
      * 未读消息数量
      */
@@ -20,25 +20,25 @@ public class ChatDeviceMember {
      */
     long lastCheckTime;
 
-    public ChatDeviceMember(InterfaceDevice.pbui_Item_DeviceDetailInfo deviceDetailInfo, InterfaceMember.pbui_Item_MemberDetailInfo memberDetailInfo) {
-        this.deviceDetailInfo = deviceDetailInfo;
-        this.memberDetailInfo = memberDetailInfo;
+    public ChatDeviceMember(InterfaceMember.pbui_Item_MeetMemberDetailInfo memberDetail, InterfaceRoom.pbui_Item_MeetSeatDetailInfo seat) {
+        this.memberDetail = memberDetail;
+        this.seat = seat;
     }
 
-    public InterfaceDevice.pbui_Item_DeviceDetailInfo getDeviceDetailInfo() {
-        return deviceDetailInfo;
+    public int getMemberId() {
+        return memberDetail.getMemberid();
     }
 
-    public void setDeviceDetailInfo(InterfaceDevice.pbui_Item_DeviceDetailInfo deviceDetailInfo) {
-        this.deviceDetailInfo = deviceDetailInfo;
+    public String getMemberName() {
+        return memberDetail.getMembername().toStringUtf8();
     }
 
-    public InterfaceMember.pbui_Item_MemberDetailInfo getMemberDetailInfo() {
-        return memberDetailInfo;
+    public int getRole(){
+        return seat.getRole();
     }
 
-    public void setMemberDetailInfo(InterfaceMember.pbui_Item_MemberDetailInfo memberDetailInfo) {
-        this.memberDetailInfo = memberDetailInfo;
+    public int getDeviceId() {
+        return memberDetail.getDevid();
     }
 
     public int getCount() {

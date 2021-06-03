@@ -83,8 +83,9 @@ public interface MainContract {
          * 更新备注
          * @param s
          */
-        void updateRemarks(String s);
+        void updateRemarks(String remarks);
 
+        void updateIniDirPath(String dirPath);
     }
     interface Presenter extends IBasePresenter {
         /**

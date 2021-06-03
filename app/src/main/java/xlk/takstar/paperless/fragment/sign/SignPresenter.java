@@ -7,7 +7,6 @@ import com.mogujie.tt.protobuf.InterfaceFaceconfig;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceMember;
 import com.mogujie.tt.protobuf.InterfaceRoom;
-import com.mogujie.tt.protobuf.InterfaceSignin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,6 @@ import xlk.takstar.paperless.base.BasePresenter;
 import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.model.EventMessage;
 import xlk.takstar.paperless.model.EventType;
-import xlk.takstar.paperless.util.DateUtil;
 import xlk.takstar.paperless.util.LogUtil;
 
 /**
@@ -108,7 +106,7 @@ public class SignPresenter extends BasePresenter<SignContract.View> implements S
             int mediaId = jni.queryMeetRoomProperty(queryCurrentRoomId());
             if (mediaId != 0) {
                 FileUtils.createOrExistsDir(Constant.download_dir);
-                jni.creationFileDownload(Constant.download_dir + Constant.ROOM_BG + ".png", mediaId, 1, 0, Constant.ROOM_BG);
+                jni.downloadFile(Constant.download_dir + Constant.ROOM_BG + ".png", mediaId, 1, 0, Constant.ROOM_BG);
                 return;
             }
             placeDeviceRankingInfo();

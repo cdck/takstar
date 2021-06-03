@@ -201,6 +201,8 @@
     <drawable name="btn_tv_color_pressed">#F3F5F6</drawable>
     <drawable name="btn_tv_color_selected">#F3F5F6</drawable>
 
+    <color name="text_color_black">#252525</color>
+
     <drawable name="text_color_black">#252525</drawable>
     <drawable name="text_color_blue">#3480FF</drawable>
     <drawable name="text_color_white">#FFFFFF</drawable>

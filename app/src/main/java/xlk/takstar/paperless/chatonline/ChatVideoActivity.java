@@ -243,7 +243,8 @@ public class ChatVideoActivity extends BaseActivity<ChatVideoPresenter> implemen
                     createIntercom();
                 }
                 break;
-            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_STOPPLAY_VALUE://停止资源通知
+            //停止资源通知
+            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_STOPPLAY_VALUE:{
                 byte[] o2 = (byte[]) msg.getObjects()[0];
                 if (msg.getMethod() == InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_CLOSE_VALUE) {
                     //停止资源通知
@@ -273,7 +274,7 @@ public class ChatVideoActivity extends BaseActivity<ChatVideoPresenter> implemen
                         }
                     }
                 }
-                break;
+                break;}
         }
     }
 

@@ -19,6 +19,8 @@ public class GlobalValue {
     public static boolean initializationIsOver;
 
     public static int localDeviceId = 0;
+    public static int localDeviceFlag = 0;
+    public static int localMeetingId = 0;
     public static int localMemberId = 0;
     public static String localMemberName;
     /**

@@ -13,6 +13,7 @@ import com.mogujie.tt.protobuf.InterfaceBase;
 import com.mogujie.tt.protobuf.InterfaceDevice;
 import com.mogujie.tt.protobuf.InterfaceFaceconfig;
 import com.mogujie.tt.protobuf.InterfaceMacro;
+import com.mogujie.tt.protobuf.InterfaceMeet;
 import com.mogujie.tt.protobuf.InterfaceMember;
 import com.mogujie.tt.protobuf.InterfaceRoom;
 
@@ -186,6 +187,16 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
     @Override
     protected void busEvent(EventMessage msg) throws InvalidProtocolBufferException {
         switch (msg.getType()) {
+            //选择会议目录返回的结果
+            case EventType.RESULT_DIR_PATH: {
+                Object[] objects = msg.getObjects();
+                int dirType = (int) objects[0];
+                String dirPath = (String) objects[1];
+                if(dirType==Constant.CHOOSE_DIR_TYPE_INI_CONFIG){
+                    mView.updateIniDirPath(dirPath);
+                }
+                break;
+            }
             //平台初始化结果
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_READY_VALUE: {
                 int method = msg.getMethod();
@@ -306,6 +317,7 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
                 LogUtil.i(TAG, "busEvent 设备寄存器变更通知 deviceid=" + deviceid + ",attribid=" + attribid);
                 if (deviceid != 0 && deviceid == localDeviceId) {
                     getSeatName();
+                    queryDeviceFlag();
                 }
                 break;
             }
@@ -359,7 +371,9 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
                 InterfaceBase.pbui_MeetNotifyMsg inform = InterfaceBase.pbui_MeetNotifyMsg.parseFrom(datas);
                 LogUtil.d(TAG, "BusEvent -->" + "会议排位变更通知 id=" + inform.getId() + ",operMethod=" + inform.getOpermethod());
                 if (inform.getId() != 0 && inform.getId() == localDeviceId) {
+                    queryDeviceMeetInfo();
                     queryLocalRole();
+                    queryMember();
                 }
                 break;
             }
@@ -469,8 +483,28 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
         initStream();
         getSeatName();
         queryInterFaceConfiguration();
+        queryDeviceFlag();
         queryDeviceMeetInfo();
         queryMember();
+    }
+
+    private void queryDeviceFlag() {
+        byte[] bytes = jni.queryDevicePropertiesById(InterfaceMacro.Pb_MeetDevicePropertyID.Pb_MEETDEVICE_PROPERTY_DEVICEFLAG_VALUE, localDeviceId);
+        if (bytes != null) {
+            try {
+                InterfaceDevice.pbui_DeviceInt32uProperty devFlag = InterfaceDevice.pbui_DeviceInt32uProperty.parseFrom(bytes);
+                GlobalValue.localDeviceFlag = devFlag.getPropertyval();
+                //判断本机是不是处于访客模式
+                boolean isGuestMode = (GlobalValue.localDeviceFlag & InterfaceMacro.Pb_MeetDeviceFlag.Pb_MEETDEVICE_FLAG_GUESTMODE_VALUE)
+                        == InterfaceMacro.Pb_MeetDeviceFlag.Pb_MEETDEVICE_FLAG_GUESTMODE_VALUE;
+                LogUtils.e("本机的设备属性，localDeviceFlag=" + GlobalValue.localDeviceFlag + ",是否是访客模式=" + isGuestMode);
+                if (isGuestMode) {
+                    jni.modifyMeetRanking(0, InterfaceMacro.Pb_MeetMemberRole.Pb_role_member_normal_VALUE, localDeviceId);
+                }
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -489,6 +523,9 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
         if (pbui_type_meetSeatDetailInfo != null) {
             List<Integer> ids = new ArrayList<>();
             List<InterfaceRoom.pbui_Item_MeetSeatDetailInfo> itemList = pbui_type_meetSeatDetailInfo.getItemList();
+            //判断本机是不是处于访客模式
+//            boolean isGuestMode = (GlobalValue.localDeviceFlag & InterfaceMacro.Pb_MeetDeviceFlag.Pb_MEETDEVICE_FLAG_GUESTMODE_VALUE)
+//                    == InterfaceMacro.Pb_MeetDeviceFlag.Pb_MEETDEVICE_FLAG_GUESTMODE_VALUE;
             for (int i = 0; i < itemList.size(); i++) {
                 InterfaceRoom.pbui_Item_MeetSeatDetailInfo item = itemList.get(i);
                 if (item.getNameId() != 0) {

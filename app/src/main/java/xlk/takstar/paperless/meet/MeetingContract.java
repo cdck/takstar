@@ -41,6 +41,8 @@ public interface MeetingContract {
         void exportNoteFile();
 
         void exitDraw();
+
+        void updateMeetingBadgeNumber(int count);
     }
 
     interface Presenter extends IBasePresenter {

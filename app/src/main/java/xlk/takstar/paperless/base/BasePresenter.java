@@ -81,5 +81,4 @@ public abstract class BasePresenter<T extends IBaseView>{
     public void onEventMessage(EventMessage msg) throws InvalidProtocolBufferException {
         busEvent(msg);
     }
-
 }

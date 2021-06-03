@@ -59,11 +59,11 @@ public class ScreenManagePresenter extends BasePresenter<ScreenManageContract.Vi
 
     private void queryDevice() {
         InterfaceDevice.pbui_Type_DeviceDetailInfo info = jni.queryDeviceInfo();
+        onLineProjectors.clear();
+        targetMembers.clear();
+        sourceMembers.clear();
         if (info != null) {
             List<InterfaceDevice.pbui_Item_DeviceDetailInfo> pdevList = info.getPdevList();
-            onLineProjectors.clear();
-            targetMembers.clear();
-            sourceMembers.clear();
             for (int i = 0; i < pdevList.size(); i++) {
                 InterfaceDevice.pbui_Item_DeviceDetailInfo dev = pdevList.get(i);
                 int netstate = dev.getNetstate();

@@ -1,10 +1,12 @@
 package xlk.takstar.paperless.fragment.chat;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.mogujie.tt.protobuf.InterfaceBase;
 import com.mogujie.tt.protobuf.InterfaceDevice;
 import com.mogujie.tt.protobuf.InterfaceIM;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceMember;
+import com.mogujie.tt.protobuf.InterfaceRoom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ import xlk.takstar.paperless.util.LogUtil;
 
 import static xlk.takstar.paperless.meet.MeetingActivity.chatIsShowing;
 import static xlk.takstar.paperless.meet.MeetingPresenter.imMessages;
+import static xlk.takstar.paperless.model.GlobalValue.localDeviceId;
 
 /**
  * @author Created by xlk on 2020/12/2.
@@ -25,8 +28,8 @@ import static xlk.takstar.paperless.meet.MeetingPresenter.imMessages;
  */
 public class ChatPresenter extends BasePresenter<ChatContract.View> implements ChatContract.Presenter {
 
-    private List<InterfaceMember.pbui_Item_MemberDetailInfo> members = new ArrayList<>();
-    private List<ChatDeviceMember> deviceMembers = new ArrayList<>();
+    public List<ChatDeviceMember> deviceMembers = new ArrayList<>();
+    private List<InterfaceMember.pbui_Item_MeetMemberDetailInfo> memberDetails = new ArrayList<>();
     /**
      * 当前正在交流的参会人
      */
@@ -93,6 +96,14 @@ public class ChatPresenter extends BasePresenter<ChatContract.View> implements C
                 }
                 break;
             }
+            //会议排位变更通知
+            case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEETSEAT_VALUE: {
+                byte[] datas = (byte[]) msg.getObjects()[0];
+                InterfaceBase.pbui_MeetNotifyMsg inform = InterfaceBase.pbui_MeetNotifyMsg.parseFrom(datas);
+                LogUtil.d(TAG, "BusEvent -->" + "会议排位变更通知 id=" + inform.getId() + ",operMethod=" + inform.getOpermethod());
+                queryMeetRanking();
+                break;
+            }
             default:
                 break;
         }
@@ -127,7 +138,7 @@ public class ChatPresenter extends BasePresenter<ChatContract.View> implements C
         for (int i = 0; i < deviceMembers.size(); i++) {
             ChatDeviceMember item = deviceMembers.get(i);
             long lastCheckTime = item.getLastCheckTime();
-            int personid = item.getMemberDetailInfo().getPersonid();
+            int personid = item.getMemberId();
             int newCount = 0;
             if (imMessages.containsKey(personid)) {
                 List<MyChatMessage> chatMessages = imMessages.get(personid);
@@ -143,14 +154,13 @@ public class ChatPresenter extends BasePresenter<ChatContract.View> implements C
             }
             item.setCount(newCount);
         }
-        mView.updateDeviceMember(deviceMembers);
+        mView.updateMemberList();
     }
-
 
     public void updateMember(int memberid, long utcsecond) {
         for (int i = 0; i < deviceMembers.size(); i++) {
             ChatDeviceMember item = deviceMembers.get(i);
-            if (item.getMemberDetailInfo().getPersonid() == memberid) {
+            if (item.getMemberId() == memberid) {
                 long lastCheckTime = item.getLastCheckTime();
                 if (utcsecond > lastCheckTime) {
                     if (memberid != currentMemberId) {
@@ -161,7 +171,7 @@ public class ChatPresenter extends BasePresenter<ChatContract.View> implements C
                 }
             }
         }
-        mView.updateDeviceMember(deviceMembers);
+        mView.updateMemberList();
     }
 
     @Override
@@ -175,34 +185,34 @@ public class ChatPresenter extends BasePresenter<ChatContract.View> implements C
 
     @Override
     public void queryMember() {
-        InterfaceMember.pbui_Type_MemberDetailInfo info = jni.queryMember();
-        members.clear();
-        if (info != null) {
-            members.addAll(info.getItemList());
+        InterfaceMember.pbui_Type_MeetMemberDetailInfo memberDetailInfo = jni.queryMemberDetailed();
+        memberDetails.clear();
+        if (memberDetailInfo != null) {
+            List<InterfaceMember.pbui_Item_MeetMemberDetailInfo> itemList = memberDetailInfo.getItemList();
+            for (int i = 0; i < itemList.size(); i++) {
+                InterfaceMember.pbui_Item_MeetMemberDetailInfo item = itemList.get(i);
+                if (item.getMemberdetailflag() == InterfaceMember.Pb_MemberDetailFlag.Pb_MEMBERDETAIL_FLAG_ONLINE_VALUE
+                        && item.getFacestatus() == InterfaceMacro.Pb_MeetFaceStatus.Pb_MemState_MemFace_VALUE
+                        && item.getDevid() != GlobalValue.localDeviceId) {
+                    memberDetails.add(item);
+                }
+            }
         }
-        queryDevice();
+        queryMeetRanking();
     }
 
-    @Override
-    public void queryDevice() {
-        InterfaceDevice.pbui_Type_DeviceDetailInfo info = jni.queryDeviceInfo();
+    private void queryMeetRanking() {
+        InterfaceRoom.pbui_Type_MeetSeatDetailInfo info = jni.queryMeetRanking();
         List<ChatDeviceMember> temps = new ArrayList<>();
         temps.addAll(deviceMembers);
         deviceMembers.clear();
         if (info != null) {
-            List<InterfaceDevice.pbui_Item_DeviceDetailInfo> pdevList = info.getPdevList();
-            for (int i = 0; i < pdevList.size(); i++) {
-                InterfaceDevice.pbui_Item_DeviceDetailInfo dev = pdevList.get(i);
-                int devcieid = dev.getDevcieid();
-                int memberid = dev.getMemberid();
-                int netstate = dev.getNetstate();
-                int facestate = dev.getFacestate();
-                if (facestate == 1 && netstate == 1 && devcieid != GlobalValue.localDeviceId) {
-                    for (int j = 0; j < members.size(); j++) {
-                        InterfaceMember.pbui_Item_MemberDetailInfo member = members.get(j);
-                        if (member.getPersonid() == memberid) {
-                            deviceMembers.add(new ChatDeviceMember(dev, member));
-                        }
+            List<InterfaceRoom.pbui_Item_MeetSeatDetailInfo> itemList = info.getItemList();
+            for (int i = 0; i < itemList.size(); i++) {
+                InterfaceRoom.pbui_Item_MeetSeatDetailInfo item = itemList.get(i);
+                for (int j = 0; j < memberDetails.size(); j++) {
+                    if (item.getNameId() == memberDetails.get(j).getMemberid()) {
+                        deviceMembers.add(new ChatDeviceMember(memberDetails.get(j), item));
                     }
                 }
             }
@@ -211,13 +221,12 @@ public class ChatPresenter extends BasePresenter<ChatContract.View> implements C
             ChatDeviceMember temp = temps.get(i);
             for (int j = 0; j < deviceMembers.size(); j++) {
                 ChatDeviceMember item = deviceMembers.get(j);
-                if (temp.getMemberDetailInfo().getPersonid() == item.getMemberDetailInfo().getPersonid()) {
+                if (temp.getMemberId() == item.getMemberId()) {
                     item.setLastCheckTime(temp.getLastCheckTime());
                     break;
                 }
             }
         }
-        mView.updateDeviceMember(deviceMembers);
+        mView.updateMemberList();
     }
-
 }

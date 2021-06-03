@@ -9,19 +9,19 @@ import com.mogujie.tt.protobuf.InterfaceMember;
  * @desc
  */
 public class ScoreMember {
-    InterfaceMember.pbui_Item_MemberDetailInfo member;
     InterfaceFilescorevote.pbui_Type_Item_FileScoreMemberStatistic score;
+    InterfaceMember.pbui_Item_MeetMemberDetailInfo member;
 
-    public ScoreMember(InterfaceMember.pbui_Item_MemberDetailInfo member, InterfaceFilescorevote.pbui_Type_Item_FileScoreMemberStatistic score) {
-        this.member = member;
+    public ScoreMember(InterfaceFilescorevote.pbui_Type_Item_FileScoreMemberStatistic score, InterfaceMember.pbui_Item_MeetMemberDetailInfo member) {
         this.score = score;
-    }
-
-    public InterfaceMember.pbui_Item_MemberDetailInfo getMember() {
-        return member;
+        this.member = member;
     }
 
     public InterfaceFilescorevote.pbui_Type_Item_FileScoreMemberStatistic getScore() {
         return score;
+    }
+
+    public InterfaceMember.pbui_Item_MeetMemberDetailInfo getMember() {
+        return member;
     }
 }

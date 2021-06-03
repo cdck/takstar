@@ -27,6 +27,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment imp
     protected T presenter;
     protected JniHelper jni = JniHelper.getInstance();
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -90,6 +91,12 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment imp
                 .setBgResource(R.drawable.round_gray_bg)
                 .setDurationIsLong(true)
                 .show(R.string.launch_successful);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @Override

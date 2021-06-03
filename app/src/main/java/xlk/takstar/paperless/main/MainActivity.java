@@ -40,6 +40,8 @@ import com.mogujie.tt.protobuf.InterfaceDevice;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceMember;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -56,10 +58,11 @@ import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.adapter.LocalFileAdapter;
 import xlk.takstar.paperless.adapter.MemberAdapter;
-import xlk.takstar.paperless.admin.activity.AdminActivity;
 import xlk.takstar.paperless.base.BaseActivity;
 import xlk.takstar.paperless.meet.MeetingActivity;
 import xlk.takstar.paperless.model.Constant;
+import xlk.takstar.paperless.model.EventMessage;
+import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.ui.ArtBoard;
 import xlk.takstar.paperless.ui.RvItemDecoration;
@@ -102,6 +105,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     private final int REQUEST_CODE_READ_FRAME_BUFFER = 1;
     private TextView main_tv_remarks, main_tv_status, main_tv_role, main_tv_version;
+    private EditText edt_cache_location;
 
     @Override
     protected int getLayoutId() {
@@ -319,19 +323,32 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         drawing_board = inflate.findViewById(R.id.drawing_board);
         edt_pwd = inflate.findViewById(R.id.edt_pwd);
         RelativeLayout pwd_rl = inflate.findViewById(R.id.pwd_rl);
-        tv_handwritten.setSelected(true);
-        tv_password.setSelected(false);
-        pwd_rl.setVisibility(View.GONE);
-        tv_handwritten.setOnClickListener(v -> {
+        if ((type & 1) == 1) {
+            //有手写签到
             tv_handwritten.setSelected(true);
             tv_password.setSelected(false);
+            drawing_board.setVisibility(View.VISIBLE);
             pwd_rl.setVisibility(View.GONE);
-        });
-        tv_password.setOnClickListener(v -> {
-            tv_handwritten.setSelected(false);
+        } else {
+            //如果没有手写签到那就一定是密码签到
             tv_password.setSelected(true);
+            tv_handwritten.setSelected(false);
+            drawing_board.setVisibility(View.GONE);
             pwd_rl.setVisibility(View.VISIBLE);
-        });
+        }
+        if ((type & 3) == 3) {
+            //有手写签到和密码签到才设置点击事件进行切换
+            tv_handwritten.setOnClickListener(v -> {
+                tv_handwritten.setSelected(true);
+                tv_password.setSelected(false);
+                pwd_rl.setVisibility(View.GONE);
+            });
+            tv_password.setOnClickListener(v -> {
+                tv_handwritten.setSelected(false);
+                tv_password.setSelected(true);
+                pwd_rl.setVisibility(View.VISIBLE);
+            });
+        }
         inflate.findViewById(R.id.btn_undo).setOnClickListener(v -> {
             drawing_board.revoke();
         });
@@ -346,7 +363,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                     Bitmap canvasBmp = drawing_board.getCanvasBmp();
                     bytestring = ConvertUtil.bmp2bs(canvasBmp);
                     canvasBmp.recycle();
-                    drawing_board.clear();
                 } else {
                     ToastUtils.showShort(R.string.please_signing_first);
                     return;
@@ -360,14 +376,16 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 }
             }
             jni.sendSign(0, mSignInType, pwd, bytestring);
+            if (drawing_board.isNotEmpty()) {
+                drawing_board.clear();
+            }
             enterPwdPop.dismiss();
         });
         inflate.findViewById(R.id.btn_cancel).setOnClickListener(v -> {
             enterPwdPop.dismiss();
         });
-        enterPwdPop.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
+        enterPwdPop.setOnDismissListener(() -> {
+            if (drawing_board.isNotEmpty()) {
                 drawing_board.clear();
             }
         });
@@ -609,13 +627,20 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         }
     }
 
+    @Override
+    public void updateIniDirPath(String dirPath) {
+        if (edt_cache_location != null) {
+            edt_cache_location.setText(dirPath);
+        }
+    }
+
     private void showConfigPop() {
         View inflate = LayoutInflater.from(this).inflate(R.layout.pop_config, null, false);
         PopupWindow configPop = PopUtil.createBigPop(inflate, main_btn_enter_meeting);
         EditText edt_ip = inflate.findViewById(R.id.edt_ip);
         EditText edt_port = inflate.findViewById(R.id.edt_port);
         EditText edt_bitrate = inflate.findViewById(R.id.edt_bitrate);
-        EditText edt_cache_location = inflate.findViewById(R.id.edt_cache_location);
+        edt_cache_location = inflate.findViewById(R.id.edt_cache_location);
         EditText edt_cache_size = inflate.findViewById(R.id.edt_cache_size);
         CheckBox cb_encode_filter = inflate.findViewById(R.id.cb_encode_filter);
         CheckBox cb_open_microphone = inflate.findViewById(R.id.cb_open_microphone);
@@ -644,7 +669,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         inflate.findViewById(R.id.iv_close).setOnClickListener(v -> configPop.dismiss());
         inflate.findViewById(R.id.btn_cancel).setOnClickListener(v -> configPop.dismiss());
         inflate.findViewById(R.id.iv_more).setOnClickListener(v -> {
-            showDirPop(edt_cache_location);
+            String dirPath = edt_cache_location.getText().toString();
+//            showDirPop(edt_cache_location);
+            EventBus.getDefault().post(new EventMessage.Builder().type(EventType.CHOOSE_DIR_PATH).objects(Constant.CHOOSE_DIR_TYPE_INI_CONFIG, dirPath).build());
         });
         inflate.findViewById(R.id.btn_ensure).setOnClickListener(v -> {
             String ip = edt_ip.getText().toString().trim();

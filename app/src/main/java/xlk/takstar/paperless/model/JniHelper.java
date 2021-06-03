@@ -17,6 +17,7 @@ import com.mogujie.tt.protobuf.InterfaceFile;
 import com.mogujie.tt.protobuf.InterfaceFilescorevote;
 import com.mogujie.tt.protobuf.InterfaceIM;
 import com.mogujie.tt.protobuf.InterfaceMacro;
+import com.mogujie.tt.protobuf.InterfaceMeet;
 import com.mogujie.tt.protobuf.InterfaceMeetfunction;
 import com.mogujie.tt.protobuf.InterfaceMember;
 import com.mogujie.tt.protobuf.InterfacePlaymedia;
@@ -171,7 +172,7 @@ public class JniHelper {
      * @param onlyFinish =1 表示只需要结束的通知
      * @param userStr    用户传入的自定义字串标识
      */
-    public void creationFileDownload(String pathName, int mediaId, int isNewFile, int onlyFinish, String userStr) {
+    public void downloadFile(String pathName, int mediaId, int isNewFile, int onlyFinish, String userStr) {
         if (downloadingFiles.contains(mediaId)) {
             ToastUtils.showShort(R.string.file_downloading);
             return;
@@ -558,12 +559,13 @@ public class JniHelper {
                 .build();
         jni.call_method(type, InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_CACHE_VALUE, build.toByteArray());
     }
+
     /**
      * 普通缓存会议数据
      *
      * @param type 要缓存的数据
      */
-    public void cacheData(int type,int id,int flag) {
+    public void cacheData(int type, int id, int flag) {
         InterfaceBase.pbui_MeetCacheOper build = InterfaceBase.pbui_MeetCacheOper.newBuilder()
                 .setCacheflag(flag)
                 .setId(id)
@@ -625,10 +627,10 @@ public class JniHelper {
         byte[] array = jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_DEVICEINFO.getNumber(),
                 InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_QUERYPROPERTY.getNumber(), bytes);
         if (array == null) {
-            LogUtil.e(TAG, "queryDevicePropertiesById :  按属性ID查询指定设备属性失败 --->>> ");
+            LogUtil.e(TAG, "queryDevicePropertiesById :  按属性ID查询指定设备属性失败 --->>> propetyid=" + propetyid + ",devId=" + devId);
             return null;
         }
-        LogUtil.e(TAG, "queryDevicePropertiesById:  按属性ID查询指定设备属性成功 --->>> ");
+        LogUtil.e(TAG, "queryDevicePropertiesById:  按属性ID查询指定设备属性成功 --->>> propetyid=" + propetyid + ",devId=" + devId);
         return array;
     }
 
@@ -1306,6 +1308,7 @@ public class JniHelper {
 
     /**
      * 停止公告
+     *
      * @param id 公告id
      */
     public void stopBullet(int id) {
@@ -1555,6 +1558,32 @@ public class JniHelper {
 
 
     /**
+     * 查询指定ID的会议
+     *
+     * @param meetingId 会议id
+     */
+    public InterfaceMeet.pbui_Item_MeetMeetInfo queryMeetingById(int meetingId) {
+        InterfaceBase.pbui_QueryInfoByID build = InterfaceBase.pbui_QueryInfoByID.newBuilder()
+                .setId(meetingId)
+                .build();
+        byte[] bytes = jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEETINFO_VALUE,
+                InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_SINGLEQUERYBYID_VALUE, build.toByteArray());
+        if (bytes != null) {
+            try {
+                InterfaceMeet.pbui_Type_MeetMeetInfo info = InterfaceMeet.pbui_Type_MeetMeetInfo.parseFrom(bytes);
+                if (info.getItemCount() > 0) {
+                    LogUtils.i("查询指定id的会议成功 meetingId=" + meetingId);
+                    return info.getItem(0);
+                }
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
+        }
+        LogUtils.e("查询指定id的会议失败 meetingId=" + meetingId);
+        return null;
+    }
+
+    /**
      * 查询会议属性
      *
      * @param propertyid Pb_MeetPropertyID
@@ -1595,8 +1624,9 @@ public class JniHelper {
                 InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_QUERYPROPERTY.getNumber(), build.toByteArray());
         if (bytes != null) {
             try {
-                LogUtil.d(TAG, "queryMemberProperty -->" + "查询参会人员属性成功");
-                return InterfaceMember.pbui_Type_MeetMembeProperty.parseFrom(bytes);
+                InterfaceMember.pbui_Type_MeetMembeProperty info = InterfaceMember.pbui_Type_MeetMembeProperty.parseFrom(bytes);
+                LogUtil.d(TAG, "queryMemberProperty -->" + "查询参会人员属性成功 value=" + info.getPropertyval() + ",text=" + info.getPropertytext().toStringUtf8());
+                return info;
             } catch (InvalidProtocolBufferException e) {
                 e.printStackTrace();
             }
@@ -1737,6 +1767,7 @@ public class JniHelper {
 
     /**
      * 判断是否连接服务器（在线）
+     *
      * @return 是否在线
      */
     public boolean isOnline() {
@@ -1754,5 +1785,37 @@ public class JniHelper {
             }
         }
         return isonline;
+    }
+
+    /**
+     * 添加文件评分
+     *
+     * @param fileId
+     * @param score
+     */
+    public void addScore(int fileId, InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore score) {
+        InterfaceFilescorevote.pbui_Type_UserDefineFileScore build = InterfaceFilescorevote.pbui_Type_UserDefineFileScore.newBuilder()
+                .setFileid(fileId)
+                .addItem(score)
+                .build();
+        jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTE_VALUE,
+                InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_ADD_VALUE, build.toByteArray());
+    }
+
+    public void addScore(int fileId, List<InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore> scores) {
+        InterfaceFilescorevote.pbui_Type_UserDefineFileScore build = InterfaceFilescorevote.pbui_Type_UserDefineFileScore.newBuilder()
+                .setFileid(fileId)
+                .addAllItem(scores)
+                .build();
+        jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTE_VALUE, InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_ADD_VALUE, build.toByteArray());
+    }
+
+    public void modifyScore(int fileId, InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore score) {
+        InterfaceFilescorevote.pbui_Type_UserDefineFileScore build = InterfaceFilescorevote.pbui_Type_UserDefineFileScore.newBuilder()
+                .setFileid(fileId)
+                .addItem(score)
+                .build();
+        jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTESIGN_VALUE,
+                InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_MODIFY_VALUE, build.toByteArray());
     }
 }

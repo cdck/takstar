@@ -256,7 +256,7 @@ public class AnnotateFragment extends BaseFragment<AnnotatePresenter> implements
                         }
                     } else {
                         LogUtil.i(TAG, "onItemChildClick fileName=" + fileName);
-                        JniHelper.getInstance().creationFileDownload(Constant.download_dir + fileName,
+                        JniHelper.getInstance().downloadFile(Constant.download_dir + fileName,
                                 mediaid, 1, 0, Constant.DOWNLOAD_MATERIAL_FILE);
                     }
                 });

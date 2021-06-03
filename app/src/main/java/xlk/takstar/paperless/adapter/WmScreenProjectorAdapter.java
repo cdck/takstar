@@ -31,7 +31,7 @@ public class WmScreenProjectorAdapter extends BaseQuickAdapter<InterfaceDevice.p
         View item_root_view = helper.getView(R.id.item_root_view);
         item_root_view.setBackgroundColor(isOdd(layoutPosition)
                 ? getContext().getColor(R.color.table_bg_color) : getContext().getColor(R.color.table_bg_color1));
-        helper.setText(R.id.cb_name, item.getDevname().toStringUtf8());
+        helper.setText(R.id.item_tv_name, item.getDevname().toStringUtf8());
         cb.setChecked(ids.contains(item.getDevcieid()));
     }
 

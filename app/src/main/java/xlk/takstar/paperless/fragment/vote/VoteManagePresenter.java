@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xlk.takstar.paperless.base.BasePresenter;
+import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.model.EventMessage;
+import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.model.bean.SubmitMember;
 import xlk.takstar.paperless.util.LogUtil;
 
@@ -31,6 +33,17 @@ public class VoteManagePresenter extends BasePresenter<VoteManageContract.View> 
     @Override
     protected void busEvent(EventMessage msg) throws InvalidProtocolBufferException {
         switch (msg.getType()) {
+            //选择会议目录返回的结果
+            case EventType.RESULT_DIR_PATH: {
+                Object[] objects = msg.getObjects();
+                int dirType = (int) objects[0];
+                String dirPath = (String) objects[1];
+                if (dirType == Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE
+                        || dirType == Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE_SUBMIT) {
+                    mView.updateExportDirPath(dirPath);
+                }
+                break;
+            }
             //投票变更通知
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEETVOTEINFO_VALUE:
                 LogUtil.i(TAG, "busEvent 投票变更通知");

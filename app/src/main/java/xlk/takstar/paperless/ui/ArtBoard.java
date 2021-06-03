@@ -585,6 +585,15 @@ public class ArtBoard extends View {
         }
     }
 
+    /**
+     * 绘制波浪线
+     * @param x 当前移动的x坐标
+     * @param y 当前移动的y坐标
+     */
+    private void drawWavyLine(float x, float y) {
+
+    }
+
     public void drawText(final float x, final float y, String drawText) {
         float ex = x;
         float ey = y;

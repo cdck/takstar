@@ -4,6 +4,7 @@ package xlk.takstar.paperless.util;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.protobuf.ByteString;
+import com.mogujie.tt.protobuf.InterfaceFilescorevote;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceMember;
 import com.mogujie.tt.protobuf.InterfacePerson;
@@ -143,15 +144,16 @@ public class JxlUtil {
     /**
      * 导出投票/选举内容
      *
-     * @param votes    投票信息
+     * @param dirPath  目录路径
      * @param fileName 文件名（不需要后缀）
      * @param content  内容描述
+     * @param votes    投票信息
      */
-    public static void exportVoteInfo(List<InterfaceVote.pbui_Item_MeetVoteDetailInfo> votes, String fileName, String content) {
-        FileUtils.createOrExistsDir(Constant.export_dir);
+    public static void exportVoteInfo(String dirPath, String fileName, String content, List<InterfaceVote.pbui_Item_MeetVoteDetailInfo> votes) {
+        FileUtils.createOrExistsDir(dirPath);
         try {
             //1.创建Excel文件
-            File file = createXlsFile(Constant.export_dir + fileName);
+            File file = createXlsFile(dirPath + "/" + fileName);
             //2.创建工作簿
             WritableWorkbook workbook = Workbook.createWorkbook(file);
             //3.创建Sheet
@@ -567,15 +569,15 @@ public class JxlUtil {
     /**
      * 导出投票详情，投票提交人
      *
-     * @param dirPath 导出目录区分：导出投票和导出选举
-     * @param voteContent 投票/选举内容
+     * @param dirPath       导出目录区分：导出投票和导出选举
+     * @param fileName      文件名称（不需要后缀）
      * @param submitMembers 投票/选举提交人
      */
-    public static void exportVoteSubmitMember(String dirPath, String voteContent, List<SubmitMember> submitMembers) {
+    public static void exportVoteSubmitMember(String dirPath, String fileName, List<SubmitMember> submitMembers) {
         FileUtils.createOrExistsDir(dirPath);
         try {
             //1.创建Excel文件
-            File file = createXlsFile(dirPath + voteContent);
+            File file = createXlsFile(dirPath + "/" + fileName);
             //2.创建工作簿
             WritableWorkbook workbook = Workbook.createWorkbook(file);
             //3.创建Sheet
@@ -616,5 +618,14 @@ public class JxlUtil {
         } catch (IOException | WriteException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 导出某个评分的结果
+     */
+    public static void exportSingleScoreResult(InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore item) {
+        App.threadPool.execute(() -> {
+            // TODO: 2021/5/25
+        });
     }
 }

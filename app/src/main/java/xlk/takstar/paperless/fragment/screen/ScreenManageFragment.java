@@ -29,7 +29,7 @@ import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_0;
  */
 public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> implements ScreenManageContract.View, View.OnClickListener {
     private RecyclerView rv_screen_source, rv_projection, rv_member;
-    private CheckBox cb_source, cb_projection, cb_member;
+    private CheckBox cb_projection, cb_member;
     private Button btn_preview;
     private CheckBox cb_mandatory;
     private Button btn_launch;
@@ -44,9 +44,19 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
 
     @Override
     protected void initView(View inflate) {
-        cb_source = inflate.findViewById(R.id.cb_source);
         cb_projection = inflate.findViewById(R.id.cb_projection);
+        inflate.findViewById(R.id.ll_cb_pro).setOnClickListener(v->{
+            boolean checked = cb_projection.isChecked();
+            cb_projection.setChecked(!checked);
+            projectorAdapter.setChooseAll(!checked);
+        });
+
         cb_member = inflate.findViewById(R.id.cb_member);
+        inflate.findViewById(R.id.ll_cb_member).setOnClickListener(v->{
+            boolean checked = cb_member.isChecked();
+            cb_member.setChecked(!checked);
+            targetAdapter.setChooseAll(!checked);
+        });
 
         rv_screen_source = inflate.findViewById(R.id.rv_screen_source);
         rv_projection = inflate.findViewById(R.id.rv_projection);
@@ -61,10 +71,6 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
         btn_preview.setOnClickListener(this);
         btn_launch.setOnClickListener(this);
         btn_stop.setOnClickListener(this);
-
-        cb_source.setOnClickListener(this);
-        cb_projection.setOnClickListener(this);
-        cb_member.setOnClickListener(this);
     }
 
     @Override
@@ -82,7 +88,6 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
         presenter.queryData();
     }
 
-
     @Override
     public void updateRecyclerView() {
         if (sourceMemberAdapter == null) {
@@ -94,7 +99,6 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
                 @Override
                 public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                     sourceMemberAdapter.choose(presenter.sourceMembers.get(position).getDeviceDetailInfo().getDevcieid());
-//                    cb_source.setChecked(sourceMemberAdapter.isChooseAll());
                 }
             });
         } else {
@@ -142,24 +146,6 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
                     return;
                 }
                 jni.playTargetScreen(checks.get(0));
-                break;
-            }
-            case R.id.cb_source: {
-//                boolean checked = cb_source.isChecked();
-//                cb_source.setChecked(checked);
-//                sourceMemberAdapter.setChooseAll(checked);
-                break;
-            }
-            case R.id.cb_projection: {
-                boolean checked = cb_projection.isChecked();
-                cb_projection.setChecked(checked);
-                projectorAdapter.setChooseAll(checked);
-                break;
-            }
-            case R.id.cb_member: {
-                boolean checked = cb_member.isChecked();
-                cb_member.setChecked(checked);
-                targetAdapter.setChooseAll(checked);
                 break;
             }
             case R.id.btn_launch: {

@@ -9,6 +9,9 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.mogujie.tt.protobuf.InterfaceMacro;
+import com.mogujie.tt.protobuf.InterfaceMember;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +24,13 @@ import xlk.takstar.paperless.adapter.MulitpleItemAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
 import xlk.takstar.paperless.chatonline.ChatVideoActivity;
 import xlk.takstar.paperless.meet.MeetingActivity;
+import xlk.takstar.paperless.model.Constant;
+import xlk.takstar.paperless.model.EventMessage;
+import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.model.bean.ChatDeviceMember;
 import xlk.takstar.paperless.model.bean.MyChatMessage;
 
-import static xlk.takstar.paperless.meet.MeetingActivity.mBadge;
 
 /**
  * @author Created by xlk on 2020/12/2.
@@ -110,7 +115,7 @@ public class ChatFragment extends BaseFragment<ChatPresenter> implements ChatCon
         MeetingActivity.chatIsShowing = true;
         presenter.queryDeviceMeetInfo();
         presenter.queryMember();
-        mBadge.setBadgeNumber(0);
+        EventBus.getDefault().post(new EventMessage.Builder().type(EventType.BUS_UPDATE_BADGE_NUMBER).objects(0).build());
         presenter.refreshUnreadCount();
         presenter.updateRvMessage();
     }
@@ -131,18 +136,20 @@ public class ChatFragment extends BaseFragment<ChatPresenter> implements ChatCon
     }
 
     @Override
-    public void updateDeviceMember(List<ChatDeviceMember> deviceMembers) {
+    public void updateMemberList() {
         if (chatMemberAdapter == null) {
-            chatMemberAdapter = new ChatMemberAdapter(R.layout.item_chat_member, deviceMembers);
+            chatMemberAdapter = new ChatMemberAdapter(R.layout.item_chat_member, presenter.deviceMembers);
             rv_member.setLayoutManager(new LinearLayoutManager(getContext()));
             rv_member.setAdapter(chatMemberAdapter);
             chatMemberAdapter.setOnItemClickListener((adapter, view, position) -> {
-                ChatDeviceMember chatDeviceMember = deviceMembers.get(position);
-                chatDeviceMember.setCount(0);
-                chatDeviceMember.setLastCheckTime(System.currentTimeMillis() / 1000);
-                chatMemberAdapter.setSelected(chatDeviceMember.getMemberDetailInfo().getPersonid());
-                tv_member_name.setText(chatDeviceMember.getMemberDetailInfo().getName().toStringUtf8());
-                presenter.setCurrentMemberId(chatDeviceMember.getMemberDetailInfo().getPersonid());
+                ChatDeviceMember item = presenter.deviceMembers.get(position);
+                item.setCount(0);
+                item.setLastCheckTime(System.currentTimeMillis() / 1000);
+                chatMemberAdapter.setSelected(item.getMemberId());
+                String memberRoleName = Constant.getMemberRoleName(getContext(), item.getRole());
+                String memberName = item.getMemberName();
+                tv_member_name.setText(memberRoleName.isEmpty() ? memberName : memberRoleName + ":" + memberName);
+                presenter.setCurrentMemberId(item.getMemberId());
                 presenter.updateRvMessage();
             });
         } else {

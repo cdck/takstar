@@ -7,11 +7,15 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
+import com.mogujie.tt.protobuf.InterfaceMacro;
+import com.mogujie.tt.protobuf.InterfaceMember;
 
 import java.util.List;
 
 import androidx.annotation.Nullable;
 import xlk.takstar.paperless.R;
+import xlk.takstar.paperless.model.Constant;
+import xlk.takstar.paperless.model.JniHelper;
 import xlk.takstar.paperless.model.bean.ChatDeviceMember;
 
 /**
@@ -28,7 +32,7 @@ public class ChatMemberAdapter extends BaseQuickAdapter<ChatDeviceMember, BaseVi
 
     public int getSelectedId() {
         for (int i = 0; i < getData().size(); i++) {
-            if (getData().get(i).getMemberDetailInfo().getPersonid() == selectedId) {
+            if (getData().get(i).getMemberId() == selectedId) {
                 return selectedId;
             }
         }
@@ -41,14 +45,20 @@ public class ChatMemberAdapter extends BaseQuickAdapter<ChatDeviceMember, BaseVi
 
     @Override
     protected void convert(BaseViewHolder helper, ChatDeviceMember item) {
-        helper.setText(R.id.item_tv_name, item.getMemberDetailInfo().getName().toStringUtf8())
-                .setText(R.id.item_tv_job, item.getMemberDetailInfo().getJob().toStringUtf8());
+        InterfaceMember.pbui_Type_MeetMembeProperty memberRole = JniHelper.getInstance().queryMemberProperty(
+                InterfaceMacro.Pb_MemberPropertyID.Pb_MEETMEMBER_PROPERTY_JOB_VALUE, item.getMemberId());
+        String memberRoleName = "";
+        if (memberRole != null) {
+            memberRoleName = Constant.getMemberRoleName(getContext(), memberRole.getPropertyval());
+        }
+        helper.setText(R.id.item_tv_name, item.getMemberName())
+                .setText(R.id.item_tv_job, memberRoleName);
         int count = item.getCount();
         TextView item_tv_count = helper.getView(R.id.item_tv_count);
         LinearLayout item_chat_root = helper.getView(R.id.item_chat_root);
         item_tv_count.setText(String.valueOf(count));
         item_tv_count.setVisibility(count > 0 ? View.VISIBLE : View.INVISIBLE);
-        item_chat_root.setSelected(selectedId == item.getMemberDetailInfo().getPersonid());
+        item_chat_root.setSelected(selectedId == item.getMemberId());
 
     }
 }

@@ -12,17 +12,23 @@ import xlk.takstar.paperless.base.IBaseView;
  * @desc
  */
 public interface SignContract {
-    interface View extends IBaseView{
+    interface View extends IBaseView {
 
-        void updateView(List<InterfaceRoom.pbui_Item_MeetRoomDevSeatDetailInfo> itemList, boolean isShow,int allMemberCount, int checkedMemberCount);
-
-        void updateSignin(int yqd, int size);
+        /**
+         * @param itemList           会议排位信息
+         * @param isShow             是否展示图标
+         * @param allMemberCount     所有会议终端的数量
+         * @param checkedMemberCount 已经签到的参会人数量
+         */
+        void updateView(List<InterfaceRoom.pbui_Item_MeetRoomDevSeatDetailInfo> itemList, boolean isShow, int allMemberCount, int checkedMemberCount);
 
         void updateBg(String filepath);
     }
-    interface Presenter extends IBasePresenter{
+
+    interface Presenter extends IBasePresenter {
 
         void queryInterFaceConfiguration();
+
         void placeDeviceRankingInfo();
     }
 }

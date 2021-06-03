@@ -16,9 +16,9 @@ public interface ChatContract {
 
         void updateMeetingName(String meetingName);
 
-        void updateDeviceMember(List<ChatDeviceMember> deviceMembers);
-
         void updateMessageRv(List<MyChatMessage> messages);
+
+        void updateMemberList();
     }
     interface Presenter extends IBasePresenter{
 
@@ -26,6 +26,5 @@ public interface ChatContract {
 
         void queryMember();
 
-        void queryDevice();
     }
 }

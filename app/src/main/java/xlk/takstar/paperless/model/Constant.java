@@ -5,6 +5,8 @@ import android.os.Environment;
 
 import com.mogujie.tt.protobuf.InterfaceMacro;
 
+import java.math.BigDecimal;
+
 import xlk.takstar.paperless.R;
 
 import static xlk.takstar.paperless.model.GlobalValue.hasAllPermission;
@@ -151,6 +153,10 @@ public class Constant {
      * 上传升级文件
      */
     public static final String UPLOAD_UPGRADE_FILE = "upload_upgrade_file";
+    /**
+     * 上传评分文件
+     */
+    public static final String UPLOAD_SCORE_FILE = "upload_score_file";
 
     //下载文件标识
     public static final String DOWNLOAD_AGENDA_FILE = "download_agenda_file";
@@ -158,6 +164,19 @@ public class Constant {
      * 下载会议资料文件
      */
     public static final String DOWNLOAD_MATERIAL_FILE = "download_material_file";
+
+    /**
+     * ini配置缓存目录
+     */
+    public static final int CHOOSE_DIR_TYPE_INI_CONFIG = 1;
+    /**
+     * 导出投票信息文件目录
+     */
+    public static final int CHOOSE_DIR_TYPE_EXPORT_VOTE = 2;
+    /**
+     * 导出某个投票的提交人信息
+     */
+    public static final int CHOOSE_DIR_TYPE_EXPORT_VOTE_SUBMIT = 3;
 
     public static final int RESOURCE_ID_0 = 0;
     public static final int RESOURCE_ID_1 = 1;
@@ -464,7 +483,7 @@ public class Constant {
             case InterfaceMacro.Pb_MeetMemberRole.Pb_role_admin_VALUE:
                 return context.getString(R.string.member_role_admin);
             default:
-                return context.getString(R.string.none);
+                return "";//context.getString(R.string.none);
         }
     }
 
@@ -569,4 +588,13 @@ public class Constant {
         }
     }
 
+    public static double div(double v1, double v2, int scale) {
+        if (scale < 0) {
+            throw new IllegalArgumentException(
+                    "The scale must be a positive integer or zero");
+        }
+        BigDecimal b1 = new BigDecimal(Double.toString(v1));
+        BigDecimal b2 = new BigDecimal(Double.toString(v2));
+        return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
 }
