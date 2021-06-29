@@ -51,7 +51,7 @@ public class LaunchActivity extends AppCompatActivity {
                     @Override
                     public void noPermission(List<String> permissions, boolean never) {
                         LogUtils.d("部分权限未获取===" + permissions);
-//                        if(never){
+//                        if(never){ceshi
 //                            XXPermissions.startPermissionActivity(LaunchActivity.this,permissions);
 //                        }else {
 //                            showPermissionDescription(permissions);

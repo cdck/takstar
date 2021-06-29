@@ -122,7 +122,6 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
                             }
                         }
                     }
-
                 }
             }
         }

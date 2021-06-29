@@ -10,32 +10,16 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemClickListener;
-import com.mogujie.tt.protobuf.InterfaceAgenda;
-import com.mogujie.tt.protobuf.InterfaceFile;
 import com.tencent.smtt.sdk.TbsDownloader;
 import com.tencent.smtt.sdk.TbsReaderView;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import xlk.takstar.paperless.R;
-import xlk.takstar.paperless.adapter.AgendaAdapter;
-import xlk.takstar.paperless.adapter.AgendaFileAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
-import xlk.takstar.paperless.model.GlobalValue;
-import xlk.takstar.paperless.model.JniHelper;
-import xlk.takstar.paperless.ui.RvItemDecoration;
-import xlk.takstar.paperless.util.FileUtil;
 import xlk.takstar.paperless.util.LogUtil;
 
 import static xlk.takstar.paperless.App.appContext;
-import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_0;
 import static xlk.takstar.paperless.model.GlobalValue.initX5Finished;
 
 /**
@@ -51,11 +35,7 @@ public class AgendaFragment extends BaseFragment<AgendaPresenter> implements Age
     private ProgressBar progress_bar;
     private ScrollView agenda_sv;
     private TextView agenda_tv;
-    private LinearLayout ll_time_agenda;
-    private RecyclerView rv_agenda, rv_file;
     private TbsReaderView tbsReaderView;
-    private AgendaAdapter agendaAdapter;
-    private AgendaFileAdapter agendaFileAdapter;
 
     @Override
     protected int getLayoutId() {
@@ -68,9 +48,6 @@ public class AgendaFragment extends BaseFragment<AgendaPresenter> implements Age
         progress_bar = inflate.findViewById(R.id.progress_bar);
         agenda_sv = inflate.findViewById(R.id.agenda_sv);
         agenda_tv = inflate.findViewById(R.id.agenda_tv);
-        ll_time_agenda = inflate.findViewById(R.id.ll_time_agenda);
-        rv_agenda = inflate.findViewById(R.id.rv_agenda);
-        rv_file = inflate.findViewById(R.id.rv_file);
     }
 
     @Override
@@ -90,9 +67,6 @@ public class AgendaFragment extends BaseFragment<AgendaPresenter> implements Age
 
     @Override
     public void initDefault() {
-        ll_time_agenda.setVisibility(View.GONE);
-        progress_bar.setVisibility(View.GONE);
-        agenda_sv.setVisibility(View.GONE);
         agenda_tv.setText("");
         if (tbsReaderView != null) {
             agenda_root.removeView(tbsReaderView);
@@ -105,7 +79,6 @@ public class AgendaFragment extends BaseFragment<AgendaPresenter> implements Age
     public void updateAgendaTv(String content) {
         //也有可能下载X5内核完成，但是议程变成文本类
         progress_bar.setVisibility(View.GONE);
-        ll_time_agenda.setVisibility(View.GONE);
         agenda_sv.setVisibility(View.VISIBLE);
         agenda_tv.setText(content);
     }
@@ -113,7 +86,6 @@ public class AgendaFragment extends BaseFragment<AgendaPresenter> implements Age
     @Override
     public void displayFile(String path) {
         agenda_sv.setVisibility(View.GONE);
-        ll_time_agenda.setVisibility(View.GONE);
         if (initX5Finished) {
             //加载完成
             if (isNeedRestart) {
@@ -156,53 +128,6 @@ public class AgendaFragment extends BaseFragment<AgendaPresenter> implements Age
     @Override
     public void onCallBackAction(Integer integer, Object o, Object o1) {
 
-    }
-
-    @Override
-    public void showTimeAgenda() {
-        ll_time_agenda.setVisibility(View.VISIBLE);
-        if (agendaAdapter == null) {
-            agendaAdapter = new AgendaAdapter(presenter.agendaTimeInfos);
-            rv_agenda.addItemDecoration(new RvItemDecoration(getContext()));
-            rv_agenda.setLayoutManager(new LinearLayoutManager(getContext()));
-            rv_agenda.setAdapter(agendaAdapter);
-            agendaAdapter.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
-                    InterfaceAgenda.pbui_ItemAgendaTimeInfo item = presenter.agendaTimeInfos.get(position);
-                    agendaAdapter.choose(item.getAgendaid());
-                    presenter.queryFileByDir(item.getDirid());
-                }
-            });
-        } else {
-            agendaAdapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void updateFileList() {
-        if (agendaFileAdapter == null) {
-            agendaFileAdapter = new AgendaFileAdapter(presenter.files);
-            rv_file.setLayoutManager(new LinearLayoutManager(getContext()));
-            rv_file.addItemDecoration(new RvItemDecoration(getContext()));
-            rv_file.setAdapter(agendaFileAdapter);
-            agendaFileAdapter.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
-                    InterfaceFile.pbui_Item_MeetDirFileDetailInfo item = presenter.files.get(position);
-                    String fileName = item.getName().toStringUtf8();
-                    if (FileUtil.isVideo(fileName)) {
-                        List<Integer> devIds = new ArrayList<>();
-                        devIds.add(GlobalValue.localDeviceId);
-                        JniHelper.getInstance().mediaPlayOperate(item.getMediaid(), devIds, 0, RESOURCE_ID_0, 0, 0);
-                    } else {
-                        FileUtil.openFile(getContext(), fileName, item.getMediaid());
-                    }
-                }
-            });
-        } else {
-            agendaFileAdapter.notifyDataSetChanged();
-        }
     }
 
     @Override

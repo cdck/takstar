@@ -62,8 +62,6 @@ import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.model.EventMessage;
 import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.model.bean.DevMember;
-import xlk.takstar.paperless.model.node.FeaturesChildNode;
-import xlk.takstar.paperless.model.node.FeaturesFootNode;
 import xlk.takstar.paperless.model.node.FeaturesNodeAdapter;
 import xlk.takstar.paperless.model.node.FeaturesParentNode;
 import xlk.takstar.paperless.ui.RvItemDecoration;
@@ -112,8 +110,6 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
      * 保存当前点击的目录id
      */
     private int currentClickDirId = -1;
-    private boolean alreadyShow;
-    private LinearLayoutManager layoutManager;
 
     @Override
     protected int getLayoutId() {
@@ -141,7 +137,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             if (nodeAdapter != null) {
                 nodeAdapter.clearChildSelectedStatus();
                 nodeAdapter.setDefaultSelected(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
-                nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
+                nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE,InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
                 nodeAdapter.notifyDataSetChanged();
             }
         }
@@ -182,98 +178,31 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         }
     }
 
-    private void showWelcomePage() {
-        for (int i = 0; i < presenter.features.size(); i++) {
-            BaseNode baseNode = presenter.features.get(i);
-            if (baseNode instanceof FeaturesParentNode) {
-                FeaturesParentNode node = (FeaturesParentNode) baseNode;
-                if (node.getFeatureId() == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE) {
-                    showFragment(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE);
-                    nodeAdapter.clearChildSelectedStatus();
-                    nodeAdapter.setDefaultSelected(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE);
-                    nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE);
-                    nodeAdapter.notifyDataSetChanged();
-                    alreadyShow = true;
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
-     * @param isExpanded 这次将要进行的状态 =true展开，=false收缩
-     */
-    public void setMoreFeaturesSticky(boolean isExpanded) {
-        LogUtils.d("setMoreFeaturesSticky " + (layoutManager != null));
-        if (isExpanded) {
-            //展开更多功能时，需要先将会议资料（所有展开状态的node）进行收缩，不然更多功能展开后会显示不全
-            for (int i = 0; i < presenter.features.size(); i++) {
-                BaseNode baseNode = presenter.features.get(i);
-                if (baseNode instanceof FeaturesParentNode) {
-                    FeaturesParentNode parentNode = (FeaturesParentNode) baseNode;
-                    if (parentNode.getFeatureId() == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE) {
-                        parentNode.setExpanded(false);
-                        break;
-                    }
-                }
-            }
-            nodeAdapter.setList(presenter.features);
-            nodeAdapter.notifyDataSetChanged();
-        }
-        for (int i = 0; i < presenter.features.size(); i++) {
-            BaseNode baseNode = presenter.features.get(i);
-            if (baseNode instanceof FeaturesFootNode) {
-                meet_rv.scrollToPosition(i);
-                LinearLayoutManager manager = (LinearLayoutManager) meet_rv.getLayoutManager();
-                manager.scrollToPositionWithOffset(i, 0);
-                return;
-            }
-        }
-    }
-
     @Override
     public void updateMeetingFeatures() {
         if (nodeAdapter == null) {
             nodeAdapter = new FeaturesNodeAdapter(presenter.features);
             meet_rv.setAdapter(nodeAdapter);
             meet_rv.addItemDecoration(new RvItemDecoration(this));
-            layoutManager = new LinearLayoutManager(this);
-            meet_rv.setLayoutManager(layoutManager);
+            meet_rv.setLayoutManager(new LinearLayoutManager(this));
             nodeAdapter.setNodeClickItemListener(new FeaturesNodeAdapter.NodeClickItem() {
                 @Override
                 public void onClickItem(FeaturesNodeAdapter.ClickType clickType, Object... obj) {
-                    switch (clickType) {
-                        case FEATURE: {
-                            int id = (int) obj[0];
-                            if (id != InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE) {
-                                currentClickDirId = -1;
-                            }
-                            //点击了某一功能
-                            showFragment(id);
-                            break;
-                        }
-                        case DIRECTORY: {
-                            currentClickDirId = (int) obj[0];
-                            //点击了目录
-                            showFragment(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE);
-                            break;
-                        }
-                        case FOOT_FEATURE: {
-                            saveFunCode = Constant.FUN_CODE;
-                            boolean isExpanded = (boolean) obj[0];
-                            setMoreFeaturesSticky(isExpanded);
-                            break;
-                        }
+                    int id = (int) obj[0];
+                    if (obj.length > 1) {
+                        currentClickDirId = id;
+                        //点击了目录
+                        showFragment(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE);
+                    } else {
+                        currentClickDirId = -1;
+                        //点击了某一功能
+                        showFragment(id);
                     }
                 }
             });
         } else {
             nodeAdapter.setList(presenter.features);
             nodeAdapter.notifyDataSetChanged();
-        }
-        if (!alreadyShow) {
-            showWelcomePage();
-            return;
         }
         if (saveFunCode == -1) {
             setChooseDefaultFeature();
@@ -330,29 +259,9 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     }
 
     @Override
-    public void exitDraw() {
-        LogUtils.e("exitDraw saveFunCode=" + saveFunCode + ",currentClickDirId=" + currentClickDirId);
-        nodeAdapter.clearChildSelectedStatus();
-        nodeAdapter.setDefaultSelected(saveFunCode);
-        if (currentClickDirId != -1) {
-            nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.DIRECTORY, currentClickDirId);
-            nodeAdapter.clearParentSelectedStatus();
-            nodeAdapter.setCurrentChildId(currentClickDirId);
-        } else {
-            if (saveFunCode > Constant.FUN_CODE) {
-                nodeAdapter.setCurrentChildId(saveFunCode);
-            }
-            nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, saveFunCode);
-        }
-        nodeAdapter.notifyDataSetChanged();
-    }
-
-    @Override
     public void showFragment(int funcode) {
         LogUtil.i(TAG, "showFragment funcode=" + funcode);
-        if (funcode != InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE) {
-            saveFunCode = funcode;
-        }
+        saveFunCode = funcode;
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         hideFragment(ft);
         switch (funcode) {
@@ -590,7 +499,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         if (mBadge == null) {
             /** ************ ******  设置未读消息展示  ****** ************ **/
             mBadge = new QBadgeView(this).bindTarget(meet_iv_message);
-            mBadge.setBadgeGravity(Gravity.END | Gravity.TOP);
+            mBadge.setBadgeGravity(Gravity.START | Gravity.TOP);
             mBadge.setBadgeTextSize(6, true);
             mBadge.setShowShadow(true);
             mBadge.setOnDragStateChangedListener((dragState, badge, targetView) -> {
@@ -729,6 +638,11 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult(intent, REQUEST_CODE_EXPORT_NOTE);
+    }
+
+    @Override
+    public void exitDraw() {
+
     }
 
     @Override
