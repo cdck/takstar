@@ -1,6 +1,7 @@
 package xlk.takstar.paperless.fragment.vote;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.mogujie.tt.protobuf.InterfaceBase;
 import com.mogujie.tt.protobuf.InterfaceMacro;
 import com.mogujie.tt.protobuf.InterfaceMember;
 import com.mogujie.tt.protobuf.InterfaceVote;
@@ -15,8 +16,6 @@ import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.model.bean.SubmitMember;
 import xlk.takstar.paperless.util.LogUtil;
 
-import static xlk.takstar.paperless.fragment.vote.VoteManageFragment.IS_VOTE_PAGE;
-
 /**
  * @author Created by xlk on 2020/12/8.
  * @desc
@@ -25,6 +24,7 @@ public class VoteManagePresenter extends BasePresenter<VoteManageContract.View> 
     public List<InterfaceVote.pbui_Item_MeetVoteDetailInfo> votes = new ArrayList<>();
     public List<InterfaceMember.pbui_Item_MeetMemberDetailInfo> memberDetails = new ArrayList<>();
     public List<SubmitMember> submitMembers = new ArrayList<>();
+    private boolean isVote;
 
     public VoteManagePresenter(VoteManageContract.View view) {
         super(view);
@@ -38,8 +38,7 @@ public class VoteManagePresenter extends BasePresenter<VoteManageContract.View> 
                 Object[] objects = msg.getObjects();
                 int dirType = (int) objects[0];
                 String dirPath = (String) objects[1];
-                if (dirType == Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE
-                        || dirType == Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE_SUBMIT) {
+                if (dirType == Constant.CHOOSE_DIR_TYPE_PAGE_VOTE_MANAGE) {
                     mView.updateExportDirPath(dirPath);
                 }
                 break;
@@ -75,6 +74,11 @@ public class VoteManagePresenter extends BasePresenter<VoteManageContract.View> 
     }
 
     @Override
+    public void setIsVote(boolean isVote) {
+        this.isVote = isVote;
+    }
+
+    @Override
     public void queryVote() {
         InterfaceVote.pbui_Type_MeetVoteDetailInfo info = jni.queryVote();
         votes.clear();
@@ -83,7 +87,7 @@ public class VoteManagePresenter extends BasePresenter<VoteManageContract.View> 
             for (int i = 0; i < itemList.size(); i++) {
                 InterfaceVote.pbui_Item_MeetVoteDetailInfo item = itemList.get(i);
                 int maintype = item.getMaintype();
-                if (IS_VOTE_PAGE) {
+                if (isVote) {
                     if (maintype == InterfaceMacro.Pb_MeetVoteType.Pb_VOTE_MAINTYPE_vote_VALUE) {
                         votes.add(item);
                     }
@@ -160,5 +164,20 @@ public class VoteManagePresenter extends BasePresenter<VoteManageContract.View> 
                 mView.showChartPop(vote);
             }
         }
+    }
+
+    public String[] queryYd(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote) {
+        InterfaceBase.pbui_CommonInt32uProperty yingDaoInfo = jni.queryVoteSubmitterProperty(vote.getVoteid(), 0, InterfaceMacro.Pb_MeetVotePropertyID.Pb_MEETVOTE_PROPERTY_ATTENDNUM.getNumber());
+        InterfaceBase.pbui_CommonInt32uProperty yiTouInfo = jni.queryVoteSubmitterProperty(vote.getVoteid(), 0, InterfaceMacro.Pb_MeetVotePropertyID.Pb_MEETVOTE_PROPERTY_VOTEDNUM.getNumber());
+        InterfaceBase.pbui_CommonInt32uProperty shiDaoInfo = jni.queryVoteSubmitterProperty(vote.getVoteid(), 0, InterfaceMacro.Pb_MeetVotePropertyID.Pb_MEETVOTE_PROPERTY_CHECKINNUM.getNumber());
+        int yingDao = yingDaoInfo == null ? 0 : yingDaoInfo.getPropertyval();
+        int yiTou = yiTouInfo == null ? 0 : yiTouInfo.getPropertyval();
+        int shiDao = shiDaoInfo == null ? 0 : shiDaoInfo.getPropertyval();
+        String yingDaoStr = "应到：" + yingDao + "人 ";
+        String shiDaoStr = "实到：" + shiDao + "人 ";
+        String yiTouStr = "已投：" + yiTou + "人 ";
+        String weiTouStr = "未投：" + (yingDao - yiTou) + "人";
+        LogUtil.d(TAG, "queryYd :  应到人数: " + yingDaoStr + "，实到：" + shiDaoStr + ", 已投人数: " + yiTouStr + "， 未投：" + weiTouStr);
+        return new String[]{yingDaoStr, shiDaoStr, yiTouStr, weiTouStr};
     }
 }

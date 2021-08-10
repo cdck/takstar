@@ -19,39 +19,46 @@
         <ImageView
             android:id="@+id/item_iv_icon"
             android:layout_width="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             tools:src="@drawable/ic_ppt" />
     </RelativeLayout>
 
-    <TextView
+    <xlk.takstar.paperless.ui.MarqueeTextView
         android:id="@+id/item_tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="7"
-        android:ellipsize="end"
-        android:lines="1"
-        android:singleLine="true"
-        android:textSize="12sp"
+        android:textSize="@dimen/text_size_normal"
         tools:text="资料名称资料名称资料名称.doc" />
+
+    <TextView
+        android:id="@+id/item_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/invalid_file"
+        android:textColor="@color/red"
+        android:textSize="@dimen/text_size_normal"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/item_btn_open"
-        style="@style/button_style_rect_blue_white_radius10"
+        style="@style/file_button_style"
+        android:layout_height="20dp"
         android:layout_gravity="center"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:gravity="center"
-        android:text="@string/open"
-        android:textSize="12sp" />
+        android:text="@string/open" />
 
+    <!--    style="@style/button_style_rect_blue_white_radius10"-->
     <Button
         android:id="@+id/item_btn_download"
-        style="@style/button_style_rect_blue_white_radius10"
+        style="@style/file_button_style"
+        android:layout_height="20dp"
         android:layout_gravity="center"
         android:layout_marginEnd="10dp"
         android:enabled="false"
         android:gravity="center"
-        android:text="@string/download"
-        android:textSize="12sp" />
+        android:text="@string/download" />
 </LinearLayout>

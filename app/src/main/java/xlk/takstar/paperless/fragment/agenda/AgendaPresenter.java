@@ -44,6 +44,7 @@ public class AgendaPresenter extends BasePresenter<AgendaContract.View> implemen
                 break;
             case EventType.BUS_X5_INSTALL://腾讯X5内核加载完成
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEETAGENDA_VALUE://议程变更通知
+                LogUtils.i("议程变更通知 type=" + msg.getType());
                 queryAgenda();
                 break;
             default:
@@ -58,10 +59,12 @@ public class AgendaPresenter extends BasePresenter<AgendaContract.View> implemen
         if (meetAgenda != null) {
             int agendatype = meetAgenda.getAgendatype();
             if (agendatype == InterfaceMacro.Pb_AgendaType.Pb_MEET_AGENDA_TYPE_TEXT_VALUE) {
+                LogUtils.e("当前是文本议程");
                 String s = meetAgenda.getText().toStringUtf8();
                 mView.updateAgendaTv(s);
             } else if (agendatype == InterfaceMacro.Pb_AgendaType.Pb_MEET_AGENDA_TYPE_FILE_VALUE) {
                 int mediaid = meetAgenda.getMediaid();
+                LogUtils.e("当前是文件议程 mediaid=" + mediaid);
                 byte[] bytes = jni.queryFileProperty(InterfaceMacro.Pb_MeetFilePropertyID.Pb_MEETFILE_PROPERTY_NAME.getNumber(), mediaid);
                 InterfaceBase.pbui_CommonTextProperty textProperty = null;
                 try {
@@ -85,6 +88,7 @@ public class AgendaPresenter extends BasePresenter<AgendaContract.View> implemen
             } else if (agendatype == InterfaceMacro.Pb_AgendaType.Pb_MEET_AGENDA_TYPE_TIME_VALUE) {
                 agendaTimeInfos.clear();
                 agendaTimeInfos.addAll(meetAgenda.getItemList());
+                LogUtils.e("当前是时间轴议程 个数=" + agendaTimeInfos.size());
                 mView.showTimeAgenda();
             }
         }
@@ -92,7 +96,7 @@ public class AgendaPresenter extends BasePresenter<AgendaContract.View> implemen
 
     @Override
     public void queryFileByDir(int dirid) {
-        LogUtils.e("queryFileByDir dirid="+dirid);
+        LogUtils.e("queryFileByDir dirid=" + dirid);
         InterfaceFile.pbui_Type_MeetDirFileDetailInfo info = jni.queryMeetDirFile(dirid);
         files.clear();
         if (info != null) {

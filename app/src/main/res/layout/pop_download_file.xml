@@ -18,7 +18,7 @@
             android:layout_centerInParent="true"
             android:text="@string/choose_file_export"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_size_big"
+            android:textSize="@dimen/text_size_pop_title"
             android:textStyle="bold" />
 
         <ImageView
@@ -59,7 +59,7 @@
             <Button
                 android:id="@+id/pop_btn_cancel"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_height="@dimen/button_height"
                 android:layout_marginEnd="10dp"
                 android:background="@color/transparent"
                 android:text="@string/cancel"
@@ -69,7 +69,6 @@
                 android:id="@+id/pop_btn_download"
                 style="@style/button_style_rect_blue_white_radius10"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
                 android:layout_marginStart="10dp"
                 android:text="@string/export" />
         </LinearLayout>

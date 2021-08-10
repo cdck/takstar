@@ -76,6 +76,10 @@ public class FeaturesChildProvider extends BaseNodeProvider {
                     item_feature_tv.setText(getContext().getResources().getString(R.string.score_manage));
                     item_feature_iv.setImageResource(R.drawable.feature_score_manage_icon);
                     break;
+                case Constant.FUN_CODE_SIGN:
+                    item_feature_tv.setText(getContext().getResources().getString(R.string.function_meeting_sign_in));
+                    item_feature_iv.setImageResource(R.drawable.feature_signin_icon);
+                    break;
             }
         } else {
             String dirName = (String) objects[1];

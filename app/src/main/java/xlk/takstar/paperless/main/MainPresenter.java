@@ -192,7 +192,7 @@ public class MainPresenter extends BasePresenter<MainContract.View> implements M
                 Object[] objects = msg.getObjects();
                 int dirType = (int) objects[0];
                 String dirPath = (String) objects[1];
-                if(dirType==Constant.CHOOSE_DIR_TYPE_INI_CONFIG){
+                if (dirType == Constant.CHOOSE_DIR_TYPE_INI_CONFIG) {
                     mView.updateIniDirPath(dirPath);
                 }
                 break;

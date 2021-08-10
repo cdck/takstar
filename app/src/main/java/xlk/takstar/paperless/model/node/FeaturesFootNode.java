@@ -35,7 +35,12 @@ public class FeaturesFootNode extends BaseExpandNode {
             otherFeatures.add(new FeaturesChildNode(Constant.FUN_CODE_SCREEN));
             otherFeatures.add(new FeaturesChildNode(Constant.FUN_CODE_BULLETIN));
             otherFeatures.add(new FeaturesChildNode(Constant.FUN_CODE_SCORE));
+            otherFeatures.add(new FeaturesChildNode(Constant.FUN_CODE_SIGN));
         }
+    }
+
+    public void clear() {
+        otherFeatures.clear();
     }
 
     @Nullable

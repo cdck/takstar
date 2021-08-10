@@ -37,7 +37,7 @@
         android:background="@color/white"
         android:gravity="center"
         android:text="@string/number"
-        android:textSize="12sp" />
+        android:textSize="@dimen/text_size_normal" />
 
     <TextView
         android:id="@+id/item_tv_name"
@@ -52,7 +52,8 @@
         android:ellipsize="end"
         android:gravity="center"
         android:lines="1"
+        android:textColor="@color/text_color_black"
         android:singleLine="true"
         android:text="@string/pro_device"
-        android:textSize="12sp" />
+        android:textSize="@dimen/text_size_normal" />
 </LinearLayout>

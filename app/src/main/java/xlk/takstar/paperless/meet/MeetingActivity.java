@@ -1,7 +1,6 @@
 package xlk.takstar.paperless.meet;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileIOUtils;
@@ -33,7 +33,6 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,6 +49,7 @@ import xlk.takstar.paperless.fragment.bullet.BulletFragment;
 import xlk.takstar.paperless.fragment.chat.ChatFragment;
 import xlk.takstar.paperless.fragment.draw.DrawFragment;
 import xlk.takstar.paperless.fragment.livevideo.LiveVideoFragment;
+import xlk.takstar.paperless.fragment.livevideo.VideoFragment;
 import xlk.takstar.paperless.fragment.material.MaterialFragment;
 import xlk.takstar.paperless.fragment.score.ScoreManageFragment;
 import xlk.takstar.paperless.fragment.screen.ScreenManageFragment;
@@ -62,7 +62,6 @@ import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.model.EventMessage;
 import xlk.takstar.paperless.model.EventType;
 import xlk.takstar.paperless.model.bean.DevMember;
-import xlk.takstar.paperless.model.node.FeaturesChildNode;
 import xlk.takstar.paperless.model.node.FeaturesFootNode;
 import xlk.takstar.paperless.model.node.FeaturesNodeAdapter;
 import xlk.takstar.paperless.model.node.FeaturesParentNode;
@@ -84,12 +83,10 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     private TextView meet_tv_meet_name;
     private TextView meet_tv_member_role;
     private TextView meet_tv_member_name;
-    private ImageView meet_iv_close;
-    private ImageView meet_iv_min;
     private TextView meet_top_line;
     private TextView meet_tv_online;
-    private ImageView meet_iv_message;
-    private ImageView meet_iv_news;
+    private RelativeLayout meet_iv_message;
+    private RelativeLayout meet_iv_news;
     private FrameLayout meet_fl;
     private int saveFunCode = -1;
     public static boolean chatIsShowing = false;
@@ -105,15 +102,16 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     private VoteManageFragment voteManageFragment;
     private ScreenManageFragment screenManageFragment;
     private BulletFragment bulletFragment;
-    private LiveVideoFragment liveVideoFragment;
+    private VideoFragment videoFragment;
     private ScoreManageFragment scoreManageFragment;
     private FeaturesNodeAdapter nodeAdapter;
     /**
      * 保存当前点击的目录id
      */
     private int currentClickDirId = -1;
-    private boolean alreadyShow;
-    private LinearLayoutManager layoutManager;
+    private boolean alreadyShow = false;
+    private ImageView welcome_view;
+    private int firstDirId;
 
     @Override
     protected int getLayoutId() {
@@ -140,8 +138,8 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         if (draw != null && draw.equals("draw")) {
             if (nodeAdapter != null) {
                 nodeAdapter.clearChildSelectedStatus();
-                nodeAdapter.setDefaultSelected(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
-                nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
+                nodeAdapter.setDefaultSelected(Constant.function_code_board);
+                nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, Constant.function_code_board);
                 nodeAdapter.notifyDataSetChanged();
             }
         }
@@ -183,20 +181,52 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     }
 
     private void showWelcomePage() {
+        welcome_view.setVisibility(View.VISIBLE);
+        meet_fl.setVisibility(View.GONE);
+//        for (int i = 0; i < presenter.features.size(); i++) {
+//            BaseNode baseNode = presenter.features.get(i);
+//            if (baseNode instanceof FeaturesParentNode) {
+//                FeaturesParentNode node = (FeaturesParentNode) baseNode;
+//                if (node.getFeatureId() == Constant.function_code_material) {
+//                    showFragment(Constant.function_code_material);
+//                    nodeAdapter.clearChildSelectedStatus();
+//                    nodeAdapter.setDefaultSelected(Constant.function_code_material);
+//                    nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, Constant.function_code_material);
+//                    nodeAdapter.notifyDataSetChanged();
+//                    alreadyShow = true;
+//                    return;
+//                }
+//            }
+//        }
+    }
+
+    /**
+     * 展开会议资料的时候将更多功能进行收缩
+     */
+    private void expandMaterial() {
+        boolean isExpanded = false;
         for (int i = 0; i < presenter.features.size(); i++) {
             BaseNode baseNode = presenter.features.get(i);
             if (baseNode instanceof FeaturesParentNode) {
-                FeaturesParentNode node = (FeaturesParentNode) baseNode;
-                if (node.getFeatureId() == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE) {
-                    showFragment(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE);
-                    nodeAdapter.clearChildSelectedStatus();
-                    nodeAdapter.setDefaultSelected(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE);
-                    nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE);
-                    nodeAdapter.notifyDataSetChanged();
-                    alreadyShow = true;
-                    return;
+                FeaturesParentNode parentNode = (FeaturesParentNode) baseNode;
+                if (parentNode.getFeatureId() == Constant.function_code_material) {
+                    isExpanded = parentNode.isExpanded();
+                    break;
                 }
             }
+        }
+        if (isExpanded) {
+            //展开会议资料功能时，需要先将更多功能（所有展开状态的node）进行收缩
+            for (int i = 0; i < presenter.features.size(); i++) {
+                BaseNode baseNode = presenter.features.get(i);
+                if (baseNode instanceof FeaturesFootNode) {
+                    FeaturesFootNode parentNode = (FeaturesFootNode) baseNode;
+                    parentNode.setExpanded(false);
+                    break;
+                }
+            }
+            nodeAdapter.setList(presenter.features);
+            nodeAdapter.notifyDataSetChanged();
         }
     }
 
@@ -204,14 +234,13 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
      * @param isExpanded 这次将要进行的状态 =true展开，=false收缩
      */
     public void setMoreFeaturesSticky(boolean isExpanded) {
-        LogUtils.d("setMoreFeaturesSticky " + (layoutManager != null));
         if (isExpanded) {
             //展开更多功能时，需要先将会议资料（所有展开状态的node）进行收缩，不然更多功能展开后会显示不全
             for (int i = 0; i < presenter.features.size(); i++) {
                 BaseNode baseNode = presenter.features.get(i);
                 if (baseNode instanceof FeaturesParentNode) {
                     FeaturesParentNode parentNode = (FeaturesParentNode) baseNode;
-                    if (parentNode.getFeatureId() == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE) {
+                    if (parentNode.getFeatureId() == Constant.function_code_material) {
                         parentNode.setExpanded(false);
                         break;
                     }
@@ -232,35 +261,48 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     }
 
     @Override
+    public void setFirstDirId(int dirId) {
+        LogUtils.i("setFirstDirId currentClickDirId=" + currentClickDirId + ",dirId=" + dirId + ",firstDirId=" + firstDirId);
+        firstDirId = dirId;
+    }
+
+    @Override
     public void updateMeetingFeatures() {
         if (nodeAdapter == null) {
             nodeAdapter = new FeaturesNodeAdapter(presenter.features);
             meet_rv.setAdapter(nodeAdapter);
             meet_rv.addItemDecoration(new RvItemDecoration(this));
-            layoutManager = new LinearLayoutManager(this);
-            meet_rv.setLayoutManager(layoutManager);
+            meet_rv.setLayoutManager(new LinearLayoutManager(this));
             nodeAdapter.setNodeClickItemListener(new FeaturesNodeAdapter.NodeClickItem() {
                 @Override
                 public void onClickItem(FeaturesNodeAdapter.ClickType clickType, Object... obj) {
                     switch (clickType) {
+                        //点击了某一功能
                         case FEATURE: {
                             int id = (int) obj[0];
-                            if (id != InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE) {
+                            if (id == Constant.function_code_material) {
+                                expandMaterial();
+                                break;
+                            }
+                            if (id != Constant.function_code_board) {
                                 currentClickDirId = -1;
                             }
-                            //点击了某一功能
+                            LogUtils.i("点击了某一功能 id=" + id);
                             showFragment(id);
                             break;
                         }
+                        //点击了目录
                         case DIRECTORY: {
                             currentClickDirId = (int) obj[0];
-                            //点击了目录
-                            showFragment(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE);
+                            LogUtils.i("点击了目录 currentClickDirId=" + currentClickDirId);
+                            showFragment(Constant.function_code_material);
                             break;
                         }
+                        //点击了更多功能
                         case FOOT_FEATURE: {
                             saveFunCode = Constant.FUN_CODE;
                             boolean isExpanded = (boolean) obj[0];
+                            LogUtils.i("点击了更多功能 isExpanded=" + isExpanded);
                             setMoreFeaturesSticky(isExpanded);
                             break;
                         }
@@ -279,7 +321,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             setChooseDefaultFeature();
         } else {
             LogUtils.i(TAG, "之前展示的功能id=" + saveFunCode);
-            if (saveFunCode < Constant.FUN_CODE) {//之前展示的是后台提供的功能模块
+            if (saveFunCode < Constant.FUN_CODE) {//说明之前展示的是参会人功能模块
                 //判断更新后之前展示的功能还在不在
                 boolean hasFeature = false;
                 for (int i = 0; i < presenter.features.size(); i++) {
@@ -298,9 +340,6 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 }
             } else {//之前展示的是固定的其它功能模块
                 //不需要操作
-//                showFragment(saveFunCode);
-//                nodeAdapter.expandOrCollapseOtherFeature(true);
-//                nodeAdapter.setSelectChildFeature(saveFunCode);
             }
         }
     }
@@ -309,24 +348,17 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
      * 设置默认选中第一个功能，如果一个功能都没有就进行隐藏掉之前显示的功能fragment视图
      */
     private void setChooseDefaultFeature() {
-        //presenter.features最少都有一个其它功能模块
-        BaseNode baseNode = presenter.features.get(0);
-        if (baseNode instanceof FeaturesParentNode) {
-            FeaturesParentNode parentNode = (FeaturesParentNode) baseNode;
-            showFragment(parentNode.getFeatureId());
-            nodeAdapter.setDefaultSelected(parentNode.getFeatureId());
+        if (!presenter.features.isEmpty()) {
+            BaseNode baseNode = presenter.features.get(0);
+            if (baseNode instanceof FeaturesParentNode) {
+                FeaturesParentNode parentNode = (FeaturesParentNode) baseNode;
+                showFragment(parentNode.getFeatureId());
+                nodeAdapter.setDefaultSelected(parentNode.getFeatureId());
+            }
         } else {
             showFragment(-1);
             nodeAdapter.setDefaultSelected(-1);
         }
-//            else if (presenter.features.size() > 1) {
-//                BaseNode baseNode1 = presenter.features.get(1);
-//                if (baseNode1 instanceof FeaturesParentNode) {
-//                    FeaturesParentNode parentNode = (FeaturesParentNode) baseNode1;
-//                    showFragment(parentNode.getFeatureId());
-//                    nodeAdapter.setDefaultSelected(parentNode.getFeatureId());
-//                }
-//            }
     }
 
     @Override
@@ -349,15 +381,20 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
 
     @Override
     public void showFragment(int funcode) {
+        if (funcode != -1 && !alreadyShow) {
+            welcome_view.setVisibility(View.GONE);
+            meet_fl.setVisibility(View.VISIBLE);
+            alreadyShow = true;
+        }
         LogUtil.i(TAG, "showFragment funcode=" + funcode);
-        if (funcode != InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE) {
+        if (funcode != Constant.function_code_board) {
             saveFunCode = funcode;
         }
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         hideFragment(ft);
         switch (funcode) {
             //会议议程
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_AGENDA_BULLETIN_VALUE: {
+            case Constant.function_code_agenda: {
                 if (agendaFragment == null) {
                     agendaFragment = new AgendaFragment();
                     ft.add(R.id.meet_fl, agendaFragment);
@@ -366,7 +403,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 break;
             }
             //会议资料
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE: {
+            case Constant.function_code_material: {
                 Bundle bundle = new Bundle();
                 bundle.putInt("dirId", currentClickDirId);
                 if (materialFragment == null) {
@@ -378,7 +415,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 break;
             }
             //批注查看
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_POSTIL_VALUE: {
+            case Constant.function_code_annotation: {
                 if (annotateFragment == null) {
                     annotateFragment = new AnnotateFragment();
                     ft.add(R.id.meet_fl, annotateFragment);
@@ -387,7 +424,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 break;
             }
             //互动交流
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MESSAGE_VALUE: {
+            case Constant.function_code_chat: {
                 if (chatFragment == null) {
                     chatFragment = new ChatFragment();
                     ft.add(R.id.meet_fl, chatFragment);
@@ -396,19 +433,19 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 break;
             }
             //视频直播
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_VIDEOSTREAM_VALUE: {
+            case Constant.function_code_video: {
                 Bundle bundle = new Bundle();
-                bundle.putBoolean("isVideoManage", false);
-                if (liveVideoFragment == null) {
-                    liveVideoFragment = new LiveVideoFragment();
-                    ft.add(R.id.meet_fl, liveVideoFragment);
+                bundle.putBoolean("isManage", false);
+                if (videoFragment == null) {
+                    videoFragment = new VideoFragment();
+                    ft.add(R.id.meet_fl, videoFragment);
                 }
-                liveVideoFragment.setArguments(bundle);
-                ft.show(liveVideoFragment);
+                videoFragment.setArguments(bundle);
+                ft.show(videoFragment);
                 break;
             }
             //电子白板
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE: {
+            case Constant.function_code_board: {
                 if (drawFragment == null) {
                     drawFragment = new DrawFragment();
                     ft.add(R.id.meet_fl, drawFragment);
@@ -417,7 +454,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 break;
             }
             //网页浏览
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WEBBROWSER_VALUE: {
+            case Constant.function_code_web: {
                 if (webFragment == null) {
                     webFragment = new WebFragment();
                     ft.add(R.id.meet_fl, webFragment);
@@ -425,16 +462,67 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 ft.show(webFragment);
                 break;
             }
-            //签到信息
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_SIGNINRESULT_VALUE: {
-                if (signFragment == null) {
-                    signFragment = new SignFragment();
-                    ft.add(R.id.meet_fl, signFragment);
+//            //签到信息
+//            case Constant.function_code_sign: {
+//                if (signFragment == null) {
+//                    signFragment = new SignFragment();
+//                    ft.add(R.id.meet_fl, signFragment);
+//                }
+//                ft.show(signFragment);
+//                break;
+//            }
+            //评分查看
+            case Constant.function_code_rate: {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isManage", false);
+                if (scoreManageFragment == null) {
+                    scoreManageFragment = new ScoreManageFragment();
+                    ft.add(R.id.meet_fl, scoreManageFragment);
                 }
-                ft.show(signFragment);
+                scoreManageFragment.setArguments(bundle);
+                ft.show(scoreManageFragment);
                 break;
             }
-            //终端控制  其它功能
+            //公告查看
+            case Constant.function_code_bulletin: {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isManage", false);
+                if (bulletFragment == null) {
+                    bulletFragment = new BulletFragment();
+                    ft.add(R.id.meet_fl, bulletFragment);
+                }
+                bulletFragment.setArguments(bundle);
+                ft.show(bulletFragment);
+                break;
+            }
+            //投票查看
+            case Constant.function_code_vote: {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isVote", true);
+                bundle.putBoolean("isManage", false);
+                if (voteManageFragment == null) {
+                    voteManageFragment = new VoteManageFragment();
+                    ft.add(R.id.meet_fl, voteManageFragment);
+                }
+                voteManageFragment.setArguments(bundle);
+                ft.show(voteManageFragment);
+                break;
+            }
+            //选举查看
+            case Constant.function_code_election: {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isVote", false);
+                bundle.putBoolean("isManage", false);
+                if (voteManageFragment == null) {
+                    voteManageFragment = new VoteManageFragment();
+                    ft.add(R.id.meet_fl, voteManageFragment);
+                }
+                voteManageFragment.setArguments(bundle);
+                ft.show(voteManageFragment);
+                break;
+            }
+            /* **** **  其它功能  ** **** */
+            //终端控制
             case Constant.FUN_CODE_TERMINAL: {
                 if (clientControlFragment == null) {
                     clientControlFragment = new TerminalControlFragment();
@@ -445,34 +533,40 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             }
             //投票管理
             case Constant.FUN_CODE_VOTE: {
-                VoteManageFragment.IS_VOTE_PAGE = true;
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isVote", true);
+                bundle.putBoolean("isManage", true);
                 if (voteManageFragment == null) {
                     voteManageFragment = new VoteManageFragment();
                     ft.add(R.id.meet_fl, voteManageFragment);
                 }
+                voteManageFragment.setArguments(bundle);
                 ft.show(voteManageFragment);
                 break;
             }
             //选举管理
             case Constant.FUN_CODE_ELECTION: {
-                VoteManageFragment.IS_VOTE_PAGE = false;
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isVote", false);
+                bundle.putBoolean("isManage", true);
                 if (voteManageFragment == null) {
                     voteManageFragment = new VoteManageFragment();
                     ft.add(R.id.meet_fl, voteManageFragment);
                 }
+                voteManageFragment.setArguments(bundle);
                 ft.show(voteManageFragment);
                 break;
             }
             //视频控制
             case Constant.FUN_CODE_VIDEO: {
                 Bundle bundle = new Bundle();
-                bundle.putBoolean("isVideoManage", true);
-                if (liveVideoFragment == null) {
-                    liveVideoFragment = new LiveVideoFragment();
-                    ft.add(R.id.meet_fl, liveVideoFragment);
+                bundle.putBoolean("isManage", true);
+                if (videoFragment == null) {
+                    videoFragment = new VideoFragment();
+                    ft.add(R.id.meet_fl, videoFragment);
                 }
-                liveVideoFragment.setArguments(bundle);
-                ft.show(liveVideoFragment);
+                videoFragment.setArguments(bundle);
+                ft.show(videoFragment);
                 break;
             }
             //屏幕管理
@@ -486,17 +580,20 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             }
             //公告管理
             case Constant.FUN_CODE_BULLETIN: {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isManage", true);
                 if (bulletFragment == null) {
                     bulletFragment = new BulletFragment();
                     ft.add(R.id.meet_fl, bulletFragment);
                 }
+                bulletFragment.setArguments(bundle);
                 ft.show(bulletFragment);
                 break;
             }
             //评分管理
             case Constant.FUN_CODE_SCORE: {
                 Bundle bundle = new Bundle();
-                bundle.putBoolean("isScoreManage", true);
+                bundle.putBoolean("isManage", true);
                 if (scoreManageFragment == null) {
                     scoreManageFragment = new ScoreManageFragment();
                     ft.add(R.id.meet_fl, scoreManageFragment);
@@ -505,16 +602,13 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 ft.show(scoreManageFragment);
                 break;
             }
-            //评分查看
-            case 31: {
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("isScoreManage", false);
-                if (scoreManageFragment == null) {
-                    scoreManageFragment = new ScoreManageFragment();
-                    ft.add(R.id.meet_fl, scoreManageFragment);
+            //签到查看
+            case Constant.FUN_CODE_SIGN: {
+                if (signFragment == null) {
+                    signFragment = new SignFragment();
+                    ft.add(R.id.meet_fl, signFragment);
                 }
-                scoreManageFragment.setArguments(bundle);
-                ft.show(scoreManageFragment);
+                ft.show(signFragment);
                 break;
             }
             default:
@@ -525,6 +619,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     }
 
     private void hideFragment(FragmentTransaction ft) {
+
         if (agendaFragment != null) ft.hide(agendaFragment);
         if (materialFragment != null) ft.hide(materialFragment);
         if (annotateFragment != null) ft.hide(annotateFragment);
@@ -536,7 +631,7 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         if (voteManageFragment != null) ft.hide(voteManageFragment);
         if (screenManageFragment != null) ft.hide(screenManageFragment);
         if (bulletFragment != null) ft.hide(bulletFragment);
-        if (liveVideoFragment != null) ft.hide(liveVideoFragment);
+        if (videoFragment != null) ft.hide(videoFragment);
         if (scoreManageFragment != null) ft.hide(scoreManageFragment);
     }
 
@@ -546,21 +641,17 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     }
 
     private void exit2main() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.exit_main_tip);
-        builder.setPositiveButton(R.string.ensure, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                jump2main();
-            }
+        View inflate = LayoutInflater.from(this).inflate(R.layout.pop_operating_tip, null);
+        PopupWindow pop = PopUtil.createSmallPop(inflate, getWindow().getDecorView());
+        TextView tv_title = inflate.findViewById(R.id.tv_title);
+        TextView tv_message = inflate.findViewById(R.id.tv_message);
+        tv_title.setText(getString(R.string.operating_tips));
+        tv_message.setText(getString(R.string.exit_main_tip));
+        inflate.findViewById(R.id.btn_cancel).setOnClickListener(v -> pop.dismiss());
+        inflate.findViewById(R.id.btn_define).setOnClickListener(v -> {
+            pop.dismiss();
+            jump2main();
         });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.create().show();
     }
 
     @Override
@@ -580,25 +671,25 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         this.meet_tv_meet_name = (TextView) findViewById(R.id.meet_tv_meet_name);
         this.meet_tv_member_role = (TextView) findViewById(R.id.meet_tv_member_role);
         this.meet_tv_member_name = (TextView) findViewById(R.id.meet_tv_member_name);
-        this.meet_iv_close = (ImageView) findViewById(R.id.meet_iv_close);
-        this.meet_iv_min = (ImageView) findViewById(R.id.meet_iv_min);
+
         this.meet_top_line = (TextView) findViewById(R.id.meet_top_line);
         this.meet_tv_online = (TextView) findViewById(R.id.meet_tv_online);
-        this.meet_iv_message = (ImageView) findViewById(R.id.meet_iv_message);
-        this.meet_iv_news = (ImageView) findViewById(R.id.meet_iv_news);
+        this.meet_iv_message = (RelativeLayout) findViewById(R.id.meet_iv_message);
+        this.meet_iv_news = (RelativeLayout) findViewById(R.id.meet_iv_news);
         this.meet_fl = (FrameLayout) findViewById(R.id.meet_fl);
+        welcome_view = (ImageView) findViewById(R.id.welcome_view);
         if (mBadge == null) {
             /** ************ ******  设置未读消息展示  ****** ************ **/
             mBadge = new QBadgeView(this).bindTarget(meet_iv_message);
             mBadge.setBadgeGravity(Gravity.END | Gravity.TOP);
-            mBadge.setBadgeTextSize(6, true);
+            mBadge.setBadgeTextSize(8, true);
             mBadge.setShowShadow(true);
             mBadge.setOnDragStateChangedListener((dragState, badge, targetView) -> {
                 //只需要空实现，就可以拖拽消除未读消息
             });
         }
-        meet_iv_close.setOnClickListener(this);
-        meet_iv_min.setOnClickListener(this);
+        findViewById(R.id.meet_iv_close).setOnClickListener(this);
+        findViewById(R.id.meet_iv_min).setOnClickListener(this);
         meet_iv_message.setOnClickListener(this);
         meet_iv_news.setOnClickListener(this);
     }
@@ -610,12 +701,13 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 exit2main();
                 break;
             case R.id.meet_iv_min:
+//                moveTaskToBack(true);
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_HOME);
                 startActivity(intent);
                 break;
             case R.id.meet_iv_message:
-                showFragment(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MESSAGE_VALUE);
+                showFragment(Constant.function_code_chat);
                 break;
             case R.id.meet_iv_news:
                 break;

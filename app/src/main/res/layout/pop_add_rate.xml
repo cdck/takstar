@@ -8,7 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:background="@drawable/dialog_top_blue_bg">
+        android:background="@drawable/dialog_title_bg">
 
         <TextView
             android:id="@+id/tv_title"
@@ -71,7 +71,7 @@
                         android:background="@drawable/editbox_background_normal"
                         android:gravity="top"
                         android:padding="5dp"
-                        android:textSize="@dimen/text_size_small"
+                        android:textSize="@dimen/text_size_normal"
                         tools:text="多少考虑就风口浪尖" />
 
                     <CheckBox
@@ -83,7 +83,7 @@
                         android:button="@drawable/check_box_style"
                         android:gravity="top"
                         android:text="@string/use_file_name"
-                        android:textSize="@dimen/text_size_small" />
+                        android:textSize="@dimen/text_size_normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -109,7 +109,7 @@
                         android:entries="@array/yes_or_no"
                         android:gravity="center_vertical"
                         android:spinnerMode="dialog"
-                        android:textSize="@dimen/text_size_small" />
+                        android:textSize="@dimen/text_size_normal" />
 
                     <View
                         android:layout_width="0dp"
@@ -140,7 +140,7 @@
                         android:layout_gravity="center"
                         android:layout_weight="2"
                         android:gravity="center_vertical"
-                        android:textSize="@dimen/text_size_small"
+                        android:textSize="@dimen/text_size_normal"
                         tools:text="多少考虑就风口浪尖" />
 
                     <View
@@ -172,7 +172,7 @@
                         android:layout_gravity="center"
                         android:layout_weight="2"
                         android:gravity="center_vertical"
-                        android:textSize="@dimen/text_size_small"
+                        android:textSize="@dimen/text_size_normal"
                         tools:text="多少考虑就风口浪尖" />
 
                     <View
@@ -205,7 +205,7 @@
                         android:layout_gravity="center"
                         android:layout_weight="2"
                         android:gravity="center_vertical"
-                        android:textSize="@dimen/text_size_small"
+                        android:textSize="@dimen/text_size_normal"
                         tools:text="多少考虑就风口浪尖" />
 
                     <View
@@ -238,7 +238,7 @@
                         android:layout_gravity="center"
                         android:layout_weight="2"
                         android:gravity="center_vertical"
-                        android:textSize="@dimen/text_size_small"
+                        android:textSize="@dimen/text_size_normal"
                         tools:text="多少考虑就风口浪尖" />
 
                     <View
@@ -293,7 +293,7 @@
                                 android:singleLine="true"
                                 android:text="@string/number"
                                 android:textColor="@color/normal_text_color"
-                                android:textSize="@dimen/text_size_small" />
+                                android:textSize="@dimen/text_size_normal" />
 
                             <TextView
                                 android:id="@+id/item_view_2"
@@ -307,7 +307,7 @@
                                 android:singleLine="true"
                                 android:text="@string/file_name"
                                 android:textColor="@color/normal_text_color"
-                                android:textSize="@dimen/text_size_small" />
+                                android:textSize="@dimen/text_size_normal" />
                         </LinearLayout>
 
                         <androidx.recyclerview.widget.RecyclerView

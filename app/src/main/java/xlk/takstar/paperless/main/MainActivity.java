@@ -132,6 +132,13 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     private void setVersion() {
         if (ini.loadFile()) {
+            String s = ini.get("debug", "maxBitRate");
+            LogUtils.i("从ini文件中获取到的最大码率值：" + s);
+            if (s != null && !s.isEmpty()) {
+                App.maxBitRate = Integer.parseInt(s);
+            } else {
+                ini.put("debug", "maxBitRate", App.maxBitRate / 1000);
+            }
             PackageManager pm = getPackageManager();
             try {
                 PackageInfo packageInfo = pm.getPackageInfo(getPackageName(), 0);
@@ -465,8 +472,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             String job = info.getJob().toStringUtf8();
             main_tv_meeting_name.setText(meetName);
             main_tv_member_name.setText(!memberName.isEmpty() ? getString(R.string.member_name_) + memberName : "");
-            main_tv_position.setText(!company.isEmpty() ? getString(R.string.member_position_) + company : "");
-            main_tv_unit.setText(!job.isEmpty() ? getString(R.string.member_unit_) + job : "");
+            main_tv_position.setText(!company.isEmpty() ? getString(R.string.member_position_) + job : "");
+            main_tv_unit.setText(!job.isEmpty() ? getString(R.string.member_unit_) + company : "");
         } else {
             main_tv_meeting_name.setText("");
             main_tv_member_name.setText("");
@@ -606,7 +613,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 break;
             }
             case R.id.tv_custom_set: {
-//                startActivity(new Intent(MainActivity.this, AdminActivity.class));
                 if (ini.loadFile()) {
                     showConfigPop();
                 }
@@ -655,7 +661,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
         edt_ip.setText(ini.get("areaaddr", "area0ip"));
         edt_port.setText(ini.get("areaaddr", "area0port"));
-        edt_bitrate.setText(ini.get("debug", "maxBitRate"));
+        String iniMaxBitRate = ini.get("debug", "maxBitRate");
+        LogUtils.i("ini中获取最大码率值：" + iniMaxBitRate);
+        edt_bitrate.setText(iniMaxBitRate);
+
 
         //编码过滤
         cb_encode_filter.setChecked(ini.get("nosdl", "disablebsf").equals("0"));
@@ -692,6 +701,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 ToastUtils.showShort(R.string.tip_bitrate_scope);
                 return;
             }
+            App.maxBitRate = i;
             ini.put("areaaddr", "area0ip", ip);
             ini.put("areaaddr", "area0port", port);
             ini.put("Buffer Dir", "mediadir", mediadir);

@@ -43,6 +43,8 @@ public interface MeetingContract {
         void exitDraw();
 
         void updateMeetingBadgeNumber(int count);
+
+        void setFirstDirId(int dirId);
     }
 
     interface Presenter extends IBasePresenter {
@@ -60,7 +62,5 @@ public interface MeetingContract {
         void queryLocalRole();
 
         void queryMeetingFeature();
-
-        boolean hasThisFeature(int id);
     }
 }

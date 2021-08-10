@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/constraint_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/a"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="1dp"
+        android:padding="2dp"
+        android:orientation="vertical"
+        android:background="@drawable/play_view_status_bg"
+        app:layout_constraintBottom_toTopOf="@+id/c"
+        app:layout_constraintEnd_toStartOf="@+id/b"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <xlk.takstar.paperless.ui.video.single.PlayView
+            android:id="@+id/a_view"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/a_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/ic_play_status" />
+
+            <ImageView
+                android:id="@+id/a_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_toEndOf="@+id/a_play"
+                android:src="@drawable/ic_stop_status" />
+
+            <ImageView
+                android:id="@+id/a_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/a_stop"
+                android:src="@drawable/ic_pause_status" />
+
+            <ImageView
+                android:id="@+id/a_full"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/ic_full_screen" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/b"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="1dp"
+        android:padding="2dp"
+        android:background="@drawable/play_view_status_bg"
+        app:layout_constraintBottom_toTopOf="@+id/d"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/a"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <xlk.takstar.paperless.ui.video.single.PlayView
+            android:id="@+id/b_view"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/b_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/ic_play_status" />
+
+            <ImageView
+                android:id="@+id/b_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_toEndOf="@+id/b_play"
+                android:src="@drawable/ic_stop_status" />
+
+            <ImageView
+                android:id="@+id/b_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/b_stop"
+                android:src="@drawable/ic_pause_status" />
+
+            <ImageView
+                android:id="@+id/b_full"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/ic_full_screen" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/c"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="1dp"
+        android:padding="2dp"
+        android:background="@drawable/play_view_status_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/d"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/a">
+
+        <xlk.takstar.paperless.ui.video.single.PlayView
+            android:id="@+id/c_view"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/c_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/ic_play_status" />
+
+            <ImageView
+                android:id="@+id/c_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_toEndOf="@+id/c_play"
+                android:src="@drawable/ic_stop_status" />
+
+            <ImageView
+                android:id="@+id/c_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/c_stop"
+                android:src="@drawable/ic_pause_status" />
+
+            <ImageView
+                android:id="@+id/c_full"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/ic_full_screen" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/d"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="1dp"
+        android:padding="2dp"
+        android:background="@drawable/play_view_status_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/c"
+        app:layout_constraintTop_toBottomOf="@+id/b">
+
+        <xlk.takstar.paperless.ui.video.single.PlayView
+            android:id="@+id/d_view"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/d_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/ic_play_status" />
+
+            <ImageView
+                android:id="@+id/d_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_toEndOf="@+id/d_play"
+                android:src="@drawable/ic_stop_status" />
+
+            <ImageView
+                android:id="@+id/d_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/d_stop"
+                android:src="@drawable/ic_pause_status" />
+
+            <ImageView
+                android:id="@+id/d_full"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/ic_full_screen" />
+        </RelativeLayout>
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

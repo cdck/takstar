@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@+id/item_iv"
         app:layout_constraintTop_toTopOf="parent"
+        android:textSize="@dimen/text_size_normal"
         tools:text="参会人【16:40】" />
 
     <ImageView
@@ -36,6 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:textSize="@dimen/text_size_normal"
             android:background="@drawable/chat_right_msg"
             android:gravity="start|center_vertical"
             tools:text="第三方士大夫" />

@@ -100,4 +100,12 @@ public class EventType {
      * 返回选择的目录
      */
     public static final int RESULT_DIR_PATH = BUS_BASE + 29;
+    /**
+     * 文件导出成功
+     */
+    public static final int BUS_EXPORT_SUCCESSFUL = BUS_BASE + 30;
+    /**
+     * 通知进行吐丝操作
+     */
+    public static final int BUS_TOAST_MESSAGE = BUS_BASE + 31;
 }

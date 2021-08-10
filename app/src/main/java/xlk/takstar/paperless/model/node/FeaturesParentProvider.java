@@ -49,28 +49,24 @@ class FeaturesParentProvider extends BaseNodeProvider {
         FeaturesParentNode parentNode = (FeaturesParentNode) data;
         int featureId = parentNode.getFeatureId();
         FeaturesNodeAdapter adapter = (FeaturesNodeAdapter) getAdapter();
-        adapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, featureId);
-        if (featureId == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE) {
-            if (!parentNode.isExpanded()) {
-                int currentChildId = adapter.getCurrentChildId();
-                if (currentChildId != -1 && currentChildId < Constant.FUN_CODE) {
-                    //之前已经选中了某个目录
-                    // TODO: 2021/1/22 有可能这个目录已经不存在了
-                    //2021年3月1日14:36:24 只要点击了父类，目录的点击状态就清空掉
-                    adapter.clearChildSelectedStatus();
-                    adapter.clearFootSelectedStatus();
-//                    clearSelectedStatus();
-                }
-            }
-//            else {
-//                currentParentId = featureId;
+        if (featureId == Constant.function_code_material) {
+//            if (!parentNode.isExpanded()) {
+//                int currentChildId = adapter.getCurrentChildId();
+//                if (currentChildId != -1 && currentChildId < Constant.FUN_CODE) {
+//                    //之前已经选中了某个目录
+//                    //2021年3月1日14:36:24 只要点击了父类，目录的点击状态就清空掉
+////                    adapter.clearChildSelectedStatus();
+////                    adapter.clearFootSelectedStatus();
+//                }
 //            }
-            currentParentId = featureId;
-            adapter.clearFootSelectedStatus();
+//            currentParentId = featureId;
+//            adapter.clearFootSelectedStatus();
             adapter.expandOrCollapse(position);
-            adapter.notifyDataSetChanged();
+            adapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, featureId);
+//            adapter.notifyDataSetChanged();
         } else {
             currentParentId = featureId;
+            adapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, featureId);
             adapter.clearChildSelectedStatus();
             adapter.clearFootSelectedStatus();
         }
@@ -85,57 +81,75 @@ class FeaturesParentProvider extends BaseNodeProvider {
         int funcode = parentNode.getFeatureId();
         switch (funcode) {
             //会议议程
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_AGENDA_BULLETIN_VALUE: {
+            case Constant.function_code_agenda: {
                 item_feature_iv.setImageResource(R.drawable.feature_agenda_icon);
-                item_feature_tv.setText(getContext().getString(R.string.meeting_agenda));
+                item_feature_tv.setText(getContext().getString(R.string.function_meeting_agenda));
                 break;
             }
             //会议资料
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE: {
+            case Constant.function_code_material: {
                 item_feature_iv.setImageResource(R.drawable.feature_materials_icon);
-                item_feature_tv.setText(getContext().getString(R.string.meeting_materials));
+                item_feature_tv.setText(getContext().getString(R.string.function_meeting_material));
                 break;
             }
             //批注查看
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_POSTIL_VALUE: {
+            case Constant.function_code_annotation: {
                 item_feature_iv.setImageResource(R.drawable.feature_annotate_icon);
-                item_feature_tv.setText(getContext().getString(R.string.meeting_annotate));
+                item_feature_tv.setText(getContext().getString(R.string.function_meeting_annotation));
                 break;
             }
             //互动交流
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MESSAGE_VALUE: {
+            case Constant.function_code_chat: {
                 item_feature_iv.setImageResource(R.drawable.feature_chat_icon);
-                item_feature_tv.setText(getContext().getString(R.string.meeting_chat));
+                item_feature_tv.setText(getContext().getString(R.string.function_meeting_chat));
                 break;
             }
             //视频直播
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_VIDEOSTREAM_VALUE: {
+            case Constant.function_code_video: {
                 item_feature_iv.setImageResource(R.drawable.feature_video_icon);
-                item_feature_tv.setText(getContext().getString(R.string.meeting_video));
+                item_feature_tv.setText(getContext().getString(R.string.function_meeting_live_video));
                 break;
             }
             //电子白板
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE: {
+            case Constant.function_code_board: {
                 item_feature_iv.setImageResource(R.drawable.feature_draw_icon);
-                item_feature_tv.setText(getContext().getString(R.string.meeting_draw));
+                item_feature_tv.setText(getContext().getString(R.string.function_meeting_art_board));
                 break;
             }
             //网页浏览
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WEBBROWSER_VALUE: {
+            case Constant.function_code_web: {
                 item_feature_iv.setImageResource(R.drawable.feature_web_icon);
-                item_feature_tv.setText(getContext().getString(R.string.meeting_web));
+                item_feature_tv.setText(getContext().getString(R.string.function_meeting_web_browsing));
                 break;
             }
             //签到信息
-            case InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_SIGNINRESULT_VALUE: {
-                item_feature_iv.setImageResource(R.drawable.feature_signin_icon);
-                item_feature_tv.setText(getContext().getString(R.string.meeting_signin));
+//            case Constant.function_code_sign: {
+//                item_feature_iv.setImageResource(R.drawable.feature_signin_icon);
+//                item_feature_tv.setText(getContext().getString(R.string.function_meeting_sign_in));
+//                break;
+//            }
+            //评分查看
+            case Constant.function_code_rate: {
+                item_feature_iv.setImageResource(R.drawable.feature_score_manage_icon);
+                item_feature_tv.setText(getContext().getString(R.string.function_rate_view));
                 break;
             }
-            //会议评分
-            case 31: {
-                item_feature_iv.setImageResource(R.drawable.feature_score_view_icon);
-                item_feature_tv.setText(getContext().getString(R.string.meeting_score));
+            //公告查看
+            case Constant.function_code_bulletin: {
+                item_feature_iv.setImageResource(R.drawable.feature_bulletin_icon);
+                item_feature_tv.setText(getContext().getString(R.string.function_bulletin_view));
+                break;
+            }
+            //投票查看
+            case Constant.function_code_vote: {
+                item_feature_iv.setImageResource(R.drawable.feature_vote_manage_icon);
+                item_feature_tv.setText(getContext().getString(R.string.function_vote_view));
+                break;
+            }
+            //选举查看
+            case Constant.function_code_election: {
+                item_feature_iv.setImageResource(R.drawable.feature_election_manage_icon);
+                item_feature_tv.setText(getContext().getString(R.string.function_election_view));
                 break;
             }
             default:

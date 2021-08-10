@@ -72,6 +72,13 @@ public class FileUtil {
 
     /**
      * 将文本内容写入到文件中
+     */
+    public static boolean writeFileFromString(@NonNull String filePath, @NonNull String content) {
+        return writeFileFromString(new File(filePath), content, false);
+    }
+
+    /**
+     * 将文本内容写入到文件中
      *
      * @param content 文本内容
      * @param append  =true则进行追加内容，=false则清空再增加内容
@@ -185,7 +192,6 @@ public class FileUtil {
             bundle.putBoolean(WpsModel.SEND_SAVE_BROAD, true); // 文件保存时是否发送广播
             bundle.putBoolean(WpsModel.HOMEKEY_DOWN, true); // 单机home键是否发送广播
             bundle.putBoolean(WpsModel.BACKKEY_DOWN, true); // 单机back键是否发送广播
-
             bundle.putBoolean(WpsModel.SAVE_PATH, true); // 文件这次保存的路径
             bundle.putString(WpsModel.THIRD_PACKAGE, WpsModel.PackageName.NORMAL); // 第三方应用的包名，用于对改应用合法性的验证
 //            bundle.putBoolean(WpsModel.CLEAR_TRACE, true);// 清除打开记录

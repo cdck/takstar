@@ -17,6 +17,7 @@ import com.mogujie.tt.protobuf.InterfaceWhiteboard;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import cc.shinichi.library.ImagePreview;
@@ -60,6 +61,7 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
     List<String> picPath = new ArrayList<>();
     public static HashMap<Integer, List<MyChatMessage>> imMessages = new HashMap<>();
     private FeaturesParentNode materialNode;
+    private boolean beforeIsExpanded;
 
     public MeetingPresenter(MeetingContract.View view, Context context) {
         super(view);
@@ -174,11 +176,15 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                 } else {
                     mView.updateMemberRole(appContext.getString(R.string.role_manager_));
                 }
+                updateFootNode(true);
             } else {
+                updateFootNode(false);
                 GlobalValue.hasAllPermission = false;
                 mView.collapseOtherFeature();
                 mView.updateMemberRole(appContext.getString(R.string.role_member_));
             }
+        } else {
+            mView.updateMeetingFeatures();
         }
     }
 
@@ -186,12 +192,12 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
     public void queryMeetingFeature() {
         InterfaceMeetfunction.pbui_Type_MeetFunConfigDetailInfo funConfigDetailInfo = jni.queryMeetFunction();
         //获取之前的其它功能模块是否展开
-        boolean isExpanded = false;
+        beforeIsExpanded = false;
         for (int i = 0; i < features.size(); i++) {
             BaseNode baseNode = features.get(i);
             if (baseNode instanceof FeaturesFootNode) {
                 FeaturesFootNode node = (FeaturesFootNode) baseNode;
-                isExpanded = node.isExpanded();
+                beforeIsExpanded = node.isExpanded();
                 break;
             }
         }
@@ -203,39 +209,69 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                 InterfaceMeetfunction.pbui_Item_MeetFunConfigDetailInfo item = itemList.get(i);
                 int funcode = item.getFuncode();
                 LogUtils.i(TAG, "queryMeetingFunction 功能码=" + funcode);
-                /*if (funcode != InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_SHAREDFILE_VALUE
-                        && funcode != InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_VOTERESULT_VALUE
-                        && funcode != InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_DOCUMENT_VALUE
-                )*/
-                if (funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_AGENDA_BULLETIN_VALUE
-                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE
-                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_POSTIL_VALUE
-                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MESSAGE_VALUE
-                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_VIDEOSTREAM_VALUE
-                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE
-                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WEBBROWSER_VALUE
-                        || funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_SIGNINRESULT_VALUE
-                ) {
+                if (funcode <= Constant.function_code_election) {
                     FeaturesParentNode parentNode = new FeaturesParentNode(funcode);
                     features.add(parentNode);
-                    if (funcode == InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_MATERIAL_VALUE) {
+                    if (funcode == Constant.function_code_material) {
+                        //默认会议资料不展开
                         materialNode = parentNode;
+                        materialNode.setExpanded(false);
                         queryDir(materialNode);
                     }
                 }
             }
         }
-        features.add(new FeaturesFootNode(isExpanded));
-        mView.updateMeetingFeatures();
+        queryLocalRole();
     }
 
-    @Override
-    public boolean hasThisFeature(int id) {
+    /**
+     * 检查当前是否有指定功能
+     *
+     * @param functionCode 功能码
+     */
+    public boolean hasFunction(int functionCode) {
         for (int i = 0; i < features.size(); i++) {
-
+            BaseNode baseNode = features.get(i);
+            if (baseNode instanceof FeaturesParentNode) {
+                FeaturesParentNode node = (FeaturesParentNode) baseNode;
+                if (node.getFeatureId() == functionCode) {
+                    return true;
+                }
+            } else if (baseNode instanceof FeaturesFootNode) {
+                FeaturesFootNode node = (FeaturesFootNode) baseNode;
+                if (node.getFeatureId() == functionCode) {
+                    return true;
+                }
+            }
         }
         return false;
     }
+
+    /**
+     * 是否显示更多功能选项栏
+     */
+    public void updateFootNode(boolean isShow) {
+        if (isShow) {
+            if (!hasFunction(Constant.FUN_CODE)) {//当前没有该功能
+                LogUtils.i("添加更多功能栏 beforeIsExpanded=" + beforeIsExpanded);
+                features.add(new FeaturesFootNode(beforeIsExpanded));
+            }
+        } else {
+            Iterator<BaseNode> iterator = features.iterator();
+            while (iterator.hasNext()) {
+                BaseNode baseNode = iterator.next();
+                if (baseNode instanceof FeaturesFootNode) {
+                    FeaturesFootNode node = (FeaturesFootNode) baseNode;
+                    node.clear();
+                    beforeIsExpanded = false;
+                    LogUtils.i("删除更多功能栏");
+                    iterator.remove();
+                }
+            }
+        }
+        mView.updateMeetingFeatures();
+    }
+
 
     public void queryDir(FeaturesParentNode parentNode) {
         InterfaceFile.pbui_Type_MeetDirDetailInfo info = jni.queryMeetDir();
@@ -245,6 +281,8 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                 List<InterfaceFile.pbui_Item_MeetDirDetailInfo> itemList = info.getItemList();
                 for (int i = 0; i < itemList.size(); i++) {
                     InterfaceFile.pbui_Item_MeetDirDetailInfo item = itemList.get(i);
+                    int dirId = item.getId();
+                    if (i == 0) mView.setFirstDirId(dirId);
                     if (item.getId() != Constant.ANNOTATION_FILE_DIRECTORY_ID) {
                         childs.add(new FeaturesChildNode(item.getId(), item.getName().toStringUtf8()));
                     }
@@ -457,7 +495,7 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
             DrawFragment.isSharing = true;//如果同意加入就设置已经在共享中
             DrawFragment.mSrcmemid = disposePicSrcmemid;//设置发起的人员ID
             DrawFragment.mSrcwbid = disposePicSrcwbidd;//设置白板标识
-            mView.showFragment(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
+            mView.showFragment(Constant.function_code_board);
         } else if (operflag == InterfaceMacro.Pb_MeetPostilOperType.Pb_MEETPOTIL_FLAG_REQUESTOPEN.getNumber()) {
             LogUtil.i(TAG, "openArtBoardInform: 询问打开白板..");
             whetherOpen(disposePicSrcmemid, disposePicSrcwbidd, medianame, disposePicOpermemberid);
@@ -488,7 +526,7 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.View> implem
                             //将路径保存到共享中绘画信息
                             DrawFragment.pathList.add(drawPath);
                         }
-                        mView.showFragment(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
+                        mView.showFragment(Constant.function_code_board);
                         //自己不是发起人的时候,每次收到绘画通知都要判断是不是同一个发起人和白板标识
                         //并且集合中没有这一号人,将其添加进集合中
                         if (!DrawFragment.togetherIDs.contains(opermemberid)) {

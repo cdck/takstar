@@ -49,6 +49,7 @@ public class FileAdapter extends BaseQuickAdapter<InterfaceFile.pbui_Item_MeetDi
         String fileName = item.getName().toStringUtf8();
         Button item_btn_download = helper.getView(R.id.item_btn_download);
         ImageView item_iv_icon = helper.getView(R.id.item_iv_icon);
+        helper.getView(R.id.item_tip).setVisibility(item.getSize() == 0 ? View.VISIBLE : View.INVISIBLE);
         helper.setText(R.id.item_tv_name, fileName);
         if (FileUtil.isDoc(fileName)) {
             item_iv_icon.setImageResource(R.drawable.ic_word);

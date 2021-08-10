@@ -51,8 +51,10 @@ import xlk.takstar.paperless.base.BaseFragment;
 import xlk.takstar.paperless.model.Constant;
 import xlk.takstar.paperless.model.EventMessage;
 import xlk.takstar.paperless.model.EventType;
+import xlk.takstar.paperless.model.bean.ExportSubmitMember;
 import xlk.takstar.paperless.ui.MyPercentFormatter;
 import xlk.takstar.paperless.ui.RvItemDecoration;
+import xlk.takstar.paperless.util.DateUtil;
 import xlk.takstar.paperless.util.JxlUtil;
 import xlk.takstar.paperless.util.LogUtil;
 import xlk.takstar.paperless.util.MaxLengthFilter;
@@ -69,7 +71,8 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
     /**
      * =true 投票页面, =false 选举页面
      */
-    public static boolean IS_VOTE_PAGE = true;
+    public boolean isVote;
+    private boolean isManage;
     private RecyclerView rv_vote;
     private VoteAdapter voteAdapter;
     private MemberDetailAdapter memberDetailAdapter;
@@ -77,6 +80,7 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
     private PopupWindow voteConfigPop, memberPop, detailPop, chartPop, modifyElectionsPop, modifyVotePop, createVotePop;
     private EditText edt_save_address;
     private String currentExportVoteContent;
+    private Button btn_launch, btn_stop, btn_create, btn_modify, btn_delete, btn_view_details, btn_view_chart, btn_export_data, btn_import_data;
 
     @Override
     protected int getLayoutId() {
@@ -86,15 +90,24 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
     @Override
     protected void initView(View inflate) {
         rv_vote = inflate.findViewById(R.id.rv_vote);
-        inflate.findViewById(R.id.btn_launch).setOnClickListener(this);
-        inflate.findViewById(R.id.btn_stop).setOnClickListener(this);
-        inflate.findViewById(R.id.btn_create).setOnClickListener(this);
-        inflate.findViewById(R.id.btn_modify).setOnClickListener(this);
-        inflate.findViewById(R.id.btn_delete).setOnClickListener(this);
-        inflate.findViewById(R.id.btn_view_details).setOnClickListener(this);
-        inflate.findViewById(R.id.btn_view_chart).setOnClickListener(this);
-        inflate.findViewById(R.id.btn_export_data).setOnClickListener(this);
-        inflate.findViewById(R.id.btn_import_data).setOnClickListener(this);
+        btn_launch = inflate.findViewById(R.id.btn_launch);
+        btn_launch.setOnClickListener(this);
+        btn_stop = inflate.findViewById(R.id.btn_stop);
+        btn_stop.setOnClickListener(this);
+        btn_create = inflate.findViewById(R.id.btn_create);
+        btn_create.setOnClickListener(this);
+        btn_modify = inflate.findViewById(R.id.btn_modify);
+        btn_modify.setOnClickListener(this);
+        btn_delete = inflate.findViewById(R.id.btn_delete);
+        btn_delete.setOnClickListener(this);
+        btn_view_details = inflate.findViewById(R.id.btn_view_details);
+        btn_view_details.setOnClickListener(this);
+        btn_view_chart = inflate.findViewById(R.id.btn_view_chart);
+        btn_view_chart.setOnClickListener(this);
+        btn_export_data = inflate.findViewById(R.id.btn_export_data);
+        btn_export_data.setOnClickListener(this);
+        btn_import_data = inflate.findViewById(R.id.btn_import_data);
+        btn_import_data.setOnClickListener(this);
     }
 
     @Override
@@ -104,11 +117,21 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
 
     @Override
     protected void onShow() {
-        presenter.queryVote();
+        initial();
     }
 
     @Override
     protected void initial() {
+        isVote = getArguments().getBoolean("isVote");
+        isManage = getArguments().getBoolean("isManage");
+        presenter.setIsVote(isVote);
+        btn_launch.setVisibility(isManage ? View.VISIBLE : View.GONE);
+        btn_stop.setVisibility(isManage ? View.VISIBLE : View.GONE);
+        btn_create.setVisibility(isManage ? View.VISIBLE : View.GONE);
+        btn_modify.setVisibility(isManage ? View.VISIBLE : View.GONE);
+        btn_delete.setVisibility(isManage ? View.VISIBLE : View.GONE);
+        btn_export_data.setVisibility(isManage ? View.VISIBLE : View.GONE);
+        btn_import_data.setVisibility(isManage ? View.VISIBLE : View.GONE);
         presenter.queryVote();
         presenter.queryMember();
     }
@@ -123,7 +146,7 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                     return;
                 }
                 if (vote.getVotestate() != InterfaceMacro.Pb_MeetVoteStatus.Pb_vote_notvote_VALUE) {
-                    ToastUtils.showShort(IS_VOTE_PAGE ? R.string.start_vote_tip : R.string.start_election_tip);
+                    ToastUtils.showShort(isVote ? R.string.start_vote_tip : R.string.start_election_tip);
                     return;
                 }
                 presenter.queryMember();
@@ -137,7 +160,7 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                     return;
                 }
                 if (vote.getVotestate() != InterfaceMacro.Pb_MeetVoteStatus.Pb_vote_voteing_VALUE) {
-                    ToastUtils.showShort(IS_VOTE_PAGE ? R.string.stop_vote_tip : R.string.stop_election_tip);
+                    ToastUtils.showShort(isVote ? R.string.stop_vote_tip : R.string.stop_election_tip);
                     return;
                 }
                 jni.stopVote(vote.getVoteid());
@@ -154,10 +177,10 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                     return;
                 }
                 if (vote.getVotestate() != InterfaceMacro.Pb_MeetVoteStatus.Pb_vote_notvote_VALUE) {
-                    ToastUtils.showShort(IS_VOTE_PAGE ? R.string.start_vote_tip : R.string.start_election_tip);
+                    ToastUtils.showShort(isVote ? R.string.start_vote_tip : R.string.start_election_tip);
                     return;
                 }
-                if (IS_VOTE_PAGE) {
+                if (isVote) {
                     modifyVote(vote);
                 } else {
                     modifyElections(vote);
@@ -183,10 +206,10 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                     if (vote.getVotestate() != InterfaceMacro.Pb_MeetVoteStatus.Pb_vote_notvote_VALUE) {
                         presenter.querySubmittedVoters(vote, true);
                     } else {
-                        ToastUtils.showShort(IS_VOTE_PAGE ? R.string.view_vote_tip : R.string.view_election_tip);
+                        ToastUtils.showShort(isVote ? R.string.view_vote_tip : R.string.view_election_tip);
                     }
                 } else {
-                    ToastUtils.showShort(IS_VOTE_PAGE ? R.string.please_choose_snotation_vote : R.string.please_choose_snotation_election);
+                    ToastUtils.showShort(isVote ? R.string.please_choose_snotation_vote : R.string.please_choose_snotation_election);
                 }
                 break;
             }
@@ -199,7 +222,7 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                 if (vote.getVotestate() != InterfaceMacro.Pb_MeetVoteStatus.Pb_vote_notvote_VALUE) {
                     presenter.querySubmittedVoters(vote, false);
                 } else {
-                    ToastUtils.showShort(IS_VOTE_PAGE ? R.string.view_vote_tip : R.string.view_election_tip);
+                    ToastUtils.showShort(isVote ? R.string.view_vote_tip : R.string.view_election_tip);
                 }
                 break;
             }
@@ -208,12 +231,12 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                     ToastUtils.showShort(R.string.no_vote_data);
                     break;
                 }
-                showExportPop(Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE);
-//                JxlUtil.exportVoteInfo(
-//                        presenter.votes,
-//                        IS_VOTE_PAGE ? getString(R.string.vote_fileName) : getString(R.string.elections_filename),
-//                        IS_VOTE_PAGE ? getString(R.string.vote_content) : getString(R.string.elections_content)
-//                );
+                InterfaceVote.pbui_Item_MeetVoteDetailInfo select = voteAdapter.getSelect();
+                if (select == null) {
+                    ToastUtils.showShort(R.string.please_choose_vote_first);
+                    return;
+                }
+                showExportPop(0, select);
                 break;
             }
             case R.id.btn_import_data: {
@@ -229,10 +252,15 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
     public void updateExportDirPath(String dirPath) {
         if (edt_save_address != null) {
             edt_save_address.setText(dirPath);
+            edt_save_address.setSelection(dirPath.length());
         }
     }
 
-    private void showExportPop(int dirType) {
+    /**
+     * @param exportType =0投票信息，=1投票提交人详情
+     * @param vote       要导出的投票
+     */
+    private void showExportPop(int exportType, InterfaceVote.pbui_Item_MeetVoteDetailInfo vote) {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_export_config, null);
         View meet_fl = getActivity().findViewById(R.id.meet_fl);
         View meet_left_ll = getActivity().findViewById(R.id.meet_left_ll);
@@ -241,36 +269,36 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
         int width1 = meet_left_ll.getWidth();
         PopupWindow pop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_vote, Gravity.CENTER, width1 / 2, 0);
         EditText edt_file_name = inflate.findViewById(R.id.edt_file_name);
-//        EditText edt_description = inflate.findViewById(R.id.edt_description);
-//        edt_description.setText(IS_VOTE_PAGE ? getString(R.string.vote_content) : getString(R.string.elections_content));
-        if (dirType == Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE_SUBMIT) {
-            edt_file_name.setText(currentExportVoteContent);
-        } else {
-            edt_file_name.setText(IS_VOTE_PAGE ? getString(R.string.vote_fileName) : getString(R.string.elections_filename));
-        }
+        edt_file_name.setText(vote.getContent().toStringUtf8());
         edt_save_address = inflate.findViewById(R.id.edt_save_address);
         edt_save_address.setKeyListener(null);
+        edt_save_address.setText(Constant.export_dir);
+        edt_save_address.setSelection(Constant.export_dir.length());
         inflate.findViewById(R.id.btn_choose_dir).setOnClickListener(v -> {
             String currentDirPath = edt_save_address.getText().toString().trim();
             if (currentDirPath.isEmpty()) {
                 currentDirPath = Constant.root_dir;
             }
-            EventBus.getDefault().post(new EventMessage.Builder().type(EventType.CHOOSE_DIR_PATH).objects(dirType, currentDirPath).build());
+            EventBus.getDefault().post(new EventMessage.Builder().type(EventType.CHOOSE_DIR_PATH).objects(Constant.CHOOSE_DIR_TYPE_PAGE_VOTE_MANAGE, currentDirPath).build());
         });
         inflate.findViewById(R.id.iv_close).setOnClickListener(v -> pop.dismiss());
         inflate.findViewById(R.id.btn_cancel).setOnClickListener(v -> pop.dismiss());
         inflate.findViewById(R.id.btn_define).setOnClickListener(v -> {
             String fileName = edt_file_name.getText().toString().trim();
-            String description = IS_VOTE_PAGE ? getString(R.string.vote_fileName) : getString(R.string.elections_filename);
             String addr = edt_save_address.getText().toString().trim();
             if (fileName.isEmpty() || addr.isEmpty()) {
                 ToastUtil.showShort(R.string.please_enter_file_name_and_addr);
                 return;
             }
-            if (dirType == Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE) {
-                JxlUtil.exportVoteInfo(addr, fileName, description, presenter.votes);
-            } else if (dirType == Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE_SUBMIT) {
-                JxlUtil.exportVoteSubmitMember(addr, fileName, presenter.submitMembers);
+            if (exportType == 0) {
+                List<InterfaceVote.pbui_Item_MeetVoteDetailInfo> votes = new ArrayList<>();
+                votes.add(vote);
+                JxlUtil.exportVoteInfo(addr, fileName, isVote ? getString(R.string.vote_fileName) : getString(R.string.elections_filename), votes);
+            } else {
+                String[] strings = presenter.queryYd(vote);
+                String createTime = DateUtil.nowDate();
+                ExportSubmitMember exportSubmitMember = new ExportSubmitMember(vote.getContent().toStringUtf8(), createTime, strings[0], strings[1], strings[2], strings[3], presenter.submitMembers);
+                JxlUtil.exportSubmitMember(addr, fileName, exportSubmitMember);
             }
             pop.dismiss();
         });
@@ -292,10 +320,10 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
     }
 
     private void createHolderEvent(CreateVoteViewHolder holder) {
-        holder.tvOperationTitle.setText(IS_VOTE_PAGE ? getString(R.string.create_vote) : getString(R.string.create_election));
-        holder.tvTitle.setText(IS_VOTE_PAGE ? getString(R.string.vote_title_) : getString(R.string.elections_title_));
-        holder.tvType.setText(IS_VOTE_PAGE ? getString(R.string.vote_type) : getString(R.string.election_type));
-        if (IS_VOTE_PAGE) {
+        holder.tvOperationTitle.setText(isVote ? getString(R.string.create_vote) : getString(R.string.create_election));
+        holder.tvTitle.setText(isVote ? getString(R.string.vote_title_) : getString(R.string.elections_title_));
+        holder.tvType.setText(isVote ? getString(R.string.vote_type) : getString(R.string.election_type));
+        if (isVote) {
             holder.optionAEdt.setText(getString(R.string.favour));
             holder.optionBEdt.setText(getString(R.string.against));
             holder.optionCEdt.setText(getString(R.string.abstain));
@@ -305,7 +333,7 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
 //        holder.optionCEdt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
 //        holder.optionDEdt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
 //        holder.optionEEdt.setFilters(new InputFilter[]{new MaxLengthFilter(20)});
-        if (!IS_VOTE_PAGE) {
+        if (!isVote) {
             holder.optionDLl.setVisibility(View.VISIBLE);
             holder.optionELl.setVisibility(View.VISIBLE);
             //当前是创建选举
@@ -360,15 +388,15 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
             all.add(s2b(aStr));
             all.add(s2b(bStr));
             all.add(s2b(cStr));
-            if (!IS_VOTE_PAGE) {
+            if (!isVote) {
                 if (!dStr.isEmpty()) all.add(s2b(dStr));
                 if (!eStr.isEmpty()) all.add(s2b(eStr));
             }
             InterfaceVote.pbui_Item_MeetOnVotingDetailInfo.Builder builder = InterfaceVote.pbui_Item_MeetOnVotingDetailInfo.newBuilder();
             builder.setContent(s2b(title));
-            builder.setMaintype(IS_VOTE_PAGE ? InterfaceMacro.Pb_MeetVoteType.Pb_VOTE_MAINTYPE_vote_VALUE : InterfaceMacro.Pb_MeetVoteType.Pb_VOTE_MAINTYPE_election_VALUE);
+            builder.setMaintype(isVote ? InterfaceMacro.Pb_MeetVoteType.Pb_VOTE_MAINTYPE_vote_VALUE : InterfaceMacro.Pb_MeetVoteType.Pb_VOTE_MAINTYPE_election_VALUE);
             builder.setMode(InterfaceMacro.Pb_MeetVoteMode.Pb_VOTEMODE_signed_VALUE);
-            builder.setType(IS_VOTE_PAGE ? InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_SINGLE_VALUE : voteType);
+            builder.setType(isVote ? InterfaceMacro.Pb_MeetVote_SelType.Pb_VOTE_TYPE_SINGLE_VALUE : voteType);
             builder.setSelectcount(all.size());
             builder.setTimeouts(0);
             builder.addAllText(all);
@@ -610,13 +638,15 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
             if (file != null) {
                 if (file.getName().endsWith(".xls")) {
                     List<InterfaceVote.pbui_Item_MeetOnVotingDetailInfo> info = JxlUtil.readVoteXls(file.getAbsolutePath(),
-                            IS_VOTE_PAGE ? InterfaceMacro.Pb_MeetVoteType.Pb_VOTE_MAINTYPE_vote_VALUE
+                            isVote ? InterfaceMacro.Pb_MeetVoteType.Pb_VOTE_MAINTYPE_vote_VALUE
                                     : InterfaceMacro.Pb_MeetVoteType.Pb_VOTE_MAINTYPE_election_VALUE);
                     if (!info.isEmpty()) {
                         for (int i = 0; i < info.size(); i++) {
                             jni.createVote(info.get(i));
                         }
                         ToastUtils.showShort(R.string.import_successful);
+                    } else {
+                        ToastUtils.showLong(R.string.import_err_content_format_is_incorrect);
                     }
                 } else {
                     ToastUtils.showShort(R.string.please_choose_xls_file);
@@ -654,10 +684,8 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
 
         inflate.findViewById(R.id.btn_export_result).setOnClickListener(v -> {
             currentExportVoteContent = vote.getContent().toStringUtf8();
-            showExportPop(Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE_SUBMIT);
-//            String dirPath = IS_VOTE_PAGE ? Constant.export_vote_dir : Constant.export_election_dir;
-//            EventBus.getDefault().post(new EventMessage.Builder().type(EventType.CHOOSE_DIR_PATH).objects(Constant.CHOOSE_DIR_TYPE_EXPORT_VOTE_SUBMIT,).build());
-//            JxlUtil.exportVoteSubmitMember(dirPath, vote.getContent().toStringUtf8(), presenter.submitMembers);
+            detailPop.dismiss();
+            showExportPop(1, vote);
         });
         inflate.findViewById(R.id.btn_cancel).setOnClickListener(v -> {
             detailPop.dismiss();
@@ -696,9 +724,132 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
                 ? getString(R.string.anonymous) : getString(R.string.notation);
         content += "（" + voteType + "、" + mode + "）";
         tv_title.setText(content);
-        configChart(vote, chart);
+        int index = getSingleAnswerIndex(vote);
+        if (index == -1) {
+            configChart(vote, chart);
+        } else {
+            singleAnswerConfig(vote, chart, index);
+        }
         inflate.findViewById(R.id.iv_close).setOnClickListener(v -> chartPop.dismiss());
     }
+
+    private int getSingleAnswerIndex(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote) {
+        int count = 0;
+        int index = -1;
+        List<InterfaceVote.pbui_SubItem_VoteItemInfo> itemList = vote.getItemList();
+        for (int i = 0; i < itemList.size(); i++) {
+            InterfaceVote.pbui_SubItem_VoteItemInfo item = itemList.get(i);
+            int selcnt = item.getSelcnt();
+            if (count != 0 && selcnt != 0) {
+                return -1;
+            }
+            if (count == 0) {
+                count = selcnt;
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    private void singleAnswerConfig(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote, PieChart chart, int index) {
+        ArrayList<PieEntry> pieEntries = new ArrayList<>();
+        ArrayList<Integer> colors = new ArrayList<>();
+        List<InterfaceVote.pbui_SubItem_VoteItemInfo> itemList = vote.getItemList();
+        for (int i = 0; i < itemList.size(); i++) {
+            InterfaceVote.pbui_SubItem_VoteItemInfo item = itemList.get(i);
+            String answer = item.getText().toStringUtf8();
+            int selcnt = item.getSelcnt();
+            PieEntry pieEntry = new PieEntry((float) 0, answer);
+            pieEntries.add(pieEntry);
+            if (i == 0) {
+                colors.add(getResources().getColor(R.color.option_a));
+            } else if (i == 1) {
+                colors.add(getResources().getColor(R.color.option_b));
+            } else if (i == 2) {
+                colors.add(getResources().getColor(R.color.option_c));
+            } else if (i == 3) {
+                colors.add(getResources().getColor(R.color.option_d));
+            } else if (i == 4) {
+                colors.add(getResources().getColor(R.color.option_e));
+            }
+        }
+
+        chart.setLogEnabled(true);
+        //如果启用此功能，则图表内的值将以百分比而不是原始值绘制。 提供为 提供的值 ValueFormatter然后，以百分比形式 to格式
+        chart.setUsePercentValues(true);
+        //将此设置为true，以将入口标签绘制到饼片中（由PieEntry类的getLabel()方法提供）
+        chart.setDrawEntryLabels(false);
+        //设置额外的偏移量（在图表视图周围）附加到自动计算的偏移量上
+        chart.setExtraOffsets(5, 5, 100, 5);
+        //减速摩擦系数，以[0 ; 1]为区间，数值越大表示速度越慢，如设为0，则会立即停止，1为无效值，会自动转换为0.999f。1为无效值，将自动转换为0.999f
+        chart.setDragDecelerationFrictionCoef(0.95f);
+
+        //设置中间的文本
+        chart.setCenterText("100.0 %");
+        //设置中心区域的文本颜色
+        chart.setCenterTextColor(Color.WHITE);
+        //设置中心文本字体大小，单位dp
+        chart.setCenterTextSize(14f);
+        //将此设置为 "true"，以使饼中心为空
+        chart.setDrawHoleEnabled(true);
+        //设置画在饼图中心的孔的颜色。(上一行设置为true生效)
+        /* **** **  这里设置成当前圆的背景颜色，这样就算设置了文本用户也看不到，达到只有中间一个100%的效果  ** **** */
+        chart.setHoleColor(colors.get(index));
+
+        //设置透明圆的颜色
+        chart.setTransparentCircleColor(Color.WHITE);
+        //设置透明圆的透明度
+        chart.setTransparentCircleAlpha(110);
+        //设置饼图中心孔的半径，以最大半径的百分比为单位（max=整个饼图的半径），默认为50%
+        chart.setHoleRadius(100f);
+        //设置画在饼图中孔洞旁边的透明圆的半径，以最大半径的百分比为单位(max=整个图表的半径)，默认55%->表示比中心孔洞默认大5%
+        chart.setTransparentCircleRadius(61f);
+        //将此设置为 "true"，以绘制显示在饼图中心的文字
+        chart.setDrawCenterText(true);
+        //设置雷达图的旋转偏移量，单位为度。默认270f
+        chart.setRotationAngle(0);
+        //设置为 "true"，可以通过触摸来实现图表的旋转/旋转。设置为false则禁用。默认值：true
+        chart.setRotationEnabled(false);
+        //将此设置为false，以防止通过点击手势突出显示数值。值仍然可以通过拖动或编程方式高亮显示。默认值：true
+        chart.setHighlightPerTapEnabled(false);
+
+        //返回图表的Legend对象。本方法可以用来获取图例的实例，以便自定义自动生成的图例
+        Legend l = chart.getLegend();
+//        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+//        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        l.setOrientation(Legend.LegendOrientation.VERTICAL);
+        l.setDrawInside(true);
+        //在水平轴上设置图例条目之间的空间，单位为像素，内部转换为dp
+        l.setXEntrySpace(7f);
+        //在垂直轴上设置图例条目之间的空间，单位为像素，内部转换为dp
+        l.setYEntrySpace(5f);
+        l.setWordWrapEnabled(true);
+        //设置此轴上标签的Y轴偏移量。对于图例来说，偏移量越大，意味着图例作为一个整体将被放置在离顶部越远的地方
+        l.setYOffset(0f);
+
+        PieDataSet dataSet = new PieDataSet(pieEntries, "");
+        dataSet.setValueTextSize(14f);
+        dataSet.setColors(colors);
+        //设置百分比内容的文本颜色
+        /* **** **  设置成当前圆的颜色，达到隐藏的效果  ** **** */
+        dataSet.setValueTextColor(colors.get(index));
+
+        PieData pieData = new PieData(dataSet);
+        MyPercentFormatter f = new MyPercentFormatter(chart);
+        pieData.setValueFormatter(f);
+        pieData.setDrawValues(true);
+        pieData.setValueTextSize(14f);
+        chart.setData(pieData);
+
+        Description description = new Description();
+        description.setText("");
+        chart.setDescription(description);
+
+        chart.invalidate();
+    }
+
 
     private void configChart(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote, PieChart chart) {
         chart.setLogEnabled(true);
@@ -823,7 +974,7 @@ public class VoteManageFragment extends BaseFragment<VoteManagePresenter> implem
         LogUtils.i(TAG, "showDetailsPop 宽高=" + width + "," + height + ",功能菜单宽高=" + width1 + "," + height1);
         voteConfigPop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rv_vote, Gravity.CENTER, width1 / 2, 0);
         TextView pop_title = inflate.findViewById(R.id.pop_title);
-        pop_title.setText(IS_VOTE_PAGE ? getString(R.string.launch_vote) : getString(R.string.launch_elections));
+        pop_title.setText(isVote ? getString(R.string.launch_vote) : getString(R.string.launch_elections));
 
         TextView tv_title = inflate.findViewById(R.id.tv_title);
         EditText edt_remarks = inflate.findViewById(R.id.edt_remarks);

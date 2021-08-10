@@ -35,7 +35,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -49,7 +48,6 @@ import com.mogujie.tt.protobuf.InterfaceVote;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -59,7 +57,6 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import cc.shinichi.library.tool.ui.ToastUtil;
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.adapter.WmCanJoinMemberAdapter;
 import xlk.takstar.paperless.adapter.WmCanJoinProAdapter;
@@ -79,12 +76,12 @@ import xlk.takstar.paperless.ui.CircularMenu;
 import xlk.takstar.paperless.util.AppUtil;
 import xlk.takstar.paperless.util.DateUtil;
 import xlk.takstar.paperless.util.DialogUtil;
-import xlk.takstar.paperless.util.FileUtil;
 import xlk.takstar.paperless.util.LogUtil;
 import xlk.takstar.paperless.util.MaxLengthFilter;
 import xlk.takstar.paperless.util.RangeControlFilter;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static xlk.takstar.paperless.App.fabServiceIsOpen;
 import static xlk.takstar.paperless.App.mMediaProjection;
 import static xlk.takstar.paperless.chatonline.ChatVideoActivity.isChatingOpened;
 import static xlk.takstar.paperless.fragment.draw.DrawFragment.isDrawing;
@@ -145,6 +142,7 @@ public class FabService extends Service implements FabContract.View {
     public void onCreate() {
         super.onCreate();
         LogUtil.i(TAG, "onCreate ");
+        fabServiceIsOpen = true;
         cxt = getApplicationContext();
         presenter = new FabPresenter(this, this);
         presenter.queryMember();
@@ -156,7 +154,7 @@ public class FabService extends Service implements FabContract.View {
 
         hoverButton = new ImageView(this);
         hoverButton.setTag("hoverButton");
-        hoverButton.setImageResource(R.drawable.ic_fab);
+        hoverButton.setImageResource(R.drawable.ic_fab_new);
         hoverButton.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -482,13 +480,15 @@ public class FabService extends Service implements FabContract.View {
         });
         holder.btn_save_local.setOnClickListener(v -> {
             String content = holder.edt_note.getText().toString();
-            String filePath = Constant.file_dir + "会议笔记.txt";
-            File file = new File(filePath);
-            FileUtils.createOrExistsFile(file);
-            if (FileUtil.writeFileFromString(file, content)) {
-                Toast.makeText(cxt, getString(R.string.save_meet_note_, filePath), Toast.LENGTH_LONG).show();
-//                ToastUtils.showLong(getString(R.string.save_meet_note_, filePath));
-            }
+            EventBus.getDefault().post(new EventMessage.Builder().type(EventType.CHOOSE_DIR_PATH).objects(Constant.CHOOSE_DIR_TYPE_SAVE_NOTE, content).build());
+            showPop(noteView, hoverButton, mParams);
+//            String filePath = Constant.file_dir + "会议笔记.txt";
+//            File file = new File(filePath);
+//            FileUtils.createOrExistsFile(file);
+//            if (FileUtil.writeFileFromString(file, content)) {
+//                Toast.makeText(cxt, getString(R.string.save_meet_note_, filePath), Toast.LENGTH_LONG).show();
+////                ToastUtils.showLong(getString(R.string.save_meet_note_, filePath));
+//            }
         });
     }
 
@@ -1072,17 +1072,6 @@ public class FabService extends Service implements FabContract.View {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        LogUtil.i(TAG, "onDestroy ");
-        try {
-            delAllView();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        presenter.onDestroy();
-        super.onDestroy();
-    }
 
     @Override
     public void notifyOnLineAdapter() {
@@ -1667,5 +1656,18 @@ public class FabService extends Service implements FabContract.View {
                 removeScoreById(info.getVoteid());
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        LogUtil.i(TAG, "onDestroy ");
+        try {
+            delAllView();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        presenter.onDestroy();
+        fabServiceIsOpen = false;
+        super.onDestroy();
     }
 }

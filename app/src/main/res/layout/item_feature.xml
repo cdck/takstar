@@ -6,7 +6,6 @@
     android:background="@color/feature_dividing_line_color"
     android:orientation="horizontal">
 
-<!--    android:layout_marginBottom="1px"-->
     <LinearLayout
         android:id="@+id/item_feature_root"
         android:layout_width="match_parent"
@@ -37,6 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
             android:layout_weight="2"
+            android:textSize="@dimen/text_size_medium"
             android:textColor="@drawable/feature_status_textcolor"
             tools:text="会议资料" />
     </LinearLayout>

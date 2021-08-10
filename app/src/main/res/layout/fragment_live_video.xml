@@ -32,6 +32,14 @@
             app:fastScrollVerticalThumbDrawable="@drawable/fastscroll_vertical_thumb_drawable"
             app:fastScrollVerticalTrackDrawable="@drawable/fastscroll_vertical_track_drawable" />
 
+        <CheckBox
+            android:id="@+id/cb_enable_recording"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_normal"
+            android:layout_margin="2dp"
+            android:text="@string/enable_recording" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -17,81 +17,73 @@
         <Button
             android:id="@+id/btn_launch"
             style="@style/button_blue_rect_style"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_marginStart="1dp"
-            android:layout_weight="1"
             android:text="@string/launch" />
 
         <Button
             android:id="@+id/btn_stop"
             style="@style/button_blue_rect_style"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_marginStart="1dp"
-            android:layout_weight="1"
             android:text="@string/stop" />
 
         <Button
             android:id="@+id/btn_create"
             style="@style/button_blue_rect_style"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_marginStart="1dp"
-            android:layout_weight="1"
             android:text="@string/create" />
+
         <Button
             android:id="@+id/btn_modify"
             style="@style/button_blue_rect_style"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_marginStart="1dp"
-            android:layout_weight="1"
             android:text="@string/modify" />
 
         <Button
             android:id="@+id/btn_delete"
             style="@style/button_blue_rect_style"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_marginStart="1dp"
-            android:layout_weight="1"
             android:text="@string/delete" />
 
         <Button
             android:id="@+id/btn_view_details"
             style="@style/button_blue_rect_style"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_marginStart="1dp"
-            android:layout_weight="1"
             android:text="@string/view_details" />
 
         <Button
             android:id="@+id/btn_view_chart"
             style="@style/button_blue_rect_style"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_marginStart="1dp"
-            android:layout_weight="1"
             android:text="@string/view_chart" />
 
         <Button
             android:id="@+id/btn_export_data"
             style="@style/button_blue_rect_style"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_marginStart="1dp"
-            android:layout_weight="1"
             android:text="@string/export_data" />
 
         <Button
             android:id="@+id/btn_import_data"
             style="@style/button_blue_rect_style"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_marginStart="1dp"
             android:layout_marginEnd="1dp"
-            android:layout_weight="1"
             android:text="@string/import_data" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_vote"
         android:layout_width="match_parent"
-        android:layout_margin="5dp"
         android:layout_height="0dp"
+        android:layout_margin="5dp"
         android:layout_weight="1"
         android:background="@color/white" />
 

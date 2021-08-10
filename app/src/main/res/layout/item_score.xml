@@ -19,7 +19,7 @@
         android:lines="1"
         android:singleLine="true"
         android:text="@string/score_desc"
-        android:textSize="@dimen/text_size_smallest" />
+        android:textSize="@dimen/text_size_small" />
 
     <TextView
         android:id="@+id/item_view_2"
@@ -34,7 +34,7 @@
         android:lines="1"
         android:singleLine="true"
         android:text="@string/score_file"
-        android:textSize="@dimen/text_size_smallest" />
+        android:textSize="@dimen/text_size_small" />
 
     <TextView
         android:id="@+id/item_view_3"
@@ -49,7 +49,7 @@
         android:lines="1"
         android:singleLine="true"
         android:text="@string/score_status"
-        android:textSize="@dimen/text_size_smallest" />
+        android:textSize="@dimen/text_size_small" />
 
     <TextView
         android:id="@+id/item_view_4"
@@ -64,7 +64,7 @@
         android:lines="1"
         android:singleLine="true"
         android:text="@string/score_yd"
-        android:textSize="@dimen/text_size_smallest" />
+        android:textSize="@dimen/text_size_small" />
 
     <TextView
         android:id="@+id/item_view_5"
@@ -79,7 +79,7 @@
         android:lines="1"
         android:singleLine="true"
         android:text="@string/score_registered"
-        android:textSize="@dimen/text_size_smallest" />
+        android:textSize="@dimen/text_size_small" />
 
     <TextView
         android:id="@+id/item_view_6"
@@ -94,7 +94,7 @@
         android:lines="1"
         android:singleLine="true"
         android:text="@string/score_a"
-        android:textSize="@dimen/text_size_smallest" />
+        android:textSize="@dimen/text_size_small" />
 
     <TextView
         android:id="@+id/item_view_7"
@@ -109,7 +109,7 @@
         android:lines="1"
         android:singleLine="true"
         android:text="@string/score_b"
-        android:textSize="@dimen/text_size_smallest" />
+        android:textSize="@dimen/text_size_small" />
 
     <TextView
         android:id="@+id/item_view_8"
@@ -124,7 +124,7 @@
         android:lines="1"
         android:singleLine="true"
         android:text="@string/score_c"
-        android:textSize="@dimen/text_size_smallest" />
+        android:textSize="@dimen/text_size_small" />
 
     <TextView
         android:id="@+id/item_view_9"
@@ -139,7 +139,7 @@
         android:lines="1"
         android:singleLine="true"
         android:text="@string/score_d"
-        android:textSize="@dimen/text_size_smallest" />
+        android:textSize="@dimen/text_size_small" />
 
     <TextView
         android:id="@+id/item_view_10"
@@ -154,7 +154,7 @@
         android:lines="1"
         android:singleLine="true"
         android:text="@string/score_total"
-        android:textSize="@dimen/text_size_smallest" />
+        android:textSize="@dimen/text_size_small" />
 
     <TextView
         android:id="@+id/item_view_11"
@@ -169,5 +169,5 @@
         android:lines="1"
         android:singleLine="true"
         android:text="@string/score_average"
-        android:textSize="@dimen/text_size_smallest" />
+        android:textSize="@dimen/text_size_small" />
 </LinearLayout>

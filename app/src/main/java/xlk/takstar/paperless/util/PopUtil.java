@@ -5,6 +5,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.PopupWindow;
 
+import com.blankj.utilcode.util.ScreenUtils;
+
 import xlk.takstar.paperless.R;
 import xlk.takstar.paperless.model.GlobalValue;
 
@@ -19,7 +21,11 @@ public class PopUtil {
     }
 
     public static PopupWindow createHalfPop(View contentView, View parent) {
-        return createPopupWindow(contentView, GlobalValue.half_width, GlobalValue.half_height, parent);
+        return createPopupWindow(contentView, ScreenUtils.getScreenWidth() / 2, ScreenUtils.getScreenHeight() / 2, parent);
+    }
+
+    public static PopupWindow createSmallPop(View contentView, View parent) {
+        return createPopupWindow(contentView, ScreenUtils.getScreenWidth() / 3, ScreenUtils.getScreenHeight() / 3, parent);
     }
 
     /**

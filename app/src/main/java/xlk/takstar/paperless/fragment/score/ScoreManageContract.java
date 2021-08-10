@@ -15,6 +15,11 @@ interface ScoreManageContract {
         void updateScoreSubmitMemberList();
 
         void addFile2List(String filePath, int mediaId);
+
+        void updateExportDirPath(String dirPath);
+
+        void updateOnLineMemberList();
+
     }
 
     interface Presenter extends IBasePresenter {
@@ -23,5 +28,7 @@ interface ScoreManageContract {
         void queryMemberDetailed();
 
         void queryScoreSubmittedScore(int voteId);
+
+        void queryMember();
     }
 }

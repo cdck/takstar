@@ -32,7 +32,11 @@ public class IniUtil {
 
     public static IniUtil getInstance() {
         if (instance == null) {
-            instance = new IniUtil();
+            synchronized (IniUtil.class) {
+                if (instance == null) {
+                    instance = new IniUtil();
+                }
+            }
         }
         return instance;
     }
@@ -44,7 +48,7 @@ public class IniUtil {
             this.file = iniFile;
             return true;
         } catch (IOException e) {
-            LogUtils.e("IniUtil","loadFile异常："+e);
+            LogUtils.e("IniUtil", "loadFile异常：" + e);
             e.printStackTrace();
         }
         return false;
@@ -64,6 +68,8 @@ public class IniUtil {
     public void put(String sectionName, String optionName, Object value) {
         if (file != null) {
             ini.put(sectionName, optionName, value);
+        }else {
+            LogUtils.e("提交失败：ini文件为空");
         }
     }
 
@@ -71,8 +77,9 @@ public class IniUtil {
         if (file != null) {
             try {
                 ini.store(file);
+                LogUtils.i("修改ini文件提交成功");
             } catch (IOException e) {
-                LogUtils.e("IniUtil","store方法提交到ini文件中失败");
+                LogUtils.e("IniUtil", "store方法提交到ini文件中失败");
                 e.printStackTrace();
             }
         }

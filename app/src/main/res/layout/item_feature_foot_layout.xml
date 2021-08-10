@@ -38,6 +38,7 @@
             android:layout_marginStart="2dp"
             android:layout_weight="2"
             android:text="@string/other_feature"
+            android:textSize="@dimen/text_size_medium"
             android:textColor="@drawable/feature_status_textcolor" />
     </LinearLayout>
 </LinearLayout>

@@ -10,5 +10,5 @@
         android:background="@drawable/editbox_background_normal"
         android:lines="1"
         android:singleLine="true"
-        android:textSize="@dimen/text_size_smallest" />
+        android:textSize="@dimen/text_size_small" />
 </RelativeLayout>

@@ -54,7 +54,6 @@ import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_0;
  * @desc
  */
 public class MaterialFragment extends BaseFragment<MaterialPresenter> implements MaterialContract.View, View.OnClickListener {
-    private ImageView welcome_view;
     private LinearLayout content_view;
     private Button btn_upload;
     private Button btn_export;
@@ -82,7 +81,6 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
 
     @Override
     protected void initView(View inflate) {
-        welcome_view = inflate.findViewById(R.id.welcome_view);
         content_view = inflate.findViewById(R.id.content_view);
         btn_upload = inflate.findViewById(R.id.btn_upload);
         btn_export = inflate.findViewById(R.id.btn_export);
@@ -115,14 +113,7 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
     protected void onShow() {
         currentDirId = getArguments().getInt("dirId");
         LogUtils.d(TAG, "目录id=" + currentDirId);
-        if (currentDirId != -1) {
-            welcome_view.setVisibility(View.GONE);
-            content_view.setVisibility(View.VISIBLE);
-            presenter.queryFileByDir(currentDirId);
-        } else {
-            welcome_view.setVisibility(View.VISIBLE);
-            content_view.setVisibility(View.GONE);
-        }
+        presenter.queryFileByDir(currentDirId);
     }
 
     @Override
@@ -154,8 +145,8 @@ public class MaterialFragment extends BaseFragment<MaterialPresenter> implements
                 ToastUtils.showShort(R.string.please_enter_file_name);
                 return;
             }
-            jni.uploadFile(InterfaceMacro.Pb_Upload_Flag.Pb_MEET_UPLOADFLAG_ONLYENDCALLBACK_VALUE,
-                    currentDirId, 0, fileName, file.getParentFile().getAbsolutePath(), 0, Constant.UPLOAD_CHOOSE_FILE);
+            jni.uploadFile(InterfaceMacro.Pb_Upload_Flag.Pb_MEET_UPLOADFLAG_ZERO_VALUE,
+                    currentDirId, 0, fileName, file.getAbsolutePath(), 0, Constant.UPLOAD_CHOOSE_FILE);
             dialog.dismiss();
         });
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());

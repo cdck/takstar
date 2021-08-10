@@ -253,7 +253,7 @@
                     android:layout_height="match_parent"
                     android:gravity="top|start"
                     android:padding="2dp"
-                    android:textSize="@dimen/text_size_small"
+                    android:textSize="@dimen/text_size_normal"
                     tools:text="速度快放假了快速点击" />
             </RelativeLayout>
         </LinearLayout>

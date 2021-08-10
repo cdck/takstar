@@ -29,5 +29,7 @@ public interface VoteManageContract {
         void queryMember();
 
         void querySubmittedVoters(InterfaceVote.pbui_Item_MeetVoteDetailInfo vote, boolean details);
+
+        void setIsVote(boolean isVote);
     }
 }

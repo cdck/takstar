@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:textSize="@dimen/text_size_normal"
         app:layout_constraintStart_toEndOf="@+id/item_iv"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="参会人【16:40】" />
@@ -38,6 +39,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/chat_left_msg"
             android:gravity="start|center_vertical"
+            android:textSize="@dimen/text_size_normal"
             tools:text="收到了看风景盛开的积分" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

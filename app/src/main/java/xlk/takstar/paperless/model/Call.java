@@ -6,6 +6,7 @@ import com.mogujie.tt.protobuf.InterfaceMacro;
 
 import org.greenrobot.eventbus.EventBus;
 
+import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.util.LogUtil;
 
 import static xlk.takstar.paperless.App.lbm;
@@ -86,7 +87,7 @@ public class Call {
             {
                 switch (type) {
                     case 2:
-                        return GlobalValue.screen_width;
+                        return App.width;
                     case 3:
                         return GlobalValue.camera_width;
                 }
@@ -96,7 +97,7 @@ public class Call {
             {
                 switch (type) {
                     case 2:
-                        return GlobalValue.screen_height;
+                        return App.height;
                     case 3:
                         return GlobalValue.camera_height;
                 }

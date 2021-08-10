@@ -25,6 +25,7 @@
         android:layout_gravity="center"
         android:layout_weight="7"
         android:gravity="center"
-        android:textSize="12sp"
+        android:textColor="@color/text_color_black"
+        android:textSize="@dimen/text_size_normal"
         tools:text="的李开复" />
 </LinearLayout>

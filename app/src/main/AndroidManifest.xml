@@ -25,6 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="LockedOrientationActivity">
+        <activity android:name=".ErrorActivity"></activity>
         <activity
             android:name=".launch.LaunchActivity"
             android:screenOrientation="landscape">
@@ -43,7 +44,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape" />
-
         <activity
             android:name=".video.VideoActivity"
             android:launchMode="singleTop"
@@ -79,7 +79,7 @@
             android:value="960" />
         <meta-data
             android:name="design_height_in_dp"
-            android:value="1280" />
+            android:value="540" />
     </application>
 
 </manifest>

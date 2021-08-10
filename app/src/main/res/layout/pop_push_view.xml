@@ -37,12 +37,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_normal"
                     android:text="@string/member" />
 
                 <CheckBox
                     android:id="@+id/pop_push_member_cb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_normal"
                     tools:text="全选（3）" />
             </LinearLayout>
 
@@ -75,12 +77,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_normal"
                     android:text="@string/projector" />
 
                 <CheckBox
                     android:id="@+id/pop_push_projection_cb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_normal"
                     tools:text="全选（3）" />
             </LinearLayout>
 

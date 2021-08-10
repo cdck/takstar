@@ -1,12 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--  item布局的高度  -->
+    <dimen name="item_view_height">25dp</dimen>
+    <!--  悬浮窗顶部栏高度  -->
+    <dimen name="pop_top_view_height">30dp</dimen>
+    <!--  悬浮窗底部栏高度  -->
+    <dimen name="pop_bottom_view_height">40dp</dimen>
+
     <!--  按钮的宽高  -->
     <dimen name="button_width">60dp</dimen>
     <dimen name="button_height">25dp</dimen>
     <!--  字体大小  -->
-    <dimen name="text_size_large">24sp</dimen>
-    <dimen name="text_size_big">18sp</dimen>
-    <dimen name="text_size_medium">14sp</dimen>
-    <dimen name="text_size_small">12sp</dimen>
-    <dimen name="text_size_smallest">10sp</dimen>
+    <dimen name="text_size_large">16sp</dimen>
+    <dimen name="text_size_big">14sp</dimen>
+    <dimen name="text_size_medium">12sp</dimen>
+    <dimen name="text_size_normal">10sp</dimen>
+    <dimen name="text_size_small">8sp</dimen>
+
+    <!--  PopupWindow标题文本的字体大小  -->
+    <dimen name="text_size_pop_title">12sp</dimen>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Margin for restart button -->
+    <dimen name="restart_button_margin">16dp</dimen>
+
 </resources>

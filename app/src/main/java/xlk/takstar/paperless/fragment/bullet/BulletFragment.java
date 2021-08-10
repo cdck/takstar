@@ -3,6 +3,7 @@ package xlk.takstar.paperless.fragment.bullet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ public class BulletFragment extends BaseFragment<BulletPresenter> implements Bul
     private RecyclerView rv_bullet;
     private BulletAdapter bulletAdapter;
     private PopupWindow bulletPop;
+    private Button btn_launch, btn_stop, btn_modify, btn_delete;
 
     @Override
     protected int getLayoutId() {
@@ -44,10 +46,14 @@ public class BulletFragment extends BaseFragment<BulletPresenter> implements Bul
     @Override
     protected void initView(View inflate) {
         rv_bullet = inflate.findViewById(R.id.rv_bullet);
-        inflate.findViewById(R.id.btn_launch).setOnClickListener(this);
-        inflate.findViewById(R.id.btn_stop).setOnClickListener(this);
-        inflate.findViewById(R.id.btn_modify).setOnClickListener(this);
-        inflate.findViewById(R.id.btn_delete).setOnClickListener(this);
+        btn_launch = inflate.findViewById(R.id.btn_launch);
+        btn_launch.setOnClickListener(this);
+        btn_stop = inflate.findViewById(R.id.btn_stop);
+        btn_stop.setOnClickListener(this);
+        btn_modify = inflate.findViewById(R.id.btn_modify);
+        btn_modify.setOnClickListener(this);
+        btn_delete = inflate.findViewById(R.id.btn_delete);
+        btn_delete.setOnClickListener(this);
     }
 
     @Override
@@ -62,6 +68,11 @@ public class BulletFragment extends BaseFragment<BulletPresenter> implements Bul
 
     @Override
     protected void initial() {
+        boolean isManage = getArguments().getBoolean("isManage");
+        btn_launch.setVisibility(isManage ? View.VISIBLE : View.GONE);
+        btn_stop.setVisibility(isManage ? View.VISIBLE : View.GONE);
+        btn_modify.setVisibility(isManage ? View.VISIBLE : View.GONE);
+        btn_delete.setVisibility(isManage ? View.VISIBLE : View.GONE);
         presenter.queryBullet();
     }
 

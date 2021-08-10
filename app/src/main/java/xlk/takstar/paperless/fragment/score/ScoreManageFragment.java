@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.PopupWindow;
@@ -21,6 +22,8 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.protobuf.ByteString;
 import com.mogujie.tt.protobuf.InterfaceFilescorevote;
 import com.mogujie.tt.protobuf.InterfaceMacro;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,11 +41,14 @@ import xlk.takstar.paperless.adapter.UploadFileAdapter;
 import xlk.takstar.paperless.adapter.WmScreenMemberAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
 import xlk.takstar.paperless.model.Constant;
+import xlk.takstar.paperless.model.EventMessage;
+import xlk.takstar.paperless.model.EventType;
+import xlk.takstar.paperless.model.bean.PdfRateInfo;
 import xlk.takstar.paperless.model.bean.ScoreFileBean;
 import xlk.takstar.paperless.ui.RvItemDecoration;
 import xlk.takstar.paperless.util.DialogUtil;
 import xlk.takstar.paperless.util.FileUtil;
-import xlk.takstar.paperless.util.JxlUtil;
+import xlk.takstar.paperless.util.PdfUtil;
 import xlk.takstar.paperless.util.PopUtil;
 import xlk.takstar.paperless.util.ToastUtil;
 
@@ -60,6 +66,10 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
     List<ScoreFileBean> uploadFiles = new ArrayList<>();
     private UploadFileAdapter uploadFileAdapter;
     private ScoreSubmitMemberAdapter scoreSubmitMemberAdapter;
+    private boolean isManage;
+    private Button btn_launch, btn_stop, btn_add;
+    private EditText edt_save_address;
+    private WmScreenMemberAdapter memberAdapter;
 
     @Override
     protected int getLayoutId() {
@@ -70,7 +80,8 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
     protected void initView(View inflate) {
         rvScore = inflate.findViewById(R.id.rv_score);
         //发起
-        inflate.findViewById(R.id.btn_launch).setOnClickListener(v -> {
+        btn_launch = inflate.findViewById(R.id.btn_launch);
+        btn_launch.setOnClickListener(v -> {
             if (scoreAdapter != null) {
                 InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore selectedScore = scoreAdapter.getSelectedScore();
                 if (selectedScore != null) {
@@ -106,7 +117,8 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
             }
         });
         //停止
-        inflate.findViewById(R.id.btn_stop).setOnClickListener(v -> {
+        btn_stop = inflate.findViewById(R.id.btn_stop);
+        btn_stop.setOnClickListener(v -> {
             if (scoreAdapter != null) {
                 InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore selectedScore = scoreAdapter.getSelectedScore();
                 if (selectedScore != null) {
@@ -135,7 +147,8 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
             viewFileScore(item);
         });
         //添加
-        inflate.findViewById(R.id.btn_add).setOnClickListener(v -> {
+        btn_add = inflate.findViewById(R.id.btn_add);
+        btn_add.setOnClickListener(v -> {
             showAddPop();
         });
     }
@@ -156,7 +169,7 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
         int width = meet_fl.getWidth();
         int height = meet_fl.getHeight();
         int width1 = meet_left_ll.getWidth();
-        PopupWindow pop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rvScore, Gravity.CENTER, width1 / 2, 0);
+        PopupWindow pop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 3 / 4, rvScore, Gravity.CENTER, width1 / 2, 0);
 
         TextView tv_content = inflate.findViewById(R.id.tv_content);
         tv_content.setText(item.getContent().toStringUtf8());
@@ -214,7 +227,55 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
         inflate.findViewById(R.id.iv_close).setOnClickListener(v -> pop.dismiss());
         inflate.findViewById(R.id.btn_cancel).setOnClickListener(v -> pop.dismiss());
         inflate.findViewById(R.id.btn_export).setOnClickListener(v -> {
-            JxlUtil.exportSingleScoreResult(item);
+            if (presenter.scoreMembers.isEmpty()) {
+                ToastUtil.showShort(R.string.no_data_to_export);
+                return;
+            }
+            showExportFilePop(new PdfRateInfo(fileName, item, presenter.scoreMembers));
+            pop.dismiss();
+        });
+    }
+
+    @Override
+    public void updateExportDirPath(String dirPath) {
+        if (edt_save_address != null) {
+            edt_save_address.setText(dirPath);
+            edt_save_address.setSelection(dirPath.length());
+        }
+    }
+
+    private void showExportFilePop(PdfRateInfo pdfRateInfo) {
+        View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_export_config, null);
+        View ll_content = getActivity().findViewById(R.id.meet_fl);
+        View rv_navigation = getActivity().findViewById(R.id.meet_left_ll);
+        int width = ll_content.getWidth();
+        int height = ll_content.getHeight();
+        int width1 = rv_navigation.getWidth();
+        PopupWindow pop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rvScore, Gravity.CENTER, width1 / 2, 0);
+        EditText edt_file_name = inflate.findViewById(R.id.edt_file_name);
+        TextView tv_suffix = inflate.findViewById(R.id.tv_suffix);
+        tv_suffix.setText(".pdf");
+        edt_save_address = inflate.findViewById(R.id.edt_save_address);
+        edt_save_address.setKeyListener(null);
+        edt_save_address.setText(Constant.export_dir);
+        edt_save_address.setSelection(Constant.export_dir.length());
+        inflate.findViewById(R.id.btn_choose_dir).setOnClickListener(v -> {
+            String currentDirPath = edt_save_address.getText().toString().trim();
+            if (currentDirPath.isEmpty()) {
+                currentDirPath = Constant.root_dir;
+            }
+            EventBus.getDefault().post(new EventMessage.Builder().type(EventType.CHOOSE_DIR_PATH).objects(Constant.CHOOSE_DIR_TYPE_EXPORT_SOCRE_RESULT, currentDirPath).build());
+        });
+        inflate.findViewById(R.id.iv_close).setOnClickListener(v -> pop.dismiss());
+        inflate.findViewById(R.id.btn_cancel).setOnClickListener(v -> pop.dismiss());
+        inflate.findViewById(R.id.btn_define).setOnClickListener(v -> {
+            String fileName = edt_file_name.getText().toString().trim();
+            String addr = edt_save_address.getText().toString().trim();
+            if (fileName.isEmpty() || addr.isEmpty()) {
+                ToastUtil.showShort(R.string.please_enter_file_name_and_addr);
+                return;
+            }
+            PdfUtil.exportScore(addr, fileName, pdfRateInfo);
             pop.dismiss();
         });
     }
@@ -326,6 +387,12 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
 
     @Override
     protected void initial() {
+        isManage = getArguments().getBoolean("isManage");
+        btn_launch.setVisibility(isManage ? View.VISIBLE : View.GONE);
+        btn_stop.setVisibility(isManage ? View.VISIBLE : View.GONE);
+        btn_add.setVisibility(isManage ? View.VISIBLE : View.GONE);
+
+        presenter.queryMember();
         presenter.queryMemberDetailed();
         presenter.queryScore();
         uploadFileAdapter = new UploadFileAdapter(uploadFiles);
@@ -347,6 +414,13 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
         }
     }
 
+    @Override
+    public void updateOnLineMemberList() {
+        if (memberAdapter != null) {
+            memberAdapter.notifyDataSetChanged();
+        }
+    }
+
     private void showChooseOnLineMemberDialog(InterfaceFilescorevote.pbui_Type_Item_UserDefineFileScore item, int voteflag) {
         View inflate = LayoutInflater.from(getContext()).inflate(R.layout.pop_online_member, null, false);
         View meet_fl = getActivity().findViewById(R.id.meet_fl);
@@ -357,15 +431,12 @@ public class ScoreManageFragment extends BaseFragment<ScoreManagePresenter> impl
         PopupWindow memberPop = PopUtil.createPopupWindow(inflate, width * 2 / 3, height * 2 / 3, rvScore, Gravity.CENTER, width1 / 2, 0);
         CheckBox cb_all = inflate.findViewById(R.id.cb_all);
         RecyclerView rv_member = inflate.findViewById(R.id.rv_member);
-        WmScreenMemberAdapter memberAdapter = new WmScreenMemberAdapter(R.layout.item_wm_screen, presenter.onlineMembers);
+        memberAdapter = new WmScreenMemberAdapter(R.layout.item_wm_screen, presenter.onlineMembers);
         rv_member.setLayoutManager(new LinearLayoutManager(getContext()));
         rv_member.setAdapter(memberAdapter);
-        memberAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
-                memberAdapter.choose(presenter.onlineMembers.get(position).getDeviceDetailInfo().getDevcieid());
-                cb_all.setChecked(memberAdapter.isChooseAll());
-            }
+        memberAdapter.setOnItemClickListener((adapter, view, position) -> {
+            memberAdapter.choose(presenter.onlineMembers.get(position).getDeviceDetailInfo().getDevcieid());
+            cb_all.setChecked(memberAdapter.isChooseAll());
         });
         cb_all.setOnClickListener(v -> {
             boolean checked = cb_all.isChecked();

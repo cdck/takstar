@@ -44,6 +44,9 @@ public class LaunchActivity extends AppCompatActivity {
                     @Override
                     public void hasPermission(List<String> permissions, boolean all) {
                         if (all) {
+                            FileUtils.createOrExistsDir(Constant.file_dir);
+                            FileUtils.createOrExistsDir(Constant.download_dir);
+                            FileUtils.createOrExistsDir(Constant.export_dir);
                             initConfigFile();
                         }
                     }

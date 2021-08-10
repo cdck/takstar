@@ -36,8 +36,10 @@ import xlk.takstar.paperless.model.JniHelper;
 import xlk.takstar.paperless.model.WpsModel;
 import xlk.takstar.paperless.util.FileUtil;
 import xlk.takstar.paperless.util.LogUtil;
+import xlk.takstar.paperless.util.ToastUtil;
 import xlk.takstar.paperless.video.VideoActivity;
 
+import static xlk.takstar.paperless.App.backServiceIsOpen;
 import static xlk.takstar.paperless.fragment.draw.DrawFragment.disposePicOpermemberid;
 import static xlk.takstar.paperless.fragment.draw.DrawFragment.disposePicSrcmemid;
 import static xlk.takstar.paperless.fragment.draw.DrawFragment.disposePicSrcwbidd;
@@ -64,6 +66,7 @@ public class BackService extends Service {
     public void onCreate() {
         super.onCreate();
         LogUtil.i(TAG, "onCreate ");
+        backServiceIsOpen = true;
         EventBus.getDefault().register(this);
     }
 
@@ -71,12 +74,24 @@ public class BackService extends Service {
     public void onDestroy() {
         super.onDestroy();
         LogUtil.i(TAG, "onDestroy ");
+        backServiceIsOpen = false;
         EventBus.getDefault().unregister(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBusEvent(EventMessage msg) throws InvalidProtocolBufferException {
         switch (msg.getType()) {
+            case EventType.BUS_TOAST_MESSAGE: {
+                String message = (String) msg.getObjects()[0];
+                LogUtils.i("弹出提示：" + message);
+                ToastUtil.showLong(message);
+                break;
+            }
+            case EventType.BUS_EXPORT_SUCCESSFUL: {
+                String filePath = (String) msg.getObjects()[0];
+                ToastUtil.showLong(getString(R.string.export_successful_, filePath));
+                break;
+            }
             //平台下载
             case InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_DOWNLOAD_VALUE: {
                 downloadInform(msg);
@@ -176,13 +191,11 @@ public class BackService extends Service {
         int status = uploadPosCb.getStatus();
         int mediaId = uploadPosCb.getMediaId();
         int per = uploadPosCb.getPer();
-//        int uploadflag = uploadPosCb.getUploadflag();
-//        int userval = uploadPosCb.getUserval();
         byte[] bytes = jni.queryFileProperty(InterfaceMacro.Pb_MeetFilePropertyID.Pb_MEETFILE_PROPERTY_NAME.getNumber(), mediaId);
         InterfaceBase.pbui_CommonTextProperty pbui_commonTextProperty = InterfaceBase.pbui_CommonTextProperty.parseFrom(bytes);
         String fileName = pbui_commonTextProperty.getPropertyval().toStringUtf8();
         LogUtil.i(TAG, "uploadInform -->" + "上传进度：" + per + "\npathName= " + pathName);
-        if (status == InterfaceMacro.Pb_Upload_State.Pb_UPLOADMEDIA_FLAG_HADEND_VALUE) {
+         if (status == InterfaceMacro.Pb_Upload_State.Pb_UPLOADMEDIA_FLAG_HADEND_VALUE) {
             //结束上传
             if (userStr.equals(Constant.UPLOAD_DRAW_PIC)) {
                 //从画板上传的图片
@@ -298,7 +311,7 @@ public class BackService extends Service {
             filter.addAction(WpsModel.Reciver.ACTION_SAVE);
             filter.addAction(WpsModel.Reciver.ACTION_CLOSE);
             filter.addAction(WpsModel.Reciver.ACTION_HOME);
-//            filter.addAction(WpsModel.Reciver.ACTION_BACK);
+            filter.addAction(WpsModel.Reciver.ACTION_BACK);
             registerReceiver(receiver, filter);
         }
     }

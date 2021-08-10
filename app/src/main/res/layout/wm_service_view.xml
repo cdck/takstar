@@ -169,7 +169,7 @@
             android:lines="1"
             android:singleLine="true"
             android:background="@drawable/editbox_background_normal"
-            android:textSize="@dimen/text_size_small"
+            android:textSize="@dimen/text_size_normal"
             tools:text="是大立科技" />
 
         <Button

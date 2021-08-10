@@ -7,6 +7,7 @@ import com.mogujie.tt.protobuf.InterfaceMacro;
 
 import java.math.BigDecimal;
 
+import xlk.takstar.paperless.App;
 import xlk.takstar.paperless.R;
 
 import static xlk.takstar.paperless.model.GlobalValue.hasAllPermission;
@@ -19,12 +20,10 @@ import static xlk.takstar.paperless.model.GlobalValue.screen_width;
  */
 public class Constant {
     public static final String root_dir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/TakstarPaperless/";
-    public static final String logcat_dir = root_dir + "myLog";
+    public static final String logcat_dir = root_dir + "MyLog";
     public static final String file_dir = root_dir + "文件/";
     public static final String download_dir = file_dir + "下载文件/";
     public static final String export_dir = file_dir + "导出文件/";
-    public static final String export_vote_dir = export_dir + "导出投票/";
-    public static final String export_election_dir = export_dir + "导出选举/";
 
     /**
      * 各个界面的背景图和logo图标
@@ -172,11 +171,16 @@ public class Constant {
     /**
      * 导出投票信息文件目录
      */
-    public static final int CHOOSE_DIR_TYPE_EXPORT_VOTE = 2;
+    public static final int CHOOSE_DIR_TYPE_PAGE_VOTE_MANAGE = 2;
     /**
-     * 导出某个投票的提交人信息
+     * 导出评分信息为PDF
      */
-    public static final int CHOOSE_DIR_TYPE_EXPORT_VOTE_SUBMIT = 3;
+    public static final int CHOOSE_DIR_TYPE_EXPORT_SOCRE_RESULT = 3;
+    /**
+     * 保存会议笔记
+     */
+    public static final int CHOOSE_DIR_TYPE_SAVE_NOTE = 4;
+
 
     public static final int RESOURCE_ID_0 = 0;
     public static final int RESOURCE_ID_1 = 1;
@@ -189,33 +193,32 @@ public class Constant {
     public static final int SCREEN_SUB_ID = 2;
     public static final int CAMERA_SUB_ID = 3;
 
-
-    //自定义其它功能的功能码
-
-    public static final int FUN_CODE = 200000;
-    public static final int FUN_CODE_TERMINAL = FUN_CODE + 1;
-    public static final int FUN_CODE_VOTE = FUN_CODE + 2;
-    public static final int FUN_CODE_ELECTION = FUN_CODE + 3;
-    public static final int FUN_CODE_VIDEO = FUN_CODE + 4;
-    public static final int FUN_CODE_SCREEN = FUN_CODE + 5;
-    public static final int FUN_CODE_BULLETIN = FUN_CODE + 6;
-    public static final int FUN_CODE_SCORE = FUN_CODE + 7;
     /**
-     * 后台控制端
+     * 自定义的会议功能（会前设置-会议功能模块中使用，与安卓参会人端匹配）
      */
-    //系统设置
-    public static final int admin_system_settings = FUN_CODE + 8;
-    public static final int equipment_management = FUN_CODE + 9;
-    public static final int meeting_room_management = FUN_CODE + 10;
-    public static final int seat_arrangement = FUN_CODE + 11;
-    public static final int secretary_management = FUN_CODE + 12;
-    public static final int commonly_participant = FUN_CODE + 13;
-    public static final int other_setting = FUN_CODE + 14;
-    //会议预约
-    public static final int admin_meeting_reservation = FUN_CODE + 15;
-    public static final int admin_before_meeting = FUN_CODE + 10;
-    public static final int admin_current_meeting = FUN_CODE + 11;
-    public static final int admin_after_meeting = FUN_CODE + 12;
+    public static final int function_code_agenda = 0;//会议议程
+    public static final int function_code_material = 1;//会议资料
+    public static final int function_code_annotation = 2;//批注查看
+    public static final int function_code_chat = 3;//互动交流
+    public static final int function_code_video = 4;//视频直播
+    public static final int function_code_board = 5;//电子白板
+    public static final int function_code_web = 6;//网页浏览
+    public static final int function_code_rate = 7;//评分查看
+    public static final int function_code_bulletin = 8;//公告查看
+    public static final int function_code_vote = 9;//投票查看
+    public static final int function_code_election = 10;//选举查看
+    /**
+     * 自定义其它功能的功能码
+     */
+    public static final int FUN_CODE = 200000;
+    public static final int FUN_CODE_TERMINAL = FUN_CODE + 1;//终端控制
+    public static final int FUN_CODE_VOTE = FUN_CODE + 2;//投票管理
+    public static final int FUN_CODE_ELECTION = FUN_CODE + 3;//选举管理
+    public static final int FUN_CODE_VIDEO = FUN_CODE + 4;//视频控制
+    public static final int FUN_CODE_SCREEN = FUN_CODE + 5;//屏幕管理
+    public static final int FUN_CODE_BULLETIN = FUN_CODE + 6;//公告管理
+    public static final int FUN_CODE_SCORE = FUN_CODE + 7;//评分管理
+    public static final int FUN_CODE_SIGN = FUN_CODE + 8;//签到信息
 
     /**
      * 发起播放的类型
@@ -523,6 +526,10 @@ public class Constant {
             default:
                 return context.getString(R.string.vote_type_single);
         }
+    }
+
+    public static String getVoteState(int votestate) {
+        return getVoteState(App.appContext, votestate);
     }
 
     public static String getVoteState(Context context, int votestate) {

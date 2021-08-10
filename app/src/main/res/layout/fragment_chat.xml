@@ -24,7 +24,7 @@
             android:background="@drawable/shape_rect_gray"
             android:drawableStart="@drawable/ic_group"
             android:gravity="center"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_medium"
             android:paddingStart="10dp"
             tools:text="人民代表大会" />
 
@@ -51,6 +51,7 @@
             android:layout_gravity="center"
             android:background="@drawable/shape_rect_gray"
             android:gravity="center"
+            android:textSize="@dimen/text_size_medium"
             tools:text="参会者：王某某" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -105,16 +106,17 @@
                 android:background="@drawable/shape_edt_white"
                 android:gravity="start|top"
                 android:padding="2dp"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_size_normal"
                 tools:text="上课来得及弗兰克是" />
 
             <Button
                 android:id="@+id/btn_send"
-                android:layout_width="60dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="@dimen/button_height"
                 android:layout_gravity="end"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="10dp"
+                android:textSize="@dimen/text_size_normal"
                 android:background="@drawable/shape_send_btn"
                 android:text="@string/send" />
         </LinearLayout>

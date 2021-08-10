@@ -20,6 +20,7 @@ import com.tencent.smtt.sdk.TbsDownloader;
 import com.tencent.smtt.sdk.TbsListener;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,10 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import cat.ereza.customactivityoncrash.CustomActivityOnCrash;
+import cat.ereza.customactivityoncrash.config.CaocConfig;
 import xlk.takstar.paperless.fragment.agenda.AgendaFragment;
+import xlk.takstar.paperless.launch.LaunchActivity;
 import xlk.takstar.paperless.main.MainActivity;
 import xlk.takstar.paperless.meet.MeetingActivity;
 import xlk.takstar.paperless.model.Constant;
@@ -97,7 +101,7 @@ public class App extends Application {
         super.onCreate();
         System.out.println("程序创建的时候执行");
         appContext = this;
-        CrashHandler.getInstance().init(this);
+//        CrashHandler.getInstance().init(this);
         LogUtils.Config config = LogUtils.getConfig();
         config.setLog2FileSwitch(true);
         config.setDir(Constant.logcat_dir);
@@ -122,9 +126,6 @@ public class App extends Application {
             public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
                 activities.add(activity);
                 LogUtil.d("activityLife", "onActivityCreated " + activity + ",Activity数量=" + activities.size() + logAxt());
-                if (activity.getClass().getName().equals(MeetingActivity.class.getName())) {
-                    openFabService(true);
-                }
                 if (activity.getClass().getName().equals(MainActivity.class.getName())) {
                     //进入到MainActivity证明已经获取到权限了
                     loadX5();
@@ -141,6 +142,10 @@ public class App extends Application {
             public void onActivityResumed(@NonNull Activity activity) {
                 LogUtil.i("activityLife", "onActivityResumed " + activity);
                 currentActivity = activity;
+                openBackService(true);
+                if (activity.getClass().getName().equals(MeetingActivity.class.getName())) {
+                    openFabService(true);
+                }
             }
 
             @Override
@@ -171,6 +176,43 @@ public class App extends Application {
                 }
             }
         });
+
+
+        //防止项目崩溃，崩溃后打开错误界面
+        CaocConfig.Builder.create()
+                //程序在后台时，发生崩溃的三种处理方式
+                //BackgroundMode.BACKGROUND_MODE_SHOW_CUSTOM: //当应用程序处于后台时崩溃，也会启动错误页面，
+                //BackgroundMode.BACKGROUND_MODE_CRASH:      //当应用程序处于后台崩溃时显示默认系统错误（一个系统提示的错误对话框），
+                //BackgroundMode.BACKGROUND_MODE_SILENT:     //当应用程序处于后台时崩溃，默默地关闭程序！
+                .backgroundMode(CaocConfig.BACKGROUND_MODE_SILENT) //default: CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM
+                .enabled(true)//是否启用CustomActivityOnCrash崩溃拦截机制 必须启用！不然集成这个库干啥？？？
+                .showErrorDetails(true) //是否必须显示包含错误详细信息的按钮 default: true
+                .showRestartButton(true) //是否必须显示“重新启动应用程序”按钮或“关闭应用程序”按钮default: true
+                .logErrorOnRestart(true) //是否必须重新堆栈堆栈跟踪 default: true
+                .trackActivities(true) //是否必须跟踪用户访问的活动及其生命周期调用 default: false
+                .minTimeBetweenCrashesMs(2000) //应用程序崩溃之间必须经过的时间 default: 3000
+                .restartActivity(LaunchActivity.class) // 重启的activity
+                .errorActivity(ErrorActivity.class) //发生错误跳转的activity
+                .eventListener(new ErrActEventListener())
+                .apply();
+    }
+
+    private static class ErrActEventListener implements CustomActivityOnCrash.EventListener {
+
+        @Override
+        public void onLaunchErrorActivity() {
+            LogUtils.e("onLaunchErrorActivity");
+        }
+
+        @Override
+        public void onRestartAppFromErrorActivity() {
+            LogUtils.e("onRestartAppFromErrorActivity");
+        }
+
+        @Override
+        public void onCloseAppFromErrorActivity() {
+            LogUtils.e("onCloseAppFromErrorActivity");
+        }
     }
 
     private String logAxt() {
@@ -275,7 +317,7 @@ public class App extends Application {
     }
 
     private Intent fabService;
-    private boolean fabServiceIsOpen;
+    public static boolean fabServiceIsOpen;
 
     private void openFabService(boolean open) {
         if (open && !fabServiceIsOpen) {
@@ -283,12 +325,10 @@ public class App extends Application {
                 fabService = new Intent(this, FabService.class);
             }
             startService(fabService);
-            fabServiceIsOpen = true;
             LogUtil.d(TAG, "openFabService --> 打开悬浮窗服务");
         } else if (!open && fabServiceIsOpen) {
             if (fabService != null) {
                 stopService(fabService);
-                fabServiceIsOpen = false;
                 LogUtil.d(TAG, "openFabService --> 关闭悬浮窗服务");
             } else {
                 LogUtil.d(TAG, "openFabService --> fabService为空，不需要关闭");
@@ -297,7 +337,7 @@ public class App extends Application {
     }
 
     private Intent backService;
-    private boolean backServiceIsOpen;
+    public static boolean backServiceIsOpen;
 
     private void openBackService(boolean open) {
         if (open && !backServiceIsOpen) {
@@ -305,12 +345,10 @@ public class App extends Application {
                 backService = new Intent(this, BackService.class);
             }
             startService(backService);
-            backServiceIsOpen = true;
             LogUtil.d(TAG, "openBackService --> 打开后台服务");
         } else if (!open && backServiceIsOpen) {
             if (backService != null) {
                 stopService(backService);
-                backServiceIsOpen = false;
                 LogUtil.d(TAG, "openBackService --> 关闭后台服务");
             } else {
                 LogUtil.d(TAG, "openBackService --> backService为空，不需要关闭");
@@ -318,7 +356,7 @@ public class App extends Application {
         }
     }
 
-    public static int width, height, dpi, maxBitRate = 500 * 1000;
+    public static int width, height, dpi, maxBitRate = 1000 * 1000;
     private ScreenRecorder recorder;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {

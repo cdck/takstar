@@ -17,27 +17,27 @@
         <!-- 默认 EditView 输入框字体的颜色 -->
         <item name="android:editTextColor">@color/normal_text_color</item>
         <!-- 默认 EditView 字体大小 -->
-<!--        <item name="android:textSize">@dimen/text_size_small</item>-->
+        <item name="android:textSize">@dimen/text_size_normal</item>
         <!-- 默认 标题字体大小 -->
-<!--        <item name="titleTextColor">@color/title_text_color</item>-->
+        <!--        <item name="titleTextColor">@color/title_text_color</item>-->
         <!-- 底部虚拟导航栏颜色 -->
-<!--        <item name="android:navigationBarColor">#E91E63</item>-->
+        <!--        <item name="android:navigationBarColor">#E91E63</item>-->
         <!-- 让底部导航栏变半透明灰色，覆盖在Activity之上（默认false，activity会居于底部导航栏顶部），如果设为true，navigationBarColor 失效 -->
-<!--        <item name="android:windowTranslucentNavigation">true</item>-->
+        <!--        <item name="android:windowTranslucentNavigation">true</item>-->
         <!-- RadioButton checkbox等控件的文字 -->
-<!--        <item name="android:textColorPrimaryDisableOnly">#1C71A9</item>-->
+        <!--        <item name="android:textColorPrimaryDisableOnly">#1C71A9</item>-->
         <!-- 应用的主要文字颜色,actionBar的标题文字默认使用该颜色 -->
-<!--        <item name="android:textColorPrimary">#FFFFFF</item>-->
+        <!--        <item name="android:textColorPrimary">#FFFFFF</item>-->
         <!-- 辅助的文字颜色，一般比textColorPrimary的颜色弱一点，用于一些弱化的表示 -->
-<!--        <item name="android:textColorSecondary">#C1C1C1</item>-->
+        <!--        <item name="android:textColorSecondary">#C1C1C1</item>-->
         <!-- 控件选中时的颜色,默认使用colorAccent -->
-<!--        <item name="android:colorControlActivated">#FF7F50</item>-->
+        <!--        <item name="android:colorControlActivated">#FF7F50</item>-->
         <!-- 控件按压时的色调-->
-<!--        <item name="android:colorControlHighlight">#FF00FF</item>-->
+        <!--        <item name="android:colorControlHighlight">#FF00FF</item>-->
         <!-- CheckBox,RadioButton,SwitchCompat等默认状态的颜色 -->
-<!--        <item name="android:colorControlNormal">#FFD700</item>-->
+        <!--        <item name="android:colorControlNormal">#FFD700</item>-->
         <!-- 默认按钮的背景颜色 -->
-<!--        <item name="android:colorButtonNormal">#1C71A9</item>-->
+        <!--        <item name="android:colorButtonNormal">#1C71A9</item>-->
     </style>
 
     <!-- 主题：摄像头CameraActivity使用 -->
@@ -57,7 +57,7 @@
 
     <!--  默认按钮样式 矩形：黑框->蓝底->绿底  -->
     <style name="button_default_style">
-        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textSize">@dimen/text_size_normal</item>
         <item name="android:layout_width">@dimen/button_width</item>
         <item name="android:layout_height">@dimen/button_height</item>
         <item name="android:background">@drawable/shape_btn_status1_bg</item>
@@ -66,7 +66,7 @@
 
     <!-- 矩形 蓝框->蓝底->绿底  -->
     <style name="button_blue_rect_style">
-        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textSize">@dimen/text_size_normal</item>
         <item name="android:layout_width">@dimen/button_width</item>
         <item name="android:layout_height">@dimen/button_height</item>
         <item name="android:background">@drawable/shape_btn_status2_bg</item>
@@ -75,7 +75,7 @@
 
     <!-- 圆角 蓝底->白底 radius=2  -->
     <style name="button_style_rect_blue_white_radius2">
-        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textSize">@dimen/text_size_normal</item>
         <item name="android:layout_width">@dimen/button_width</item>
         <item name="android:layout_height">@dimen/button_height</item>
         <item name="android:background">@drawable/shape_btn_blue_white1</item>
@@ -84,16 +84,25 @@
 
     <!--圆角 蓝底->白底 radius=10-->
     <style name="button_style_rect_blue_white_radius10">
-        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textSize">@dimen/text_size_normal</item>
         <item name="android:layout_width">@dimen/button_width</item>
         <item name="android:layout_height">@dimen/button_height</item>
         <item name="android:background">@drawable/shape_btn_blue_white</item>
         <item name="android:textColor">@drawable/text_color_white_blue_pressed</item>
     </style>
 
+    <style name="file_button_style">
+        <item name="android:textSize">@dimen/text_size_normal</item>
+        <item name="android:layout_width">@dimen/button_width</item>
+        <item name="android:layout_height">@dimen/button_height</item>
+        <item name="android:background">@drawable/file_button_status</item>
+        <item name="android:textColor">@drawable/text_color_white_blue_pressed</item>
+
+    </style>
+
     <!--  投票状态：已发起，已完成...  -->
     <style name="vote_state_btn">
-        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textSize">@dimen/text_size_normal</item>
         <item name="android:layout_width">@dimen/button_width</item>
         <item name="android:layout_height">@dimen/button_height</item>
         <item name="android:background">@drawable/shape_vote_state_btn</item>

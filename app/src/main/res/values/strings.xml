@@ -59,6 +59,21 @@
     <string name="role_hosts_">主持人：</string>
     <string name="role_secretary_">秘书：</string>
     <string name="role_manager_">管理员：</string>
+
+
+    <string name="function_meeting_agenda">会议议程</string>
+    <string name="function_meeting_material">会议资料</string>
+    <string name="function_meeting_annotation">批注查看</string>
+    <string name="function_meeting_chat">互动交流</string>
+    <string name="function_meeting_live_video">视频直播</string>
+    <string name="function_meeting_art_board">电子白板</string>
+    <string name="function_meeting_web_browsing">网页浏览</string>
+    <string name="function_meeting_sign_in">签到信息</string>
+    <string name="function_rate_view">评分查看</string>
+    <string name="function_bulletin_view">公告查看</string>
+    <string name="function_vote_view">投票查看</string>
+    <string name="function_election_view">选举查看</string>
+
     <string name="other_feature">其它功能</string>
     <string name="meeting_agenda">会议议程</string>
     <string name="meeting_materials">会议资料</string>
@@ -410,7 +425,7 @@
     <string name="are_you_sure_to_exit_shared_comments">是否确认退出共享批注？</string>
     <string name="save_meet_note_">保存成功：%1$s</string>
     <string name="choose_file_export">选择文件导出</string>
-    <string name="import_err_content_format_is_incorrect">导入失败：内容格式不正确</string>
+    <string name="import_err_content_format_is_incorrect">导入失败：请检查表格内容格式</string>
     <string name="voting_method">投票方式</string>
     <string name="export_successful_">导出成功：%1$s</string>
     <string name="import_successful">导入成功</string>
@@ -432,7 +447,7 @@
     <string name="define">确定</string>
     <string name="rate_description_">评分描述：</string>
     <string name="use_file_name">使用文件名称</string>
-    <string name="notation_">是否记名</string>
+    <string name="notation_">是否记名：</string>
     <string name="score_a_">&#12288;评分一：</string>
     <string name="score_b_">&#12288;评分二：</string>
     <string name="score_c_">&#12288;评分三：</string>
@@ -445,7 +460,7 @@
     <string name="rate_detail">评分详情</string>
     <string name="yprs_">应评人数：</string>
     <string name="yiprs_">已评人数：</string>
-    <string name="average_score_">平均分：</string>
+    <string name="average_score_">&#12288;平均分：</string>
     <string name="add_score_hint">当评分文件超过一个时，评分描述内容默认使用文件名称！</string>
     <string name="please_add_score_file_first">请先添加评分文件</string>
     <string name="export_config">导出文件配置</string>
@@ -454,6 +469,16 @@
     <string name="choose_dir">选择目录</string>
     <string name="please_enter_file_name_and_addr">选先输入文件名和选择保存目录</string>
     <string name="description_">描述内容：</string>
+    <string name="please_choose_vote_first">请先选择投票</string>
+    <string name="enable_recording">启用录制</string>
+    <string name="operating_tips">操作提示</string>
+    <string name="enable_recording_tip">该功能需要流服务器开启录制功能！</string>
+    <string name="no_data_to_export">当前无数据可导出</string>
+    <string name="invalid_file">无效文件</string>
+    <string name="error_occurred">发生了一个错误，我们深感抱歉</string>
+    <string name="error_details">异常信息:</string>
+    <string name="unknown_exception">未知的异常</string>
+    <string name="close_app">关闭软件</string>
 
     <array name="yes_or_no">
         <item>是</item>

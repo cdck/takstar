@@ -30,6 +30,7 @@ import com.mogujie.tt.protobuf.InterfaceVideo;
 import com.mogujie.tt.protobuf.InterfaceVote;
 import com.mogujie.tt.protobuf.InterfaceWhiteboard;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -756,23 +757,28 @@ public class JniHelper {
      * @param uploadflag 上传标志 参见 Pb_Upload_Flag =1只有当上传结束才回调进度
      * @param dirid      上传的目录ID 参见 Pb_Upload_DefaultDirId
      * @param attrib     文件属性 参见 Pb_MeetFileAttrib
-     * @param newname    上传后的新名称
-     * @param pathname   全路径名
+     * @param fileName    上传后的新名称
+     * @param filePath   全路径名
      * @param userval    用户自定义的值
      * @param userStr    用户传入的自定义字串
      */
-    public void uploadFile(int uploadflag, int dirid, int attrib, String newname, String pathname, int userval, String userStr) {
+    public void uploadFile(int uploadflag, int dirid, int attrib, String fileName, String filePath, int userval, String userStr) {
+        File file = new File(filePath);
+        if (!file.isFile()) {
+            throw new IllegalArgumentException();
+        }
         InterfaceUpload.pbui_Type_AddUploadFile.Builder builder = InterfaceUpload.pbui_Type_AddUploadFile.newBuilder();
         builder.setUploadflag(uploadflag);
         builder.setDirid(dirid);
         builder.setAttrib(attrib);
-        builder.setNewname(s2b(newname));
-        builder.setPathname(s2b(pathname));
+        builder.setNewname(s2b(fileName));
+        builder.setPathname(s2b(filePath));
         builder.setUserval(userval);
         builder.setUserstr(s2b(userStr));
         InterfaceUpload.pbui_Type_AddUploadFile build = builder.build();
-        jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_UPLOAD.getNumber(), InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_ADD.getNumber(), build.toByteArray());
-        LogUtil.e(TAG, "uploadFile :   --> 上传文件 " + newname + ", dirid= " + dirid + ", pathname= " + pathname);
+        jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_UPLOAD.getNumber(),
+                InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_ADD.getNumber(), build.toByteArray());
+        LogUtil.e(TAG, "uploadFile :   --> 上传文件 " + fileName + ", dirid= " + dirid + ", filePath= " + filePath);
     }
 
     /**
@@ -1216,6 +1222,32 @@ public class JniHelper {
                 .build();
         jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_STOPPLAY.getNumber(), InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_CLOSE.getNumber(), build.toByteArray());
         LogUtil.i(TAG, "stopResourceOperate:  停止资源操作  ---> ");
+    }
+
+
+    /**
+     * 设置播放暂停
+     */
+    public void setPlayPause(int resIndex, int devId) {
+        InterfacePlaymedia.pbui_Type_MeetDoPlayControl.Builder builder = InterfacePlaymedia.pbui_Type_MeetDoPlayControl.newBuilder();
+        builder.setResindex(resIndex);
+        builder.addDeviceid(devId);
+        InterfacePlaymedia.pbui_Type_MeetDoPlayControl build = builder.build();
+        jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEDIAPLAY.getNumber(), InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_PAUSE.getNumber(), build.toByteArray());
+        LogUtil.e(TAG, "setPlayStop:  设置播放暂停 --->>> ");
+    }
+
+    /**
+     * 设置播放回复
+     */
+    public void setPlayRecover(int resIndex, int devId) {
+        InterfacePlaymedia.pbui_Type_MeetDoPlayControl.Builder builder = InterfacePlaymedia.pbui_Type_MeetDoPlayControl.newBuilder();
+        builder.setResindex(resIndex);
+        builder.addDeviceid(devId);
+        InterfacePlaymedia.pbui_Type_MeetDoPlayControl build = builder.build();
+        jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEDIAPLAY.getNumber(),
+                InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_PLAY.getNumber(), build.toByteArray());
+        LogUtil.e(TAG, "setPlayRecover:  设置播放回复 --->>> ");
     }
 
 
@@ -1817,5 +1849,33 @@ public class JniHelper {
                 .build();
         jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_FILESCOREVOTESIGN_VALUE,
                 InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_MODIFY_VALUE, build.toByteArray());
+    }
+
+
+    /**
+     * 204.查询投票提交人属性
+     *
+     * @return
+     * @throws InvalidProtocolBufferException
+     */
+    public InterfaceBase.pbui_CommonInt32uProperty queryVoteSubmitterProperty(int voteid, int memberid, int propertyid) {
+        InterfaceVote.pbui_Type_MeetVoteQueryProperty.Builder builder = InterfaceVote.pbui_Type_MeetVoteQueryProperty.newBuilder();
+        builder.setVoteid(voteid);
+        builder.setMemberid(memberid);
+        builder.setPropertyid(propertyid);
+        InterfaceVote.pbui_Type_MeetVoteQueryProperty build = builder.build();
+        byte[] array = jni.call_method(InterfaceMacro.Pb_Type.Pb_TYPE_MEET_INTERFACE_MEETVOTESIGNED.getNumber(), InterfaceMacro.Pb_Method.Pb_METHOD_MEET_INTERFACE_QUERYPROPERTY.getNumber(), build.toByteArray());
+        if (array == null) {
+            LogUtil.e(TAG, "queryVoteSubmitterProperty :  查询投票提交人属性失败 --> ");
+            return null;
+        }
+        LogUtil.e(TAG, "queryVoteSubmitterProperty :  查询投票提交人属性成功 --> ");
+        try {
+            return InterfaceBase.pbui_CommonInt32uProperty.parseFrom(array);
+        } catch (InvalidProtocolBufferException e) {
+            e.printStackTrace();
+            LogUtil.e(TAG, "queryVoteSubmitterProperty -->" + "类型转换失败");
+            return null;
+        }
     }
 }

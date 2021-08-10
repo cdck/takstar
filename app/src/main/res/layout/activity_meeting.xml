@@ -17,9 +17,9 @@
         <ImageView
             android:id="@+id/meet_iv_logo"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="40dp"
             android:background="@color/blue"
-            android:padding="15dp"
+            android:padding="10dp"
             android:src="@drawable/ic_meet_logo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -77,7 +77,7 @@
         <LinearLayout
             android:id="@+id/meet_top_ll"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="40dp"
             android:background="@color/blue"
             android:orientation="horizontal">
 
@@ -94,7 +94,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/text_size_big"
                     android:textStyle="bold"
                     tools:text="2020年第一季度会议" />
 
@@ -104,7 +104,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_size_medium"
                     tools:text="参会人：" />
 
                 <TextView
@@ -112,7 +112,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_size_medium"
                     tools:text="张三" />
             </LinearLayout>
 
@@ -121,31 +121,46 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <ImageView
+                <RelativeLayout
                     android:id="@+id/meet_iv_close"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="15dp"
-                    android:src="@drawable/ic_close" />
+                    android:layout_marginEnd="15dp">
 
-                <ImageView
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/ic_close" />
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:id="@+id/meet_iv_min"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="15dp"
-                    android:layout_toStartOf="@+id/meet_iv_close"
-                    android:src="@drawable/ic_min"
-                    android:visibility="visible" />
+                    android:layout_toStartOf="@+id/meet_iv_close">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/ic_min"
+                        android:visibility="visible" />
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/meet_top_line"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
-                    android:layout_margin="15dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_toStartOf="@+id/meet_iv_min"
                     android:background="@color/white" />
 
@@ -156,41 +171,56 @@
                     android:layout_centerVertical="true"
                     android:layout_toStartOf="@+id/meet_top_line"
                     android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_medium"
                     tools:text="在线" />
 
                 <RelativeLayout
-                    android:id="@+id/rl_message"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/meet_iv_message"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_toStartOf="@+id/meet_tv_online">
 
                     <ImageView
-                        android:id="@+id/meet_iv_message"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_centerVertical="true"
                         android:src="@drawable/ic_message" />
                 </RelativeLayout>
 
-                <ImageView
+                <RelativeLayout
                     android:id="@+id/meet_iv_news"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="15dp"
-                    android:layout_toStartOf="@+id/rl_message"
-                    android:src="@drawable/ic_news"
-                    android:visibility="visible" />
+                    android:layout_marginEnd="10dp"
+                    android:layout_toStartOf="@+id/meet_iv_message">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_news"
+                        android:visibility="visible" />
+                </RelativeLayout>
             </RelativeLayout>
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/welcome_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/icon_meet_welcome"
+            android:gravity="center"
+            android:visibility="visible" />
 
         <FrameLayout
             android:id="@+id/meet_fl"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@color/white" />
+            android:background="@color/white"
+            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

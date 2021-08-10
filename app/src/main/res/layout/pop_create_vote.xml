@@ -67,7 +67,7 @@
                     android:background="@drawable/editbox_background_normal"
                     android:lines="1"
                     android:singleLine="true"
-                    android:textSize="@dimen/text_size_small" />
+                    android:textSize="@dimen/text_size_normal" />
 
 
                 <LinearLayout
@@ -121,7 +121,7 @@
                         android:background="@drawable/editbox_background_normal"
                         android:lines="1"
                         android:singleLine="true"
-                        android:textSize="@dimen/text_size_small" />
+                        android:textSize="@dimen/text_size_normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -145,7 +145,7 @@
                         android:background="@drawable/editbox_background_normal"
                         android:lines="1"
                         android:singleLine="true"
-                        android:textSize="@dimen/text_size_small" />
+                        android:textSize="@dimen/text_size_normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -169,7 +169,7 @@
                         android:background="@drawable/editbox_background_normal"
                         android:lines="1"
                         android:singleLine="true"
-                        android:textSize="@dimen/text_size_small" />
+                        android:textSize="@dimen/text_size_normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -194,7 +194,7 @@
                         android:background="@drawable/editbox_background_normal"
                         android:lines="1"
                         android:singleLine="true"
-                        android:textSize="@dimen/text_size_small" />
+                        android:textSize="@dimen/text_size_normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -219,7 +219,7 @@
                         android:background="@drawable/editbox_background_normal"
                         android:lines="1"
                         android:singleLine="true"
-                        android:textSize="@dimen/text_size_small" />
+                        android:textSize="@dimen/text_size_normal" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

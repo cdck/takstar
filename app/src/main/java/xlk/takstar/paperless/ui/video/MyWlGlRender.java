@@ -110,7 +110,7 @@ public class MyWlGlRender implements GLSurfaceView.Renderer, SurfaceTexture.OnFr
         textureBuffer.position(0);
     }
 
-    void setFrameData(int w, int h, byte[] by, byte[] bu, byte[] bv) {
+    public void setFrameData(int w, int h, byte[] by, byte[] bu, byte[] bv) {
         this.w = w;
         this.h = h;
         this.y = ByteBuffer.wrap(by);
@@ -118,7 +118,7 @@ public class MyWlGlRender implements GLSurfaceView.Renderer, SurfaceTexture.OnFr
         this.v = ByteBuffer.wrap(bv);
     }
 
-    void setCodecType(int codecType) {
+    public void setCodecType(int codecType) {
         this.codecType = codecType;
         if (codecType == 2) {
             LogUtil.v(TAG, "清空屏幕--");
@@ -172,7 +172,7 @@ public class MyWlGlRender implements GLSurfaceView.Renderer, SurfaceTexture.OnFr
         }
     }
 
-    void setWlOnGlSurfaceViewOncreateListener(WlOnGlSurfaceViewOncreateListener wlOnGlSurfaceViewOncreateListener) {
+    public void setWlOnGlSurfaceViewOncreateListener(WlOnGlSurfaceViewOncreateListener wlOnGlSurfaceViewOncreateListener) {
         this.wlOnGlSurfaceViewOncreateListener = wlOnGlSurfaceViewOncreateListener;
     }
 
@@ -348,7 +348,7 @@ public class MyWlGlRender implements GLSurfaceView.Renderer, SurfaceTexture.OnFr
         return bitmap;
     }
 
-    void cutVideoImg() {
+    public void cutVideoImg() {
         cutimg = true;
     }
 

@@ -62,15 +62,15 @@ class FeaturesFootProvider extends BaseNodeProvider {
             ToastUtils.showShort(R.string.you_have_no_permission);
             return;
         }
-        isSelected = true;
+//        isSelected = true;
         // 这里使用payload进行增量刷新（避免整个item刷新导致的闪烁，不自然）
         FeaturesNodeAdapter adapter = (FeaturesNodeAdapter) getAdapter();
         FeaturesFootNode node = (FeaturesFootNode) data;
         boolean expanded = node.isExpanded();
         if (adapter != null) {
             adapter.expandOrCollapse(position);
-            adapter.clearParentSelectedStatus();
-            adapter.clearChildSelectedStatus();
+//            adapter.clearParentSelectedStatus();
+//            adapter.clearChildSelectedStatus();
             adapter.clickFeature(FeaturesNodeAdapter.ClickType.FOOT_FEATURE, !expanded);
         }
     }

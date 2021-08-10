@@ -47,7 +47,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/launch_type_"
-            android:textSize="12sp" />
+            android:textColor="@color/text_color_gray"
+            android:textSize="@dimen/text_size_normal" />
 
         <CheckBox
             android:id="@+id/wm_screen_mandatory"
@@ -57,7 +58,7 @@
             android:button="@drawable/check_box_style"
             android:gravity="center"
             android:text="@string/mandatory"
-            android:textSize="12sp" />
+            android:textSize="@dimen/text_size_normal" />
 
     </LinearLayout>
     <LinearLayout
@@ -73,8 +74,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/text_color_gray"
             android:text="@string/is_online_"
-            android:textSize="12sp" />
+            android:textSize="@dimen/text_size_normal" />
 
         <CheckBox
             android:id="@+id/wm_screen_is_online"
@@ -84,7 +86,7 @@
             android:button="@drawable/check_box_style"
             android:gravity="center"
             android:text="@string/online_member"
-            android:textSize="12sp" />
+            android:textSize="@dimen/text_size_normal" />
 
     </LinearLayout>
 
@@ -155,6 +157,8 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_weight="7"
+                    android:textSize="@dimen/text_size_normal"
+                    android:textColor="@color/black"
                     android:gravity="center"
                     android:text="@string/attendee" />
             </LinearLayout>
@@ -213,6 +217,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
+                    android:textSize="@dimen/text_size_normal"
+                    android:textColor="@color/black"
                     android:layout_weight="7"
                     android:gravity="center"
                     android:text="@string/projector" />

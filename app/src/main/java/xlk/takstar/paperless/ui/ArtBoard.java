@@ -587,6 +587,7 @@ public class ArtBoard extends View {
 
     /**
      * 绘制波浪线
+     *
      * @param x 当前移动的x坐标
      * @param y 当前移动的y坐标
      */
@@ -762,6 +763,10 @@ public class ArtBoard extends View {
         LocalPathList.clear();//清空自己的操作
         LocalSharingPathList.clear();//清空同屏时自己的操作
         localOperids.clear();//清空同屏时自己产生的操作ID
+        if (!isSharing) {
+            //已经退出共享后，点击清除操作也要把其它用户的操作清除掉
+            pathList.clear();
+        }
         drawAgain(pathList);//重新绘制其它用户的操作
         if (isSharing) {
             long utcstamp = System.currentTimeMillis();

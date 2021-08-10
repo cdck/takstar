@@ -33,7 +33,7 @@
             android:lines="1"
             android:singleLine="true"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_normal"
             android:layout_marginBottom="1dp"
             tools:text="参会者：孙悟空" />
 
@@ -45,7 +45,7 @@
             android:lines="1"
             android:singleLine="true"
             android:textColor="@color/gray"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_size_small"
             tools:text="部门经理" />
     </LinearLayout>
 
@@ -58,5 +58,5 @@
         android:gravity="center"
         android:layout_gravity="center"
         tools:text="125"
-        android:textSize="10sp"/>
+        android:textSize="@dimen/text_size_normal"/>
 </LinearLayout>

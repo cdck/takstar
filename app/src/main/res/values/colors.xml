@@ -7,6 +7,10 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="bg_">#E7F6FD</color>
 
+    <color name="rv_top_view_bg">#E3E4E6</color>
+    <color name="dividing_line_color">#E5E5E5</color>
+    <color name="cancel_text_color">#808080</color>
+
     <color name="text_color_enabled_f">#C5C5C5</color>
     <color name="devline">#9EBDBDBD</color>
     <color name="table_bg_color">#F0F0F0</color>
@@ -202,9 +206,11 @@
     <drawable name="btn_tv_color_selected">#F3F5F6</drawable>
 
     <color name="text_color_black">#252525</color>
+    <color name="text_color_gray">#B9B9B9</color>
 
     <drawable name="text_color_black">#252525</drawable>
-    <drawable name="text_color_blue">#3480FF</drawable>
+<!--    <drawable name="text_color_blue">#3480FF</drawable>-->
+    <drawable name="text_color_blue">#257cdd</drawable>
     <drawable name="text_color_white">#FFFFFF</drawable>
     <drawable name="text_color_gray">#B9B9B9</drawable>
     <drawable name="transparent">#00FFFFFF</drawable>

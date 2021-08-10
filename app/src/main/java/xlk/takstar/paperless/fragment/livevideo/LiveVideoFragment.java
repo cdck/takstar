@@ -1,8 +1,10 @@
 package xlk.takstar.paperless.fragment.livevideo;
 
+import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -64,6 +66,7 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
     private PopupWindow proPop;
     private PopupWindow screenPop;
     private LinearLayout ll_screen, ll_pro;
+    private CheckBox cb_enable_recording;
 
     @Override
     protected int getLayoutId() {
@@ -78,7 +81,26 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
         f_l_v_watch = (Button) inflate.findViewById(R.id.f_l_v_watch);
         f_l_v_stop = (Button) inflate.findViewById(R.id.f_l_v_stop);
         f_l_v_v = (CustomVideoView) inflate.findViewById(R.id.f_l_v_v);
-
+        cb_enable_recording = (CheckBox) inflate.findViewById(R.id.cb_enable_recording);
+        cb_enable_recording.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.operating_tips)
+                        .setMessage(R.string.enable_recording_tip)
+                        .setPositiveButton(R.string.define, (dialog, which) -> {
+                            jni.modifyContextProperties(InterfaceMacro.Pb_ContextPropertyID.Pb_MEETCONTEXT_PROPERTY_STREAMSAVE_VALUE, 1);
+                            cb_enable_recording.setChecked(true);
+                            dialog.dismiss();
+                        })
+                        .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                            cb_enable_recording.setChecked(false);
+                            dialog.dismiss();
+                        })
+                        .create().show();
+            } else {
+                jni.modifyContextProperties(InterfaceMacro.Pb_ContextPropertyID.Pb_MEETCONTEXT_PROPERTY_STREAMSAVE_VALUE, 0);
+            }
+        });
         f_l_v_watch.setOnClickListener(this);
         f_l_v_stop.setOnClickListener(this);
         f_l_v_v.setViewClickListener(this);
@@ -132,9 +154,9 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
     }
 
     private void start() {
-        boolean isVideoManage = getArguments().getBoolean("isVideoManage");
-        ll_pro.setVisibility(isVideoManage ? View.VISIBLE : View.GONE);
-        ll_screen.setVisibility(isVideoManage ? View.VISIBLE : View.GONE);
+        boolean isManage = getArguments().getBoolean("isManage");
+        ll_pro.setVisibility(isManage ? View.VISIBLE : View.GONE);
+        ll_screen.setVisibility(isManage ? View.VISIBLE : View.GONE);
         presenter.register();
         presenter.initVideoRes(pvWidth, pvHeight);
         f_l_v_v.createView(ids);
@@ -153,7 +175,7 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.f_l_v_watch:
+            case R.id.f_l_v_watch: {
                 if (adapter != null) {
                     VideoDev videoDev = adapter.getSelected();
                     if (videoDev != null) {
@@ -174,7 +196,8 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
                     }
                 }
                 break;
-            case R.id.f_l_v_stop:
+            }
+            case R.id.f_l_v_stop: {
                 int selectResId = f_l_v_v.getSelectResId();
                 if (selectResId != -1) {
                     presenter.stopResource(selectResId);
@@ -182,6 +205,7 @@ public class LiveVideoFragment extends BaseFragment<LiveVideoPresenter> implemen
                     ToastUtils.showShort(R.string.please_choose_stop_view);
                 }
                 break;
+            }
             case R.id.f_l_v_stop_pro:
                 if (adapter != null && adapter.getSelected() != null) {
                     if (Constant.hasPermission(permission_code_projection)) {

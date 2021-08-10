@@ -1,6 +1,7 @@
 package xlk.takstar.paperless.fragment.material;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.mogujie.tt.protobuf.InterfaceBase;
@@ -67,6 +68,16 @@ public class MaterialPresenter extends BasePresenter<MaterialContract.View> impl
         meetFiles.clear();
         if (info != null) {
             meetFiles.addAll(info.getItemList());
+//            for (int i = 0; i < meetFiles.size(); i++) {
+//                InterfaceFile.pbui_Item_MeetDirFileDetailInfo item = meetFiles.get(i);
+//                String name = item.getName().toStringUtf8();
+//                int mediaid = item.getMediaid();
+//                int attrib = item.getAttrib();
+//                int filepos = item.getFilepos();
+//                int mstime = item.getMstime();
+//                long size = item.getSize();
+//                LogUtils.i(name + ",mediaid=" + mediaid + ",attrib=" + attrib + ",filepos=" + filepos + ",mstime=" + mstime + ",size=" + size);
+//            }
         }
         mView.updateFile(meetFiles);
     }

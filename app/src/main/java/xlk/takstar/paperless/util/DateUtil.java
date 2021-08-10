@@ -20,6 +20,16 @@ public class DateUtil {
         return format.format(tTime);
     }
 
+    public static String nowDateErrFileName() {
+        return "异常" + nowDate();
+    }
+
+    public static String pdfExportTime() {
+        Date tTime = new Date(System.currentTimeMillis());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return format.format(tTime);
+    }
+
     /**
      * @param time 单位 毫秒
      *             时区设置：SimpleDateFormat对象.setTimeZone(TimeZone.getTimeZone("GTM"));
@@ -36,11 +46,12 @@ public class DateUtil {
         day.setTimeZone(TimeZone.getTimeZone("GTM"));
         String dayt = day.format(tTime);
 
-        return new String[]{timt,dayt};
+        return new String[]{timt, dayt};
     }
+
     /**
      * @param millisecond 单位 毫秒
-     *             时区设置：SimpleDateFormat对象.setTimeZone(TimeZone.getTimeZone("GTM"));
+     *                    时区设置：SimpleDateFormat对象.setTimeZone(TimeZone.getTimeZone("GTM"));
      */
     public static String[] convertAdminTime(long millisecond) {
         Date tTime = new Date(millisecond);
@@ -54,7 +65,7 @@ public class DateUtil {
         day.setTimeZone(TimeZone.getTimeZone("GTM"));
         String date = day.format(tTime);
 
-        return new String[]{time,date};
+        return new String[]{time, date};
     }
 
     /**
@@ -105,6 +116,7 @@ public class DateUtil {
 
     /**
      * 装换成 11:30
+     *
      * @param seconds 秒
      */
     public static String getHHss(long seconds) {
@@ -115,6 +127,7 @@ public class DateUtil {
 
     /**
      * 转换成 xx分xx秒
+     *
      * @param seconds 秒
      */
     public static String countdown(long seconds) {

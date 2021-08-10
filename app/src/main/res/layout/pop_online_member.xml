@@ -38,7 +38,7 @@
         android:layout_marginBottom="5dp"
         android:button="@drawable/check_box_style"
         android:text="@string/check_all"
-        android:textSize="@dimen/text_size_small" />
+        android:textSize="@dimen/text_size_normal" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_member"
