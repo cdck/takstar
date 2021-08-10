@@ -26,7 +26,6 @@ import xlk.takstar.paperless.util.LogUtil;
  * @desc
  */
 public class AgendaPresenter extends BasePresenter<AgendaContract.View> implements AgendaContract.Presenter {
-
     public List<InterfaceAgenda.pbui_ItemAgendaTimeInfo> agendaTimeInfos = new ArrayList<>();
     public List<InterfaceFile.pbui_Item_MeetDirFileDetailInfo> files = new ArrayList<>();
 

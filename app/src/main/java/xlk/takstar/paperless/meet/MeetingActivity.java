@@ -138,8 +138,13 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         if (draw != null && draw.equals("draw")) {
             if (nodeAdapter != null) {
                 nodeAdapter.clearChildSelectedStatus();
+//<<<<<<< HEAD
                 nodeAdapter.setDefaultSelected(Constant.function_code_board);
                 nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, Constant.function_code_board);
+//=======
+//                nodeAdapter.setDefaultSelected(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
+//                nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE,InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
+//>>>>>>> 40d173592ad4e00b593c1d1aa32bf994ab7f167f
                 nodeAdapter.notifyDataSetChanged();
             }
         }
@@ -313,10 +318,6 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             nodeAdapter.setList(presenter.features);
             nodeAdapter.notifyDataSetChanged();
         }
-        if (!alreadyShow) {
-            showWelcomePage();
-            return;
-        }
         if (saveFunCode == -1) {
             setChooseDefaultFeature();
         } else {
@@ -359,24 +360,6 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             showFragment(-1);
             nodeAdapter.setDefaultSelected(-1);
         }
-    }
-
-    @Override
-    public void exitDraw() {
-        LogUtils.e("exitDraw saveFunCode=" + saveFunCode + ",currentClickDirId=" + currentClickDirId);
-        nodeAdapter.clearChildSelectedStatus();
-        nodeAdapter.setDefaultSelected(saveFunCode);
-        if (currentClickDirId != -1) {
-            nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.DIRECTORY, currentClickDirId);
-            nodeAdapter.clearParentSelectedStatus();
-            nodeAdapter.setCurrentChildId(currentClickDirId);
-        } else {
-            if (saveFunCode > Constant.FUN_CODE) {
-                nodeAdapter.setCurrentChildId(saveFunCode);
-            }
-            nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, saveFunCode);
-        }
-        nodeAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -821,6 +804,11 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult(intent, REQUEST_CODE_EXPORT_NOTE);
+    }
+
+    @Override
+    public void exitDraw() {
+
     }
 
     @Override

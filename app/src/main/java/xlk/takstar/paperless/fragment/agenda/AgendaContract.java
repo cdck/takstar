@@ -22,7 +22,6 @@ public interface AgendaContract {
 
     interface Presenter extends IBasePresenter {
         void queryAgenda();
-
-        void queryFileByDir(int dirid);
+        void queryFileByDir(int dirId);
     }
 }
