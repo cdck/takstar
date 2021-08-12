@@ -135,7 +135,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             String s = ini.get("debug", "maxBitRate");
             LogUtils.i("从ini文件中获取到的最大码率值：" + s);
             if (s != null && !s.isEmpty()) {
-                App.maxBitRate = Integer.parseInt(s);
+                App.maxBitRate = Integer.parseInt(s) * 1000;
             } else {
                 ini.put("debug", "maxBitRate", App.maxBitRate / 1000);
             }

@@ -376,7 +376,21 @@ public class VideoFragment extends BaseFragment<LiveVideoPresenter> implements L
                 break;
             }
             case R.id.a_play: {
-                jni.setPlayRecover(RESOURCE_ID_1, GlobalValue.localDeviceId);
+                if (adapter != null) {
+                    VideoDev videoDev = adapter.getSelected();
+                    if (videoDev != null) {
+                        presenter.stopResource(RESOURCE_ID_1);
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                presenter.watch(videoDev, RESOURCE_ID_1);
+                            }
+                        }, 500);
+                    } else {
+                        ToastUtils.showShort(R.string.please_choose_video_show);
+                    }
+                }
+//                jni.setPlayRecover(RESOURCE_ID_1, GlobalValue.localDeviceId);
                 break;
             }
             case R.id.a_stop: {
@@ -392,7 +406,21 @@ public class VideoFragment extends BaseFragment<LiveVideoPresenter> implements L
                 break;
             }
             case R.id.b_play: {
-                jni.setPlayRecover(RESOURCE_ID_2, GlobalValue.localDeviceId);
+                if (adapter != null) {
+                    VideoDev videoDev = adapter.getSelected();
+                    if (videoDev != null) {
+                        presenter.stopResource(RESOURCE_ID_2);
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                presenter.watch(videoDev, RESOURCE_ID_2);
+                            }
+                        }, 500);
+                    } else {
+                        ToastUtils.showShort(R.string.please_choose_video_show);
+                    }
+                }
+//                jni.setPlayRecover(RESOURCE_ID_2, GlobalValue.localDeviceId);
                 break;
             }
             case R.id.b_stop: {
@@ -408,7 +436,21 @@ public class VideoFragment extends BaseFragment<LiveVideoPresenter> implements L
                 break;
             }
             case R.id.c_play: {
-                jni.setPlayRecover(RESOURCE_ID_3, GlobalValue.localDeviceId);
+                if (adapter != null) {
+                    VideoDev videoDev = adapter.getSelected();
+                    if (videoDev != null) {
+                        presenter.stopResource(RESOURCE_ID_3);
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                presenter.watch(videoDev, RESOURCE_ID_3);
+                            }
+                        }, 500);
+                    } else {
+                        ToastUtils.showShort(R.string.please_choose_video_show);
+                    }
+                }
+//                jni.setPlayRecover(RESOURCE_ID_3, GlobalValue.localDeviceId);
                 break;
             }
             case R.id.c_stop: {
@@ -424,7 +466,21 @@ public class VideoFragment extends BaseFragment<LiveVideoPresenter> implements L
                 break;
             }
             case R.id.d_play: {
-                jni.setPlayRecover(RESOURCE_ID_4, GlobalValue.localDeviceId);
+                if (adapter != null) {
+                    VideoDev videoDev = adapter.getSelected();
+                    if (videoDev != null) {
+                        presenter.stopResource(RESOURCE_ID_4);
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                presenter.watch(videoDev, RESOURCE_ID_4);
+                            }
+                        }, 500);
+                    } else {
+                        ToastUtils.showShort(R.string.please_choose_video_show);
+                    }
+                }
+//                jni.setPlayRecover(RESOURCE_ID_4, GlobalValue.localDeviceId);
                 break;
             }
             case R.id.d_stop: {

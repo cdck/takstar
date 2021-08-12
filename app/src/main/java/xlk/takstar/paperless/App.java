@@ -20,7 +20,6 @@ import com.tencent.smtt.sdk.TbsDownloader;
 import com.tencent.smtt.sdk.TbsListener;
 
 import org.greenrobot.eventbus.EventBus;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +42,6 @@ import xlk.takstar.paperless.model.GlobalValue;
 import xlk.takstar.paperless.service.BackService;
 import xlk.takstar.paperless.service.fab.FabService;
 import xlk.takstar.paperless.service.ScreenRecorder;
-import xlk.takstar.paperless.util.CrashHandler;
 import xlk.takstar.paperless.util.LogUtil;
 import xlk.takstar.paperless.util.MyRejectedExecutionHandler;
 import xlk.takstar.paperless.util.NamingThreadFactory;
@@ -81,7 +79,7 @@ public class App extends Application {
         System.loadLibrary("z");
     }
 
-    public static final boolean read2file = false;
+    public static final boolean read2file = true;
     private final String TAG = "App-->";
     public static boolean isDebug = true;
     public static Context appContext;
@@ -367,17 +365,17 @@ public class App extends Application {
             LogUtil.e(TAG, "onReceive :   --> type= " + type + " , action = " + action);
             if (action.equals(Constant.ACTION_START_SCREEN_RECORD)) {
                 LogUtil.e(TAG, "screen_shot --> ");
-                startScreenRecord();
+                screenRecording();
             } else if (action.equals(Constant.ACTION_STOP_SCREEN_RECORD)) {
                 LogUtil.e(TAG, "stop_screen_shot --> ");
-                if (stopScreenRecord()) {
+                if (stopRecord()) {
                     LogUtil.i(TAG, "stopStreamInform: 屏幕录制已停止..");
                 } else {
                     LogUtil.e(TAG, "stopStreamInform: 屏幕录制停止失败 ");
                 }
             } else if (action.equals(Constant.ACTION_STOP_SCREEN_RECORD_WHEN_EXIT_APP)) {
                 LogUtil.i(TAG, "onReceive 退出APP时停止屏幕录制----");
-                stopScreenRecord();
+                stopRecord();
                 killAllActivity();
             }
         }
@@ -408,7 +406,7 @@ public class App extends Application {
         }
     }
 
-    private boolean stopScreenRecord() {
+    private boolean stopRecord() {
         if (recorder != null) {
             recorder.quit();
             recorder = null;
@@ -418,8 +416,8 @@ public class App extends Application {
         }
     }
 
-    private void startScreenRecord() {
-        if (stopScreenRecord()) {
+    private void screenRecording() {
+        if (stopRecord()) {
             LogUtil.i(TAG, "startScreenRecord: 屏幕录制已停止");
         } else {
             if (mMediaProjection == null) {
@@ -429,7 +427,7 @@ public class App extends Application {
                 recorder.quit();
             }
             if (recorder == null) {
-                recorder = new ScreenRecorder(width, height, maxBitRate, dpi, mMediaProjection, "");
+                recorder = new ScreenRecorder(width, height, maxBitRate, dpi, mMediaProjection, Constant.file_dir + "屏幕录制.mp4");
             }
             recorder.start();//启动录屏线程
             LogUtil.i(TAG, "startScreenRecord: 开启屏幕录制");

@@ -289,7 +289,7 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
 
     private void initMediaMuxer() throws IOException {
         if (!read2file) return;
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/temp.mp4");
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/解码播放.mp4");
         if (file.exists()) {
             file.delete();
         }

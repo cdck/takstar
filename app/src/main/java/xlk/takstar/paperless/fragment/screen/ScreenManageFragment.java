@@ -20,6 +20,7 @@ import xlk.takstar.paperless.adapter.WmScreenMemberAdapter;
 import xlk.takstar.paperless.adapter.WmScreenProjectorAdapter;
 import xlk.takstar.paperless.base.BaseFragment;
 import xlk.takstar.paperless.model.Constant;
+import xlk.takstar.paperless.model.GlobalValue;
 
 import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_0;
 
@@ -34,7 +35,7 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
     private CheckBox cb_mandatory;
     private Button btn_launch;
     private Button btn_stop;
-    private WmScreenMemberAdapter sourceMemberAdapter,targetAdapter;
+    private WmScreenMemberAdapter sourceMemberAdapter, targetAdapter;
     private WmScreenProjectorAdapter projectorAdapter;
 
     @Override
@@ -45,14 +46,14 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
     @Override
     protected void initView(View inflate) {
         cb_projection = inflate.findViewById(R.id.cb_projection);
-        inflate.findViewById(R.id.ll_cb_pro).setOnClickListener(v->{
+        inflate.findViewById(R.id.ll_cb_pro).setOnClickListener(v -> {
             boolean checked = cb_projection.isChecked();
             cb_projection.setChecked(!checked);
             projectorAdapter.setChooseAll(!checked);
         });
 
         cb_member = inflate.findViewById(R.id.cb_member);
-        inflate.findViewById(R.id.ll_cb_member).setOnClickListener(v->{
+        inflate.findViewById(R.id.ll_cb_member).setOnClickListener(v -> {
             boolean checked = cb_member.isChecked();
             cb_member.setChecked(!checked);
             targetAdapter.setChooseAll(!checked);
@@ -106,7 +107,7 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
         }
 
         if (projectorAdapter == null) {
-            projectorAdapter = new WmScreenProjectorAdapter( presenter.onLineProjectors);
+            projectorAdapter = new WmScreenProjectorAdapter(presenter.onLineProjectors);
             rv_projection.setLayoutManager(new LinearLayoutManager(getContext()));
             rv_projection.setAdapter(projectorAdapter);
             projectorAdapter.setOnItemClickListener(new OnItemClickListener() {
@@ -121,7 +122,7 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
         }
 
         if (targetAdapter == null) {
-            targetAdapter = new WmScreenMemberAdapter(R.layout.item_wm_screen,presenter.targetMembers);
+            targetAdapter = new WmScreenMemberAdapter(R.layout.item_wm_screen, presenter.targetMembers);
             rv_member.setLayoutManager(new LinearLayoutManager(getContext()));
             rv_member.setAdapter(targetAdapter);
             targetAdapter.setOnItemClickListener(new OnItemClickListener() {
@@ -145,7 +146,12 @@ public class ScreenManageFragment extends BaseFragment<ScreenManagePresenter> im
                     ToastUtils.showShort(R.string.please_choose_member);
                     return;
                 }
-                jni.playTargetScreen(checks.get(0));
+                Integer deviceId = checks.get(0);
+                if (deviceId == GlobalValue.localDeviceId) {
+                    ToastUtils.showShort(R.string.can_not_preview_yourself);
+                } else {
+                    jni.playTargetScreen(deviceId);
+                }
                 break;
             }
             case R.id.btn_launch: {

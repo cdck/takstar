@@ -48,7 +48,6 @@ import xlk.takstar.paperless.fragment.annotate.AnnotateFragment;
 import xlk.takstar.paperless.fragment.bullet.BulletFragment;
 import xlk.takstar.paperless.fragment.chat.ChatFragment;
 import xlk.takstar.paperless.fragment.draw.DrawFragment;
-import xlk.takstar.paperless.fragment.livevideo.LiveVideoFragment;
 import xlk.takstar.paperless.fragment.livevideo.VideoFragment;
 import xlk.takstar.paperless.fragment.material.MaterialFragment;
 import xlk.takstar.paperless.fragment.score.ScoreManageFragment;
@@ -138,13 +137,8 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         if (draw != null && draw.equals("draw")) {
             if (nodeAdapter != null) {
                 nodeAdapter.clearChildSelectedStatus();
-//<<<<<<< HEAD
                 nodeAdapter.setDefaultSelected(Constant.function_code_board);
                 nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, Constant.function_code_board);
-//=======
-//                nodeAdapter.setDefaultSelected(InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
-//                nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE,InterfaceMacro.Pb_Meet_FunctionCode.Pb_MEET_FUNCODE_WHITEBOARD_VALUE);
-//>>>>>>> 40d173592ad4e00b593c1d1aa32bf994ab7f167f
                 nodeAdapter.notifyDataSetChanged();
             }
         }
@@ -183,26 +177,6 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             saveFunCode = -1;
             updateMeetingFeatures();
         }
-    }
-
-    private void showWelcomePage() {
-        welcome_view.setVisibility(View.VISIBLE);
-        meet_fl.setVisibility(View.GONE);
-//        for (int i = 0; i < presenter.features.size(); i++) {
-//            BaseNode baseNode = presenter.features.get(i);
-//            if (baseNode instanceof FeaturesParentNode) {
-//                FeaturesParentNode node = (FeaturesParentNode) baseNode;
-//                if (node.getFeatureId() == Constant.function_code_material) {
-//                    showFragment(Constant.function_code_material);
-//                    nodeAdapter.clearChildSelectedStatus();
-//                    nodeAdapter.setDefaultSelected(Constant.function_code_material);
-//                    nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, Constant.function_code_material);
-//                    nodeAdapter.notifyDataSetChanged();
-//                    alreadyShow = true;
-//                    return;
-//                }
-//            }
-//        }
     }
 
     /**
@@ -271,6 +245,29 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
         firstDirId = dirId;
     }
 
+    private void showWelcomePage() {
+        saveFunCode = -1;
+        showFragment(-1);//主要是用于隐藏掉当前展示的fragment
+        nodeAdapter.setDefaultSelected(-1);//取消选中状态
+        welcome_view.setVisibility(View.VISIBLE);
+        meet_fl.setVisibility(View.GONE);
+//        for (int i = 0; i < presenter.features.size(); i++) {
+//            BaseNode baseNode = presenter.features.get(i);
+//            if (baseNode instanceof FeaturesParentNode) {
+//                FeaturesParentNode node = (FeaturesParentNode) baseNode;
+//                if (node.getFeatureId() == Constant.function_code_material) {
+//                    showFragment(Constant.function_code_material);
+//                    nodeAdapter.clearChildSelectedStatus();
+//                    nodeAdapter.setDefaultSelected(Constant.function_code_material);
+//                    nodeAdapter.clickFeature(FeaturesNodeAdapter.ClickType.FEATURE, Constant.function_code_material);
+//                    nodeAdapter.notifyDataSetChanged();
+//                    alreadyShow = true;
+//                    return;
+//                }
+//            }
+//        }
+    }
+
     @Override
     public void updateMeetingFeatures() {
         if (nodeAdapter == null) {
@@ -319,7 +316,8 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
             nodeAdapter.notifyDataSetChanged();
         }
         if (saveFunCode == -1) {
-            setChooseDefaultFeature();
+            showWelcomePage();
+//            setChooseDefaultFeature();
         } else {
             LogUtils.i(TAG, "之前展示的功能id=" + saveFunCode);
             if (saveFunCode < Constant.FUN_CODE) {//说明之前展示的是参会人功能模块
@@ -337,7 +335,8 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
                 }
                 if (!hasFeature) {
                     //更新后没有该功能了
-                    setChooseDefaultFeature();
+                    showWelcomePage();
+//                    setChooseDefaultFeature();
                 }
             } else {//之前展示的是固定的其它功能模块
                 //不需要操作
@@ -348,26 +347,29 @@ public class MeetingActivity extends BaseActivity<MeetingPresenter> implements M
     /**
      * 设置默认选中第一个功能，如果一个功能都没有就进行隐藏掉之前显示的功能fragment视图
      */
-    private void setChooseDefaultFeature() {
-        if (!presenter.features.isEmpty()) {
-            BaseNode baseNode = presenter.features.get(0);
-            if (baseNode instanceof FeaturesParentNode) {
-                FeaturesParentNode parentNode = (FeaturesParentNode) baseNode;
-                showFragment(parentNode.getFeatureId());
-                nodeAdapter.setDefaultSelected(parentNode.getFeatureId());
-            }
-        } else {
-            showFragment(-1);
-            nodeAdapter.setDefaultSelected(-1);
-        }
-    }
+//    private void setChooseDefaultFeature() {
+//        if (!presenter.features.isEmpty()) {
+//            BaseNode baseNode = presenter.features.get(0);
+//            if (baseNode instanceof FeaturesParentNode) {
+//                FeaturesParentNode parentNode = (FeaturesParentNode) baseNode;
+//                if (parentNode.getFeatureId() == Constant.function_code_material) {
+//                    showWelcomePage();
+//                } else {
+//                    showFragment(parentNode.getFeatureId());
+//                    nodeAdapter.setDefaultSelected(parentNode.getFeatureId());
+//                }
+//            }
+//        } else {
+//            showWelcomePage();
+//        }
+//    }
 
     @Override
     public void showFragment(int funcode) {
-        if (funcode != -1 && !alreadyShow) {
+        if (funcode != -1 /*&& !alreadyShow*/) {
             welcome_view.setVisibility(View.GONE);
             meet_fl.setVisibility(View.VISIBLE);
-            alreadyShow = true;
+//            alreadyShow = true;
         }
         LogUtil.i(TAG, "showFragment funcode=" + funcode);
         if (funcode != Constant.function_code_board) {
