@@ -506,7 +506,7 @@ public class FabService extends Service implements FabContract.View {
     }
 
     private void startVirtual() {
-        LogUtil.i(TAG, "startVirtual GlobalValue.screen_width=" + GlobalValue.screen_width +
+        LogUtils.i(TAG, "startVirtual GlobalValue.screen_width=" + GlobalValue.screen_width +
                 ", GlobalValue.screen_height=" + GlobalValue.screen_height +
                 ", mScreenDensity=" + mScreenDensity);
         try {
@@ -516,7 +516,7 @@ public class FabService extends Service implements FabContract.View {
 //                    windowWidth, windowHeight,
                     mScreenDensity, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                     surface, null, null);
-            LogUtil.d(TAG, "virtual displayed surface是否为null： " + (surface == null));
+            LogUtils.d(TAG, "virtual displayed surface是否为null： " + (surface == null));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -524,7 +524,7 @@ public class FabService extends Service implements FabContract.View {
 
     private void startScreen() {
         Image image = mImageReader.acquireLatestImage();
-        LogUtil.e(TAG, "startScreen :  image 为null --> " + (image == null));
+        LogUtils.e(TAG, "startScreen :  image 为null --> " + (image == null));
         if (image == null) {
             hoverButtonIsShowing = true;
             wm.addView(hoverButton, mParams);
@@ -541,7 +541,7 @@ public class FabService extends Service implements FabContract.View {
         bitmap.copyPixelsFromBuffer(buffer);
         bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
         image.close();
-        LogUtil.d(TAG, "image data captured bitmap是否为空：" + (bitmap == null));
+        LogUtils.d(TAG, "image data captured bitmap是否为空：" + (bitmap == null));
         //截图完毕，重新显示悬浮按钮
         hoverButtonIsShowing = true;
         wm.addView(hoverButton, mParams);

@@ -166,7 +166,7 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
 
     @Override
     protected void onShow() {
-//        isDrawing = true;
+        isDrawing = true;
         presenter.queryMember();
         if (FabService.screenShotBitmap != null) {
             isAddScreenShot = true;//设置发起同屏时是否发送图片
@@ -177,7 +177,7 @@ public class DrawFragment extends BaseFragment<DrawPresenter> implements DrawCon
 
     @Override
     protected void onHide() {
-//        isDrawing = false;
+        isDrawing = false;
 //        clear();
         dismissPop(memberPop);
         dismissPop(sizePop);

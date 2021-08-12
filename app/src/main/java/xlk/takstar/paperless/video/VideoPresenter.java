@@ -38,7 +38,6 @@ import xlk.takstar.paperless.model.bean.MediaBean;
 import xlk.takstar.paperless.util.DateUtil;
 import xlk.takstar.paperless.util.LogUtil;
 
-import static xlk.takstar.paperless.App.read2file;
 import static xlk.takstar.paperless.model.Constant.RESOURCE_ID_0;
 
 /**
@@ -173,7 +172,6 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
                         saveMimeType = mimeType;
                         initCodec(width, height, codecdata);
                     }
-                    read2file(packet, codecdata);
                 }
                 mediaCodecDecode(packet, length, pts, iskeyframe);
                 if (timeThread == null && !isStop) {
@@ -265,7 +263,6 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
             }
             //3.调用start()方法使其转入执行状态（Executing）
             mediaCodec.start();
-            initMediaMuxer();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -283,27 +280,6 @@ public class VideoPresenter extends BasePresenter<VideoContract.View> implements
         }
         boolean formatSupported = mediaCodec.getCodecInfo().getCapabilitiesForType(saveMimeType).isFormatSupported(mediaFormat);
         LogUtils.e(TAG, "formatSupported=" + formatSupported + ",initMediaFormat :   --> " + mediaFormat);
-    }
-
-    private BufferedOutputStream outputStream;
-
-    private void initMediaMuxer() throws IOException {
-        if (!read2file) return;
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/解码播放.mp4");
-        if (file.exists()) {
-            file.delete();
-        }
-        outputStream = new BufferedOutputStream(new FileOutputStream(file));
-    }
-
-    public void read2file(byte[] outData, byte[] codecdata) {
-        if (!read2file) return;
-        try {
-            outputStream.write(outData, 0, outData.length);
-            outputStream.write(codecdata, 0, codecdata.length);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void mediaCodecDecode(byte[] bytes, int size, long pts, int iskeyframe) {

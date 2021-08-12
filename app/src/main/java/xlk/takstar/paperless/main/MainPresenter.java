@@ -37,7 +37,6 @@ import xlk.takstar.paperless.util.DateUtil;
 import xlk.takstar.paperless.util.LogUtil;
 
 import static xlk.takstar.paperless.App.appContext;
-import static xlk.takstar.paperless.App.read2file;
 import static xlk.takstar.paperless.model.GlobalValue.localDeviceId;
 
 /**

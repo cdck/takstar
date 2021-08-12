@@ -79,9 +79,8 @@ public class App extends Application {
         System.loadLibrary("z");
     }
 
-    public static final boolean read2file = true;
     private final String TAG = "App-->";
-    public static boolean isDebug = true;
+    public static boolean isDebug = false;
     public static Context appContext;
     public static ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
             1,

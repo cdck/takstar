@@ -11,9 +11,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="1dp"
-        android:padding="2dp"
-        android:orientation="vertical"
         android:background="@drawable/play_view_status_bg"
+        android:orientation="vertical"
+        android:padding="2dp"
         app:layout_constraintBottom_toTopOf="@+id/c"
         app:layout_constraintEnd_toStartOf="@+id/b"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,8 +22,8 @@
         <xlk.takstar.paperless.ui.video.single.PlayView
             android:id="@+id/a_view"
             android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="0dp" />
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -52,7 +52,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/a_stop"
-                android:src="@drawable/ic_pause_status" />
+                android:src="@drawable/ic_pause_status"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/a_full"
@@ -66,12 +67,12 @@
 
     <LinearLayout
         android:id="@+id/b"
-        android:orientation="vertical"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="1dp"
-        android:padding="2dp"
         android:background="@drawable/play_view_status_bg"
+        android:orientation="vertical"
+        android:padding="2dp"
         app:layout_constraintBottom_toTopOf="@+id/d"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/a"
@@ -80,8 +81,8 @@
         <xlk.takstar.paperless.ui.video.single.PlayView
             android:id="@+id/b_view"
             android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="0dp" />
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -110,7 +111,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/b_stop"
-                android:src="@drawable/ic_pause_status" />
+                android:src="@drawable/ic_pause_status"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/b_full"
@@ -123,13 +125,13 @@
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
         android:id="@+id/c"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="1dp"
-        android:padding="2dp"
         android:background="@drawable/play_view_status_bg"
+        android:orientation="vertical"
+        android:padding="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/d"
         app:layout_constraintStart_toStartOf="parent"
@@ -138,8 +140,8 @@
         <xlk.takstar.paperless.ui.video.single.PlayView
             android:id="@+id/c_view"
             android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="0dp" />
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -168,7 +170,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/c_stop"
-                android:src="@drawable/ic_pause_status" />
+                android:src="@drawable/ic_pause_status"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/c_full"
@@ -182,12 +185,12 @@
 
     <LinearLayout
         android:id="@+id/d"
-        android:orientation="vertical"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="1dp"
-        android:padding="2dp"
         android:background="@drawable/play_view_status_bg"
+        android:orientation="vertical"
+        android:padding="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/c"
@@ -196,8 +199,8 @@
         <xlk.takstar.paperless.ui.video.single.PlayView
             android:id="@+id/d_view"
             android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="0dp" />
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -226,7 +229,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/d_stop"
-                android:src="@drawable/ic_pause_status" />
+                android:src="@drawable/ic_pause_status"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/d_full"
